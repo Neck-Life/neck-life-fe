@@ -18,4 +18,8 @@ class Responsive {
   double percentHeight(double percent) {
     return deviceHeight*(percent/100);
   }
+
+  double fontSize(double fs) {
+    return fs * deviceWidth / 392;
+  }
 }
