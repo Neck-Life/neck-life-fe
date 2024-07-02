@@ -1,14 +1,9 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
-import 'package:turtleneck/util/imufusion/FusionOffset.dart';
-import 'package:turtleneck/util/imufusion/fusionAhrs.dart';
-import '../imufusion/fusion_convention.dart';
-import '../imufusion/fusion_math.dart';
-
+import 'package:fl_chart/fl_chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,59 +24,23 @@ class AirpodsExampleApp extends StatefulWidget {
 class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   StreamSubscription<DeviceMotionData>? _subscription;
   bool _isListening = false;
-  List<bool> isMoving = [];
 
-
-  final double sampleRate = 400.0;
+  final double sampleRate = 1/0.04;
   double lastTimestamp = 0.0;
-  List<double> timestamp = [];
-  List<List<double>> gyroscope = [];
-  List<List<double>> accelerometer = [];
-
-  List<double> velocity = [0.0, 0.0, 0.0];
-  List<double> position = [0.0, 0.0, 0.0];
-
-  late FusionOffset offset;
-  late FusionAhrs ahrs;
-
-  DeviceMotionData? lastdata;
-
+  List<double> positions = [0.0];
 
   @override
   void initState() {
-    //초기 세팅
-
     super.initState();
-
-    offset = FusionOffset(sampleRate.toInt());
-
-    ahrs = FusionAhrs();
-    ahrs.settings = (FusionAhrsSettings());
-    FusionAhrsInitialise(ahrs);
-
-
-    FusionAhrsSettings settings = FusionAhrsSettings(convention: FusionConvention.NWU,
-        gain: 0.5,
-        gyroscopeRange: 2000,
-        accelerationRejection: 10,
-        magneticRejection:  0,
-        recoveryTriggerPeriod:  (5 * sampleRate).toInt());
-
-    FusionAhrsSetSettings(ahrs, settings);
-
   }
 
   void _startListening() {
-
-    print("start listening");
-
     setState(() {
       _isListening = true;
       _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        // print('Data received: ${data.toJson()}');
-         _processSensorData(data);
+        _processSensorData(data);
       }, onError: (error) {
-        print('Error: $error'); // 오류 발생 시 출력
+        print('Error: $error');
       });
     });
   }
@@ -91,72 +50,31 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       _isListening = false;
       _subscription?.cancel();
       _subscription = null;
+      positions.clear();
+      positions.add(0.0);
+      lastTimestamp= 0.0;
     });
   }
 
   void _processSensorData(DeviceMotionData data) {
-
-    lastdata = data;
-
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-
-    if (timestamp.isEmpty) {
-      lastTimestamp = currentTime;
-      timestamp.add(currentTime);
-    } else {
-      timestamp.add(currentTime - timestamp.first);
-    }
-
-
-
-
-
-
-    // Calculate delta time
-    double deltaTime = currentTime - lastTimestamp;
+    double deltaTime = positions.length==1 ? 0 : currentTime - lastTimestamp;
     lastTimestamp = currentTime;
 
-    // Update gyroscope with offset
-    // List<double> currentGyro = offset.update(gyroscope);
+    double currentAccelY = data.userAcceleration.y.toDouble();
 
+    if(currentAccelY.abs() < 0.005) {
+      currentAccelY = 0;
+    }
+    double velocityY =  positions.last + currentAccelY * deltaTime;
 
-    var currentGyro = FusionOffsetUpdate(offset, FusionVector(data.rotationRate.x , data.rotationRate.y, data.rotationRate.z ));
+    // Store the position for visualization
+    if (positions.length > 100) { // Keep last 100 data points
+      positions.removeAt(0);
+    }
+    positions.add(velocityY);
 
-    // Calculate acceleration in m/s^2
-    var currentAccel = FusionVector(data.userAcceleration.x - data.gravity.x , data.userAcceleration.y  - data.gravity.y , data.userAcceleration.z -  data.gravity.z);
-
-    FusionAhrsUpdateNoMagnetometer(ahrs,currentGyro, currentAccel, deltaTime);
-
-    var euler = FusionEuler(data.attitude.roll.toDouble(), data.attitude.pitch.toDouble(), data.attitude.yaw.toDouble());
-
-    var fusionAhrsGetEarthAcceleration = FusionVectorMultiplyScalar(FusionAhrsGetEarthAcceleration(ahrs), 9.81);
-
-    isMoving.add(sqrt(FusionVectorDotProduct(fusionAhrsGetEarthAcceleration, fusionAhrsGetEarthAcceleration)) > 1);   //threshold
-
-    var margin =(0.1*sampleRate).toInt();
-
-    //todo margin
-
-
-
-    setState(() {
-
-      velocity = [
-        velocity[0] + fusionAhrsGetEarthAcceleration.x * deltaTime,
-        velocity[1] + fusionAhrsGetEarthAcceleration.y * deltaTime,
-        velocity[2] + fusionAhrsGetEarthAcceleration.z * deltaTime,
-      ];
-
-      print(velocity.toString());
-
-      position = [
-        position[0] + velocity[0] * deltaTime,
-        position[1] + velocity[1] * deltaTime,
-        position[2] + velocity[2] * deltaTime,
-      ];
-
-
-    });
+    setState(() {});
   }
 
   @override
@@ -169,15 +87,26 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Airpods example app'),
+        title: const Text('Flutter Airpods Example App'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Text("Position: ${position.toString()}"),
-
-          SizedBox(height: 20),
+          Expanded(
+            child: LineChart(
+              LineChartData(
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+                    isCurved: true,
+                    color: Colors.blue,
+                  ),
+                ],
+              ),
+            ),
+          ),
           ElevatedButton(
             onPressed: _isListening ? _stopListening : _startListening,
             child: Text(_isListening ? "Stop Listening" : "Start Listening"),
