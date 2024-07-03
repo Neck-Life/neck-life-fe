@@ -4,9 +4,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class DetectStatus with ChangeNotifier {
   bool _nowDetecting = false;
   bool _detectAvailable = false;
+  bool _isNowTurtle = false;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
+  bool get isNowTurtle => _isNowTurtle;
 
   double nowGyroX = 0;
   double nowGyroY = 0;
@@ -48,6 +50,16 @@ class DetectStatus with ChangeNotifier {
 
   void disavailableDetect() {
     _detectAvailable = false;
+    notifyListeners();
+  }
+
+  void toTurtle() {
+    _isNowTurtle = true;
+    notifyListeners();
+  }
+
+  void toNotTurtle() {
+    _isNowTurtle = false;
     notifyListeners();
   }
 
