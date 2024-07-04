@@ -143,8 +143,8 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
             child: LineChart(
               LineChartData(
                 borderData: FlBorderData(show: false),
-                minY: -0.1, // Y축 최소값 설정
-                maxY: 0.1, // Y축 최대값 설정
+                minY: -0.5, // Y축 최소값 설정 측정값 크기 에 따라 수정 필요
+                maxY: 0.5, // Y축 최대값 설정
                 lineBarsData: [
                   LineChartBarData(
                     spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
