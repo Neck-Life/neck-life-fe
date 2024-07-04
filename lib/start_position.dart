@@ -65,7 +65,7 @@ class StartPositionState extends State<StartPosition> {
                           ),
                           child: const Center(
                             child: Text(
-                              _lastTime,
+                              "",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFFEBEBEB),
