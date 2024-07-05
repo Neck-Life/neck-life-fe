@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DetectStatus with ChangeNotifier {
+
+  static bool sNowDetecting = false;
+  static bool sDetectAvailable = false;
+  static bool sIsNowTurtle = false;
   bool _nowDetecting = false;
   bool _detectAvailable = false;
   bool _isNowTurtle = false;
@@ -24,13 +28,16 @@ class DetectStatus with ChangeNotifier {
   void init() async {
     final storage = FlutterSecureStorage();
     String? nowRunning = await storage.read(key: 'nowRunning');
+    String? first = await storage.read(key: 'first');
     if (nowRunning != null) {
       _nowDetecting = nowRunning == '1' ? true : false;
+      sNowDetecting = _nowDetecting;
     }
   }
 
   void startDetecting() async {
     _nowDetecting = true;
+    sNowDetecting = true;
     notifyListeners();
     final storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '1');
@@ -38,6 +45,7 @@ class DetectStatus with ChangeNotifier {
 
   void endDetecting() async {
     _nowDetecting = false;
+    sNowDetecting = false;
     notifyListeners();
     final storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
@@ -45,11 +53,13 @@ class DetectStatus with ChangeNotifier {
 
   void availableDetect() {
     _detectAvailable = true;
+    sDetectAvailable = true;
     notifyListeners();
   }
 
   void disavailableDetect() {
     _detectAvailable = false;
+    sDetectAvailable = true;
     notifyListeners();
   }
 

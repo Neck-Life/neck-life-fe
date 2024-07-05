@@ -2,6 +2,10 @@ import 'dart:math';
 
 class Quaternion {
   final double w, x, y, z;
+  static double initialW = 0;
+  static double initialX = 0;
+  static double initialY = 0;
+  static double initialZ = 0;
 
   Quaternion(this.w, this.x, this.y, this.z);
 

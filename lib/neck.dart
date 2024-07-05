@@ -28,7 +28,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   StreamSubscription<DeviceMotionData>? _subscription;
   bool _detectAvailable = false;
   int _minAlarmDelay = 0;
-  bool _nowDetecting = false;
+  // bool _nowDetecting = false;
 
   // for position calculating
   Quaternion? _initialQuaternion;
@@ -85,7 +85,6 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
       currentAccelY = 0;
     }
     double velocityY = _positions.last + currentAccelY * deltaTime * cos(RotationAngle);
-    print(velocityY);
     // Store the position for visualization
     if (_positions.length > 100) { // Keep last 100 data points
       _positions.removeAt(0);
@@ -117,7 +116,17 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         _detectAvailable = true;
         _processSensorData(data);
         _pitchTemp = data.toJson()['pitch'];
-        // print(_pitchTemp);
+        print(_pitchTemp);
+        print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
+        if (_minAlarmDelay > 0) {
+          _minAlarmDelay -= 1;
+        }
+        if (DetectStatus.sNowDetecting && _pitchTemp < -0.3 && _minAlarmDelay == 0) {
+          _showPushAlarm();
+          // Provider.of<DetectStatus>(context, listen: false)
+          _isTurtle = false;
+          _minAlarmDelay = 600;
+        }
       }, onError: (error) {
         print("error");
         _detectAvailable = false;
@@ -146,7 +155,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         setState(() {
           _pitch = _pitchTemp;
           _isTurtle = _checkIsNowTurtle();
-          _rotateDeg = -_nowPosition*100;
+          // _rotateDeg = -_nowPosition*10;
           // print("now pitch: $_pitch");
         });
         _controller.value = 0;
@@ -168,17 +177,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
   void _checkDetectAvailable() {
     Future.delayed(Duration.zero, () {
-      if (_minAlarmDelay > 0) {
-        _minAlarmDelay -= 1;
-      }
-      _nowDetecting = Provider.of<DetectStatus>(context, listen: false).nowDetecting;
-      // print('$_isTurtle $_minAlarmDelay $_nowDetecting');
-      if (_nowDetecting && _isTurtle && _minAlarmDelay == 0) {
-        _showPushAlarm();
-        // Provider.of<DetectStatus>(context, listen: false)
-        _isTurtle = false;
-        _minAlarmDelay = 600;
-      }
+      // _nowDetecting = Provider.of<DetectStatus>(context, listen: false).nowDetecting;
+      // // print('$_isTurtle $_minAlarmDelay $_nowDetecting');
       if (_prevPitch != 0 && _prevPitch == _pitch) {
         _sameValueCnt += 1;
         if (_sameValueCnt > 30) {
@@ -203,6 +203,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     _checkDetectAvailable();
+
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -246,7 +247,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                   Positioned(
                     top: responsive.percentWidth(85)*0.28,
                     child: Transform.rotate(
-                      angle: -_nowPosition*10, // **calculate based on head pos
+                      angle: _rotateDeg, // **calculate based on head pos
                       origin: Offset(0, responsive.percentWidth(85)*0.1),
                       child: Container(
                         width: responsive.percentWidth(5),

@@ -41,6 +41,8 @@ dependencies:
   app_settings: ^5.1.1
   flutter_background_service: ^5.0.6
   flutter_local_notifications: ^17.2.1
+  url_launcher: ^6.3.0
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
