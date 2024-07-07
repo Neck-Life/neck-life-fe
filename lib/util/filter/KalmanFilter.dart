@@ -86,13 +86,13 @@ class Matrix {
 
 }
 
-class KalmanFilter {
+abstract class KalmanFilter {
   static double dt = 0.4;
   List<List<double>> A = [[1, dt], [0, 1]];
   List<List<double>> H =[[0,1]];
-  List<List<double>> Q = [[1, 0], [0, 3]];
+  List<List<double>> Q = [[1, 0], [0, 1]];
   List<List<double>> R = [[10]];
-  List<List<double>> P = [[0.5, 0], [0, 0.5]];
+  List<List<double>> P = [[1, 0.005], [0, 1]];
   List<double> x_esti = [0.0, 0.0];
 
   void setX(List<double> x) {
@@ -125,16 +125,5 @@ class KalmanFilter {
   void setDt(double d) {
     dt = d;
   }
-
-
-}
-
-void main() {
-
-
-  var kf = KalmanFilter();
-  kf.setDt(0.4);
-  var z = [30.0];  // Example measurement
-  kf.iterate(z);
 
 }
