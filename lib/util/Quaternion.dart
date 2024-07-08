@@ -1,11 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter_airpods/models/quaternion.dart';
+
 class Quaternion {
   final double w, x, y, z;
-  static double initialW = 0;
-  static double initialX = 0;
-  static double initialY = 0;
-  static double initialZ = 0;
 
   Quaternion(this.w, this.x, this.y, this.z);
 
@@ -33,6 +31,10 @@ class Quaternion {
   Quaternion normalize() {
     double mag = magnitude();
     return Quaternion(w / mag, x / mag, y / mag, z / mag);
+  }
+
+  static fromData(Quaternion quaternion) {
+    return Quaternion(quaternion.w.toDouble(), quaternion.x.toDouble(), quaternion.y.toDouble(), quaternion.z.toDouble());
   }
 }
 
