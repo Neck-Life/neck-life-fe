@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mocksum_flutter/tutorials.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,12 +24,15 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => DetectStatus(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
             useMaterial3: true,
             scaffoldBackgroundColor: const Color(0xFFF9F9F9)
         ),
-        home: const MainPage(),
+        home: UpgradeAlert(
+          child: const MainPage(),
+        ),
       ),
     );
   }
@@ -90,13 +94,13 @@ class MainState extends State<MainPage> {
   }
 
   void _getNowIsFirstLaunch() async {
-    final storage = FlutterSecureStorage();
-    String? first = await storage.read(key: 'first');
-    if (first == null) {
-      _firstLaunch = true;
-      await storage.write(key: 'first', value: '1');
-    }
-    // _firstLaunch = true;
+    // final storage = FlutterSecureStorage();
+    // String? first = await storage.read(key: 'first');
+    // if (first == null) {
+    //   _firstLaunch = true;
+    //   await storage.write(key: 'first', value: '1');
+    // }
+    _firstLaunch = true;
   }
 
   @override
@@ -199,21 +203,10 @@ class MainState extends State<MainPage> {
                         ),
                       ),
                       const Neck(),
-                      Container(
-                        margin: EdgeInsets.only(top: 20, bottom: responsive.percentHeight(5)),
-                        child: Text(
-                          '00:00',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: responsive.fontSize(30),
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                      SizedBox(height: 20+responsive.percentHeight(5)),
                       Container(
                           decoration: ShapeDecoration(
-                            color: Colors.white,
+                            color: detectStatus.detectAvailable ? Colors.white : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -228,7 +221,14 @@ class MainState extends State<MainPage> {
                           ),
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              if (!detectStatus.nowDetecting) {
+                              if (!detectStatus.detectAvailable) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('에어팟을 연결해주세요'),
+                                    duration: Duration(seconds: 2),
+                                  )
+                                );
+                              } else if (!detectStatus.nowDetecting) {
                                 Navigator.push(context, MaterialPageRoute(builder: (
                                     context) => const StartPosition()));
                               } else {
@@ -237,7 +237,7 @@ class MainState extends State<MainPage> {
                             },
                             style: ElevatedButton.styleFrom(
                                 minimumSize: Size(responsive.percentWidth(85), 40),
-                                backgroundColor: Colors.white,
+                                backgroundColor: detectStatus.detectAvailable ? Colors.white : Colors.grey,
                                 surfaceTintColor: Colors.white,
                                 shadowColor: const Color(0x19000000)
                             ),

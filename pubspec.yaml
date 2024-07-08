@@ -43,6 +43,7 @@ dependencies:
   flutter_local_notifications: ^17.2.1
   url_launcher: ^6.3.0
   carousel_slider: ^4.2.1
+  upgrader: ^10.3.0
 
 dev_dependencies:
   flutter_test:

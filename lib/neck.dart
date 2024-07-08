@@ -79,8 +79,6 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
     double currentAccelY = data.userAcceleration.y.toDouble();
 
-
-
     if(currentAccelY.abs()*cos(RotationAngle) < 0.1) {
       currentAccelY = 0;
     }
@@ -97,7 +95,6 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _showPushAlarm() async {
-    print('noti check');
     FlutterLocalNotificationsPlugin localNotification =
     FlutterLocalNotificationsPlugin();
 
@@ -114,7 +111,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     setState(() {
       _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
         _detectAvailable = true;
-        _processSensorData(data);
+        // _processSensorData(data);
         _pitchTemp = data.toJson()['pitch'];
         print(_pitchTemp);
         print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');

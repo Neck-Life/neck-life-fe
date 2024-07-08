@@ -26,13 +26,15 @@ class DetectStatus with ChangeNotifier {
   }
 
   void init() async {
-    final storage = FlutterSecureStorage();
-    String? nowRunning = await storage.read(key: 'nowRunning');
-    String? first = await storage.read(key: 'first');
-    if (nowRunning != null) {
-      _nowDetecting = nowRunning == '1' ? true : false;
-      sNowDetecting = _nowDetecting;
-    }
+    // _nowDetecting = true;
+    // _detectAvailable = true;
+    // final storage = FlutterSecureStorage();
+    // String? nowRunning = await storage.read(key: 'nowRunning');
+    // String? first = await storage.read(key: 'first');
+    // if (nowRunning != null) {
+    //   _nowDetecting = nowRunning == '1' ? true : false;
+    //   sNowDetecting = _nowDetecting;
+    // }
   }
 
   void startDetecting() async {
