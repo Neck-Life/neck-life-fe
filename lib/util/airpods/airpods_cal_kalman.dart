@@ -9,13 +9,13 @@ import 'package:turtleneck/util/detection/detection_dtw.dart';
 import 'package:turtleneck/util/filter/KalmanFilterVelocity.dart';
 
 
-import '../detection/dection_filter.dart';
-import '../filter/KalmanFilterPosition.dart' as kfp;
+import '../../detection/dection_filter.dart';
+import '../../filter/KalmanFilterPosition.dart' as kfp;
 
 
-import '../filter/KalmanFilterPosition.dart';
-import '../filter/LPFFilter.dart';
-import '../filter/MovementFilter.dart';
+import '../../filter/KalmanFilterPosition.dart';
+import '../../filter/LPFFilter.dart';
+import '../../filter/MovementFilter.dart';
 
 void main() => runApp(MyApp());
 
