@@ -4,18 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:turtleneck/util/airpods/Quaternion.dart';
-import 'package:turtleneck/util/detection/detection_dtw.dart';
-import 'package:turtleneck/util/filter/KalmanFilterVelocity.dart';
+
+import '../filter/KalmanFilterPosition.dart';
+import '../filter/KalmanFilterVelocity.dart';
+import '../filter/MovementFilter.dart';
+import 'Quaternion.dart';
 
 
-import '../../detection/dection_filter.dart';
-import '../../filter/KalmanFilterPosition.dart' as kfp;
 
 
-import '../../filter/KalmanFilterPosition.dart';
-import '../../filter/LPFFilter.dart';
-import '../../filter/MovementFilter.dart';
 
 void main() => runApp(MyApp());
 
@@ -52,58 +49,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   MovementFilter movementFilter = MovementFilter(10);
   double neckPosition =0;
 
-
-  // 거북목 경향 측정
-  bool _isSaving = false;
-  List<double> _data = [];
-
-  List<double> correlation = [];
-  late detectionFilter detection_filter;
-
-
-  void _startSaving() {
-    setState(() {
-      _isSaving = true;
-      _data.clear();
-      _isListening = true;
-      _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        double currentAccelY = data.userAcceleration.y.toDouble();
-
-
-        //
-        // if(currentAccelY.abs()*cos(RotationAngle) < 0.05) {
-        //   currentAccelY = 0;
-        // }
-
-        var kf_v = KalmanfilterVelocity();
-
-        kf_v.setDt(0.4);
-        kf_v.iterate([currentAccelY]);
-        var estimate_vel = kf_v.x_esti[0];
-        _data.add(estimate_vel);
-
-      }, onError: (error) {
-        print('Error: $error');
-      });
-
-
-    });
-  }
-
-  void _stopSaving() {
-    setState(() {
-      _isSaving = false;
-      _isListening = false;
-      _subscription?.cancel();
-      _subscription = null;
-      velocities.clear();
-      velocities.add(0.0);
-      lastTimestamp= 0.0;
-
-      detection_filter =  detectionFilter(_data);
-
-    });
-  }
 
 
   @override
@@ -199,7 +144,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     var estimate_pos = kf_p.x_esti[0];
 
 
-    // todo 탐지로직
+    // 탐지로직
     // 여기에 이동평균 씌워서 얼마나 이동했는지?
     var update = movementFilter.update(estimate_pos);
 
@@ -237,12 +182,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     rotationRatesX.add(data.rotationRate.x.toDouble());
     rotationRatesY.add(data.rotationRate.y.toDouble());
     rotationRatesZ.add(data.rotationRate.z.toDouble());
-    // roll.add(data.attitude.roll.toDouble());
-    // pitch.add(data.attitude.pitch.toDouble());
-    // yaw.add(data.attitude.yaw.toDouble());
-    // quaternionY.add(data.attitude.quaternion.x.toDouble());
-
-
 
 
     setState(() {});
@@ -315,12 +254,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
             onPressed: _isListening ? _stopListening : _startListening,
             child: Text(_isListening ? "Stop Listening" : "Start Listening"),
           ),
-
-          ElevatedButton(
-            onPressed: _isSaving ? _stopSaving : _startSaving,
-            child: Text(_isSaving ? "Stop Saving" : "Start Saving"),
-          ),
-
+          
         ],
       ),
     );

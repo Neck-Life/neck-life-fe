@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'util/airpods/Quaternion.dart';
 import 'util/responsive.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
-import 'package:mocksum_flutter/util/Quaternion.dart';
+
 import 'dart:math';
 
 class Neck extends StatefulWidget {
