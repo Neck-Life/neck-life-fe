@@ -6,20 +6,19 @@ class DetectStatus with ChangeNotifier {
   static bool sNowDetecting = false;
   static bool sDetectAvailable = false;
   static bool sIsNowTurtle = false;
+  static int sSensitivity = 1;
+  static int sAlarmGap = 15;
   bool _nowDetecting = false;
   bool _detectAvailable = false;
   bool _isNowTurtle = false;
+  int _sensitivity = 1;
+  int _alarmGap = 15;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
   bool get isNowTurtle => _isNowTurtle;
-
-  double nowGyroX = 0;
-  double nowGyroY = 0;
-  double nowGyroZ = 0;
-  double nowAccX = 0;
-  double nowAccY = 0;
-  double nowAccZ = 0;
+  int get sensitivity => _sensitivity;
+  int get alarmGap => _alarmGap;
 
   DetectStatus() {
     init();
@@ -28,13 +27,17 @@ class DetectStatus with ChangeNotifier {
   void init() async {
     // _nowDetecting = true;
     // _detectAvailable = true;
-    // final storage = FlutterSecureStorage();
-    // String? nowRunning = await storage.read(key: 'nowRunning');
-    // String? first = await storage.read(key: 'first');
-    // if (nowRunning != null) {
-    //   _nowDetecting = nowRunning == '1' ? true : false;
-    //   sNowDetecting = _nowDetecting;
-    // }
+    final storage = FlutterSecureStorage();
+    String? sensitivitySetting = await storage.read(key: 'sensitivity');
+    String? alarmSetting = await storage.read(key: 'alarm');
+    if (sensitivitySetting != null) {
+      _sensitivity = int.parse(sensitivitySetting);
+      sSensitivity = _sensitivity;
+    }
+    if (alarmSetting != null) {
+      _alarmGap = int.parse(alarmSetting);
+      sAlarmGap = _alarmGap;
+    }
   }
 
   void startDetecting() async {
@@ -57,6 +60,22 @@ class DetectStatus with ChangeNotifier {
     _detectAvailable = true;
     sDetectAvailable = true;
     notifyListeners();
+  }
+
+  void setSensitivity(double sensitivityVal) async {
+    _sensitivity = sensitivityVal.toInt();
+    sSensitivity = _sensitivity;
+    notifyListeners();
+    final storage = FlutterSecureStorage();
+    await storage.write(key: 'sensitivity', value: _sensitivity.toString());
+  }
+
+  void setAlarmGap(int alarmGapVal) async {
+    _alarmGap = alarmGapVal;
+    sAlarmGap = alarmGapVal;
+    notifyListeners();
+    final storage = FlutterSecureStorage();
+    await storage.write(key: 'alarm', value: alarmGapVal.toString());
   }
 
   void disavailableDetect() {

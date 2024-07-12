@@ -1,4 +1,5 @@
 import 'dart:async';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
+// import 'package:csv/csv.dart';
 
 import 'dart:math';
 
@@ -23,6 +25,9 @@ class Neck extends StatefulWidget {
 
 class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
+  // List<List<dynamic>> rows = [];
+
+
   late AnimationController _controller;
   double _rotateDeg = 0;
   double _pitch = 0;
@@ -33,6 +38,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   bool _detectAvailable = false;
   int _minAlarmDelay = 0;
   // bool _nowDetecting = false;
+  int _initTick = 0;
 
   // for position calculating
   Quaternion? initialQuaternion;
@@ -87,23 +93,14 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
       data.attitude.quaternion.z.toDouble(),
     );
 
-
-
     var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
-
-
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     double deltaTime = velocities.length==1 ? 0 : currentTime - lastTimestamp;
     lastTimestamp = currentTime;
 
-
-
     double currentAccelY = data.userAcceleration.y.toDouble() * cos(RotationAngle);
 
     // print(data.attitude.quaternion.y);
-
-
-
 
     // print(" data rationRate: ${data.rotationRate.x} ${data.rotationRate.y} ${data.rotationRate.z} ");
     if(data.rotationRate.x.abs()-rotationRatesX.last.abs()
@@ -114,9 +111,6 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     }
     // if(currentAccelY.abs() < 0.01) currentAccelY = 0.0;
 
-
-
-
     var kf_v = KalmanfilterVelocity();
 
     kf_v.setDt(deltaTime);
@@ -125,13 +119,17 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
     double velocityY = estimate_vel  ;
 
-
-
-
     var kf_p = KalmanfilterPosition();
 
-
     kf_p.setX([positions.last, 0]);
+
+    _initTick++;
+    if(_initTick >=3000){
+      kf_p.setX([0, 0]);
+    }
+    if(_initTick ==3005) {
+      _initTick=0;
+    }
 
     kf_p.setDt(deltaTime);
     kf_p.iterate([velocityY]);
@@ -155,7 +153,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     }
 
 
-    // print("목 위치 : $neckPosition");
+    print("목 위치 : $neckPosition");
 
     // Store the position for visualization
     if (velocities.length > 5) { // Keep last 100 data points
@@ -178,6 +176,11 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     rotationRatesY.add(data.rotationRate.y.toDouble());
     rotationRatesZ.add(data.rotationRate.z.toDouble());
 
+    // List<dynamic> row = [];
+    // row.add(currentAccelY);
+    // row.add(velocityY);
+    // row.add(neckPosition);
+    // rows.add(row);
   }
 
   Future<void> _showPushAlarm() async {
@@ -218,6 +221,12 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   void _stopListening() {
+    // print('asdf');
+    // String csv = const ListToCsvConverter().convert(rows);
+    //
+    // File f = File('est.csv');
+    // f.writeAsString(csv);
+
     setState(() {
       _subscription?.cancel();
       // _positions.clear();
@@ -230,6 +239,12 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    // List<dynamic> row = [];
+    // row.add("acc");
+    // row.add("vel");
+    // row.add("pos");
+    // rows.add(row);
+
     _startAirpodSensing();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1));
     _controller.forward();
@@ -239,7 +254,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
           _pitch = _pitchTemp;
           _isTurtle = _checkIsNowTurtle();
           // neckPositionUI = neckPosition*5;
-          _rotateDeg = neckPosition*50 > 0.5 ? 0.5 : neckPosition*50;
+          _rotateDeg = positions.last*50 > 0.5 ? 0.5 : positions.last*50;
           // print("now pitch: $_pitch");
         });
         _controller.value = 0;

@@ -45,6 +45,8 @@ dependencies:
   url_launcher: ^6.3.0
   carousel_slider: ^4.2.1
   upgrader: ^10.3.0
+  google_sign_in: ^6.2.1
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +71,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+  fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: fonts/MyFlutterApp.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
