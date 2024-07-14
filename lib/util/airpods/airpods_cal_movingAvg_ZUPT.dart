@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -101,7 +100,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     double currentAccelZ = data.userAcceleration.z.toDouble();
     pastY.add(currentAccelY);
     pastZ.add(currentAccelZ);
-    int len = 5;
+    int len = 6;
     if(pastY.length > len) pastY.removeAt(0);
     if(pastZ.length > len) pastZ.removeAt(0);
 
@@ -111,7 +110,9 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     List<double> sortedZ = List.from(pastZ);
     sortedY.sort();
     sortedZ.sort();
-    for(int i = 1; i < sortedY.length - 1;i++){
+
+    //절사평균 조정 필수
+    for(int i = 1; i < sortedY.length-1;i++){
       cal_acc_y += sortedY[i];
       cal_acc_z += sortedZ[i];
     }
@@ -122,27 +123,46 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
 
     // double cal_acc = -cal_acc_y + cal_acc_z;
     double cal_acc = -cal_acc_y;
-    double offset = 0.003;
+
+    double offset = 0.002;
     if(cal_acc > offset) cal_acc -= offset;
     else if(cal_acc < -offset) cal_acc += offset;
     else cal_acc = 0;
     //가속도의 편차 줄이기
-
-
+    double sum = 0;
+    for(int i=0;i<accelometers.length;i++){
+      sum += accelometers[i];
+    }
+    sum /= accelometers.length;
+    // print(sum);
 
 
     double deviation = 0.0;
-    for(int i=98;i<accelometers.length;i++){
+
+    for(int i=95;i<accelometers.length;i++){
       deviation += accelometers[i].abs();
     }
-    deviation /= max(1, accelometers.length - 98);
+    deviation /= max(1, accelometers.length - 95);
 
     double velocity = velocities.last + cal_acc * deltaTime;
-    if(deviation <= 0.005) velocity = 0;
+    double position = positions.last + velocity * deltaTime;
+    // print(velocities.length);
+    if(deviation <= 0.002) {
+      int idx = velocities.length - 1;
+      //위치 보상 알고리즘
+      //속도가 비정상으로 뒤집힌 구간만큼 롤백
+      while(idx>=0 && velocity * velocities[idx] > 0){
+        // position -= velocities[idx] * deltaTime;
+        velocities[idx] = 0;
+        idx--;
+      }
+      velocity = 0;
+      position = positions[idx];
+    }
     //ZUPT : 영속도 업데이트
 
 
-    double position = positions.last + velocity * deltaTime;
+
 
     accelometers.add(cal_acc);
     velocities.add(velocity);
@@ -157,7 +177,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
 
     //과도하게 올라간 변위 조정
     if(isMaxLimited && positions.length > 100){
-      position = 0.010;
+      // position = 0.010;
       // if(velocity < 0) velocities[velocities.length-1] = 0.001;
       // print("거북이감지 1초간 정지 후 리셋");
       // velocities.clear();
@@ -169,11 +189,11 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     }
     //과도하게 내려간 변위조정
     if(isMinLimited){
-      position = 0.0;
-      if(velocity > 0) velocities[velocities.length-1] = -0.001;
+      // position = 0.0;
+      // if(velocity > 0) velocities[velocities.length-1] = -0.001;
     }
-    positions.removeLast();
-    positions.add(position);
+    // positions.removeLast();
+    // positions.add(position);
 
     // print("pos_tmp : $pos_tmp, velocity : $velocity");
     if(accelometers.length > 100) accelometers.removeAt(0);
