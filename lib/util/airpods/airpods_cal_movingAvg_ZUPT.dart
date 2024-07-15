@@ -151,13 +151,26 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       int idx = velocities.length - 1;
       //위치 보상 알고리즘
       //속도가 비정상으로 뒤집힌 구간만큼 롤백
+
+      // while(idx>=0 && velocity * velocities[idx] > 0){
+      //   idx--;
+      // }
+      // while(idx>=0 && velocities[idx].abs() < 0.004){
+      //   idx--;
+      // }
+      // if(idx != -1){
+      //
+      // }
+
+      idx = velocities.length -1;
       while(idx>=0 && velocity * velocities[idx] > 0){
         // position -= velocities[idx] * deltaTime;
         velocities[idx] = 0;
         idx--;
       }
-      velocity = 0;
       position = positions[idx];
+      velocity = 0;
+
     }
     //ZUPT : 영속도 업데이트
 
