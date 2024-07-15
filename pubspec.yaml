@@ -39,7 +39,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   provider: ^6.1.2
   flutter_airpods: ^1.0.5
-  app_settings: ^5.1.1
   flutter_background_service: ^5.0.6
   flutter_local_notifications: ^17.2.1
   url_launcher: ^6.3.0
@@ -47,6 +46,8 @@ dependencies:
   upgrader: ^10.3.0
   google_sign_in: ^6.2.1
   http: ^1.2.1
+  open_settings_plus: ^0.3.3
+
 
 dev_dependencies:
   flutter_test:

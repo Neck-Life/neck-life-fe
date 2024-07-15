@@ -16,6 +16,7 @@ class StartPosition extends StatefulWidget {
 class StartPositionState extends State<StartPosition> {
   bool _timerRunning = false;
   int _lastTime = 5;
+  double _avgInitPitch = 0;
   Timer? _timer;
 
   void _startTimer(DetectStatus detectStatus, BuildContext context) {
@@ -24,8 +25,12 @@ class StartPositionState extends State<StartPosition> {
       setState(() {
         _lastTime--;
       });
+      if (_lastTime <= 3) {
+        _avgInitPitch += DetectStatus.nowPitch;
+      }
       if (_lastTime <= 0) {
         timer.cancel();
+        DetectStatus.initialPitch = _avgInitPitch / 3;
         detectStatus.startDetecting();
         Navigator.pop(context);
       }

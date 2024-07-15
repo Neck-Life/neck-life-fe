@@ -4,10 +4,8 @@ import 'package:mocksum_flutter/util/status_provider.dart';
 import 'neck.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mocksum_flutter/tutorials.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:open_settings_plus/open_settings_plus.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,26 +14,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainState extends State<MainPage> {
-  bool _firstLaunch = false;
-
-  void _showTutorial(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: const Tutorials(),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('튜토리얼 끝내기')
-              )
-            ],
-          );
-        }
-    );
-  }
+  // bool _firstLaunch = false;
 
   Future<void> _initLocalNotification() async {
     FlutterLocalNotificationsPlugin localNotification =
@@ -57,26 +36,10 @@ class MainState extends State<MainPage> {
     );
   }
 
-  void _getNowIsFirstLaunch() async {
-    final storage = FlutterSecureStorage();
-    String? first = await storage.read(key: 'first');
-    if (first == null) {
-      _firstLaunch = true;
-      await storage.write(key: 'first', value: '1');
-    }
-    // _firstLaunch = true;
-  }
-
   @override
   void initState() {
     super.initState();
     _initLocalNotification();
-    _getNowIsFirstLaunch();
-    Future.delayed(Duration.zero, () {
-      if (_firstLaunch) {
-        _showTutorial(context);
-      }
-    });
   }
 
   @override
@@ -108,7 +71,10 @@ class MainState extends State<MainPage> {
                   GestureDetector(
                     onTap: () {
                       if (!detectStatus.detectAvailable) {
-                        AppSettings.openAppSettings();
+                        switch (OpenSettingsPlus.shared) {
+                          case OpenSettingsPlusIOS settings: settings.bluetooth();
+                          default: throw Exception('Platform not supported');
+                        }
                       }
                     },
                     child: Container(

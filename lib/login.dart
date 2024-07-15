@@ -4,10 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/home.dart';
 import 'util/responsive.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mocksum_flutter/tutorials.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  static const List<String> scopes = <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ];
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -21,20 +29,54 @@ class _LoginPageState extends State<LoginPage> {
   static const IconData apple = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData google = IconData(0xf1a0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 
-  static const List<String> _scopes = <String>[
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ];
+  final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
+  final Uri _PPUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Privacy-Policy-f50f241b48d44e74a4ffe9bbc9f87dcf?pvs=4');
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: _scopes,
+    scopes: LoginPage.scopes,
   );
 
   GoogleSignInAccount? _currentUser;
+  bool _isFirstLaunch = false;
 
-  Future<void> _handleSignIn() async {
+  Future<void> _launchUrl(url) async {
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch');
+    }
+  }
+
+  void _getNowIsFirstLaunch() async {
+    final storage = FlutterSecureStorage();
+    String? first = await storage.read(key: 'first');
+    if (first == null) {
+      _isFirstLaunch = true;
+      await storage.write(key: 'first', value: '1');
+    }
+  }
+
+  void _showTutorial(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            content: const Tutorials(),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('튜토리얼 끝내기')
+              )
+            ],
+          );
+        }
+    );
+  }
+
+  Future<void> _handleSignIn(context) async {
     try {
       await _googleSignIn.signIn();
+      _checkLogin(context);
     } catch (error) {
       print(error);
     }
@@ -50,6 +92,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
+    _getNowIsFirstLaunch();
 
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) async {
       print('asdf');
@@ -69,6 +113,9 @@ class _LoginPageState extends State<LoginPage> {
     _googleSignIn.signInSilently();
 
     Future.delayed(Duration.zero, () {
+      if (_isFirstLaunch) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
+      }
       _checkLogin(context);
     });
   }
@@ -154,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  _handleSignIn();
+                  _handleSignIn(context);
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(responsive.percentWidth(85), 40),
@@ -176,6 +223,57 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 icon: const Icon(google, color: Colors.black)
+              ),
+              Container(
+                width: responsive.percentWidth(85),
+                margin: const EdgeInsets.only(top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Text(
+                        '로그인 시 본 서비스의 이용 약관과 개인정보 처리방침에\n동의한 것으로 간주됩니다.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: responsive.fontSize(12),
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w200,
+                        )
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      child: Text(
+                          '이용 약관',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: responsive.fontSize(12),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w200,
+                            decoration: TextDecoration.underline,
+                          )
+                      ),
+                      onTap: () {
+                        _launchUrl(_ToSUrl);
+                      },
+                    ),
+                    GestureDetector(
+                      child: Text(
+                        '개인정보 처리방침',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: responsive.fontSize(12),
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w200, decoration: TextDecoration.underline
+                        )
+                      ),
+                      onTap: () {
+                        _launchUrl(_PPUrl);
+                      },
+                    )
+                  ],
+                ),
               )
             ],
           )

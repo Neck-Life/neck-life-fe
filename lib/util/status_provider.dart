@@ -8,6 +8,10 @@ class DetectStatus with ChangeNotifier {
   static bool sIsNowTurtle = false;
   static int sSensitivity = 1;
   static int sAlarmGap = 15;
+
+  static double initialPitch = 0;
+  static double nowPitch = 0;
+
   bool _nowDetecting = false;
   bool _detectAvailable = false;
   bool _isNowTurtle = false;

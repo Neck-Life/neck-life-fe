@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/tutorials.dart';
+import 'login.dart';
 import 'util/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mocksum_flutter/setting_subpages/alarm_setting.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -13,7 +15,13 @@ class Settings extends StatefulWidget {
 
 class _SettingState extends State<Settings> {
 
-  final Uri _url = Uri.parse('https://forms.gle/bi2YK5wfAFXQN4DKA');
+  final Uri _fomrUrl = Uri.parse('https://forms.gle/bi2YK5wfAFXQN4DKA');
+  final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
+  final Uri _PPUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Privacy-Policy-f50f241b48d44e74a4ffe9bbc9f87dcf?pvs=4');
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: LoginPage.scopes,
+  );
 
   void _showTutorial(BuildContext context) {
     showDialog(
@@ -34,8 +42,8 @@ class _SettingState extends State<Settings> {
     );
   }
 
-  Future<void> _launchUrl() async {
-    if (!await launchUrl(_url)) {
+  Future<void> _launchUrl(url) async {
+    if (!await launchUrl(url)) {
       throw Exception('Could not launch');
     }
   }
@@ -43,7 +51,6 @@ class _SettingState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
-    final Uri _url = Uri.parse('https://forms.gle/bi2YK5wfAFXQN4DKA');
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -130,7 +137,8 @@ class _SettingState extends State<Settings> {
               ),
             ),
             onTap: () {
-              _showTutorial(context);
+              Navigator.push(context, MaterialPageRoute(builder: (
+                  context) => const Tutorials()));
             },
           ),
           GestureDetector(
@@ -156,7 +164,7 @@ class _SettingState extends State<Settings> {
               ),
             ),
             onTap: () {
-              _launchUrl();
+              _launchUrl(_fomrUrl);
             },
           ),
           Container(
@@ -180,68 +188,85 @@ class _SettingState extends State<Settings> {
               ),
             ),
           ),
-          Container(
-            width: responsive.deviceWidth,
-            height: 50,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 15),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  // bottom: BorderSide(color: Colors.grey),
-                    top: BorderSide(color: Colors.grey.withOpacity(0.3))
-                )
-            ),
-            child: Text('이용 약관',
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: responsive.fontSize(17),
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w300,
+          GestureDetector(
+            child: Container(
+              width: responsive.deviceWidth,
+              height: 50,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 15),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    // bottom: BorderSide(color: Colors.grey),
+                      top: BorderSide(color: Colors.grey.withOpacity(0.3))
+                  )
+              ),
+              child: Text('이용 약관',
+                style: TextStyle(
+                  color: const Color(0xFF434343),
+                  fontSize: responsive.fontSize(17),
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ),
+            onTap: () {
+              _launchUrl(_ToSUrl);
+            },
           ),
-          Container(
-            width: responsive.deviceWidth,
-            height: 50,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 15),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  // bottom: BorderSide(color: Colors.grey),
-                    top: BorderSide(color: Colors.grey.withOpacity(0.3))
-                )
-            ),
-            child: Text('개인정보 처리방침',
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: responsive.fontSize(17),
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w300,
+          GestureDetector(
+            child: Container(
+              width: responsive.deviceWidth,
+              height: 50,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 15),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    // bottom: BorderSide(color: Colors.grey),
+                      top: BorderSide(color: Colors.grey.withOpacity(0.3))
+                  )
+              ),
+              child: Text('개인정보 처리방침',
+                style: TextStyle(
+                  color: const Color(0xFF434343),
+                  fontSize: responsive.fontSize(17),
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ),
+            onTap: () {
+              _launchUrl(_PPUrl);
+            },
           ),
-          Container(
-            width: responsive.deviceWidth,
-            height: 50,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 15),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  // bottom: BorderSide(color: Colors.grey),
-                    top: BorderSide(color: Colors.grey.withOpacity(0.3))
-                )
-            ),
-            child: Text('로그아웃',
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: responsive.fontSize(17),
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w300,
+          GestureDetector(
+            child: Container(
+              width: responsive.deviceWidth,
+              height: 50,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 15),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    // bottom: BorderSide(color: Colors.grey),
+                      top: BorderSide(color: Colors.grey.withOpacity(0.3))
+                  )
+              ),
+              child: Text('로그아웃',
+                style: TextStyle(
+                  color: const Color(0xFF434343),
+                  fontSize: responsive.fontSize(17),
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ),
+            onTap: () async {
+              await _googleSignIn.signOut();
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+            },
           ),
           Container(
             width: responsive.deviceWidth,
