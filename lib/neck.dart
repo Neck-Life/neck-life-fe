@@ -1,5 +1,4 @@
 import 'dart:async';
-// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
-// import 'package:csv/csv.dart';
 
 import 'dart:math';
 
@@ -73,7 +71,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   bool _isTurtle = false;
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _pitchTemp > _turtleThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
@@ -211,8 +209,15 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         if (_minAlarmDelay > 0) {
           _minAlarmDelay -= 1;
         }
-        print(_stateTurtleNeck);
-        if (DetectStatus.sNowDetecting && _isTurtle && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
+        // print(_checkIsNowTurtle());
+        if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
+          _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
+        }
+        if (!_checkIsNowTurtle()) {
+          _stateTurtleNeck = 0;
+        }
+        // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+        if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
           _showPushAlarm();
           // Provider.of<DetectStatus>(context, listen: false)
           _isTurtle = false;
@@ -259,12 +264,6 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         setState(() {
           _pitch = _pitchTemp;
           _isTurtle = _checkIsNowTurtle();
-          if (_isTurtle && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
-            _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
-          }
-          if (!_isTurtle) {
-            _stateTurtleNeck = 0;
-          }
           // neckPositionUI = neckPosition*5;
           _rotateDeg = positions.last*50 > 0.5 ? 0.5 : positions.last*50;
           // print("now pitch: $_pitch");
@@ -277,6 +276,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+    print("sdf");
     _controller.dispose();
     _stopListening();
     super.dispose();

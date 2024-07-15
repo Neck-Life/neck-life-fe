@@ -97,5 +97,4 @@ class DetectStatus with ChangeNotifier {
     _isNowTurtle = false;
     notifyListeners();
   }
-
 }
