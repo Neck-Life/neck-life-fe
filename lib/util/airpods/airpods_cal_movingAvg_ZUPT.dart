@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -74,6 +75,56 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     });
   }
 
+  double compensatePosition(double velocity, double position){
+    //위치 보상 알고리즘
+    //속도가 비정상으로 뒤집힌 구간만큼 롤백
+    bool compensationFlag = false;
+    int idx = velocities.length -1;
+
+    while(idx>=0 && velocity * velocities[idx] > 0){
+      idx--;
+    }
+    while(idx>=0 && velocity * velocities[idx] < 0) {
+      if(velocities[idx].abs() > 0.001){
+        compensationFlag = true;
+        break;
+      }
+      idx--;
+    }
+    if(compensationFlag){
+      idx = velocities.length - 1;
+      while(idx>=0 && velocity * velocities[idx] > 0){
+        velocities[idx] = 0;
+        idx--;
+      }
+      position = positions[idx];
+      print("보상!");
+    }
+    return position;
+  }
+
+  List<double> applyZUPT(double velocity, double position){
+    double deviation = 0.0;
+
+    for(int i=90;i<accelometers.length;i++){
+      deviation += accelometers[i].abs();
+    }
+    deviation /= max(1, accelometers.length - 90);
+
+    if(deviation > 0.0002) return [velocity, position];
+
+    int idx = velocities.length - 1;
+    //위치 보상 알고리즘
+    //속도가 비정상으로 뒤집힌 구간만큼 롤백
+
+    // position = positions[idx];
+    position = compensatePosition(velocity, position);
+    velocity = 0;
+
+    return [velocity, position];
+  }
+
+
   void _processSensorData(DeviceMotionData data) {
 
     // 초기 자세 측정
@@ -88,8 +139,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       data.attitude.quaternion.z.toDouble(),
     );
     var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
-
-
 
 
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -111,112 +160,38 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     sortedY.sort();
     sortedZ.sort();
 
-    //절사평균 조정 필수
+    //절사평균 : 추가 조정 필수
     for(int i = 1; i < sortedY.length-1;i++){
       cal_acc_y += sortedY[i];
       cal_acc_z += sortedZ[i];
     }
     cal_acc_y /= len-2;
     cal_acc_z /= len-2;
-    // 절사평균
 
 
+    //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z;
     double cal_acc = -cal_acc_y;
-
-    double offset = 0.002;
+    double offset = 0.005;
     if(cal_acc > offset) cal_acc -= offset;
     else if(cal_acc < -offset) cal_acc += offset;
     else cal_acc = 0;
-    //가속도의 편차 줄이기
-    double sum = 0;
-    for(int i=0;i<accelometers.length;i++){
-      sum += accelometers[i];
-    }
-    sum /= accelometers.length;
-    // print(sum);
-
-
-    double deviation = 0.0;
-
-    for(int i=95;i<accelometers.length;i++){
-      deviation += accelometers[i].abs();
-    }
-    deviation /= max(1, accelometers.length - 95);
 
     double velocity = velocities.last + cal_acc * deltaTime;
     double position = positions.last + velocity * deltaTime;
-    // print(velocities.length);
-    if(deviation <= 0.002) {
-      int idx = velocities.length - 1;
-      //위치 보상 알고리즘
-      //속도가 비정상으로 뒤집힌 구간만큼 롤백
 
-      // while(idx>=0 && velocity * velocities[idx] > 0){
-      //   idx--;
-      // }
-      // while(idx>=0 && velocities[idx].abs() < 0.004){
-      //   idx--;
-      // }
-      // if(idx != -1){
-      //
-      // }
-
-      idx = velocities.length -1;
-      while(idx>=0 && velocity * velocities[idx] > 0){
-        // position -= velocities[idx] * deltaTime;
-        velocities[idx] = 0;
-        idx--;
-      }
-      position = positions[idx];
-      velocity = 0;
-
-    }
     //ZUPT : 영속도 업데이트
-
-
-
+    [velocity, position] = applyZUPT(velocity, position);
 
     accelometers.add(cal_acc);
     velocities.add(velocity);
     positions.add(position);
 
-    bool isMaxLimited = true;
-    bool isMinLimited = true;
-    for(int i=95;i<positions.length; i++){
-      if(positions[i] < 0.0090) isMaxLimited = false;
-      if(positions[i] > 0.0002) isMinLimited = false;
-    }
 
-    //과도하게 올라간 변위 조정
-    if(isMaxLimited && positions.length > 100){
-      // position = 0.010;
-      // if(velocity < 0) velocities[velocities.length-1] = 0.001;
-      // print("거북이감지 1초간 정지 후 리셋");
-      // velocities.clear();
-      // positions.clear();
-      // velocities.add(0);
-      // positions.add(0);
-      // sleep(Duration(seconds:1));
-      // return;
-    }
-    //과도하게 내려간 변위조정
-    if(isMinLimited){
-      // position = 0.0;
-      // if(velocity > 0) velocities[velocities.length-1] = -0.001;
-    }
-    // positions.removeLast();
-    // positions.add(position);
-
-    // print("pos_tmp : $pos_tmp, velocity : $velocity");
+    //화면상에서 100개 정보만 출력
     if(accelometers.length > 100) accelometers.removeAt(0);
-
-    if (velocities.length > 100) { // Keep last 100 data points
-      velocities.removeAt(0);
-    }
-    if (positions.length > 100) { // Keep last 100 data points
-      positions.removeAt(0);
-    }
+    if(velocities.length > 100) velocities.removeAt(0);
+    if(positions.length > 100) positions.removeAt(0);
 
 
     setState(() {});
