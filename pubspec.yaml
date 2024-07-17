@@ -39,12 +39,15 @@ dependencies:
   cupertino_icons: ^1.0.6
   provider: ^6.1.2
   flutter_airpods: ^1.0.5
-  app_settings: ^5.1.1
   flutter_background_service: ^5.0.6
   flutter_local_notifications: ^17.2.1
   url_launcher: ^6.3.0
   carousel_slider: ^4.2.1
   upgrader: ^10.3.0
+  google_sign_in: ^6.2.1
+  http: ^1.2.1
+  open_settings_plus: ^0.3.3
+
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +72,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+  fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: fonts/MyFlutterApp.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
