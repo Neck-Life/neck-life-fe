@@ -8,26 +8,26 @@ import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 
 ///측정로직 클래스
 class AirpodsCalMovingAvgZupt extends PositionDisplay{
-  // final double sampleRate = 1/0.04;
   double lastTimestamp = 0.0;
   List<double> accelometers = [0.0];
   List<double> velocities = [0.0];
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
   List<double> pastZ = [0.0]; //가속도Z 히스토리
-  // double offset_y = 0.001543; //y축 초기 보정 - 임의 측정값임 없애도 됨
+  static const double threshold = 0.015;
 
+  /// position값을 [0,limitValue]범위로 리턴, 비워두면 기존값그대로 리턴
   @override
-  double getPosition() {
-    return positions.last;
+  double getPosition([double limitValue=threshold]){
+    return positions.last * (limitValue / threshold);
   }
 
   ///compensatePosition : 비정상 속도히스토리,위치 보상 알고리즘
   /// <- applyZUPT : 영속도 보정 알고리즘
   ///  <- processSensorData : 측정 1틱 진입점
   double compensatePosition(double velocity, double position){
-    //위치 보상 알고리즘
-    //속도가 비정상으로 뒤집힌 구간만큼 롤백
+    ///위치 보상 알고리즘
+    ///속도가 비정상으로 뒤집힌 구간만큼 롤백
     bool compensationFlag = false;
     int idx = velocities.length -1;
 
@@ -52,8 +52,8 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
     }
 
     ///위치 오차 보정 : 과도하게 커지거나 작아지면, limit값으로 강제 변경
-    if(position > 0.015) position = 0.0151;
-    else if(position < 0) position = -0.001;
+    if(position > threshold) position = threshold;
+    else if(position < 0) position = 0.0;
     return position;
   }
 
@@ -61,12 +61,15 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
   List<double> applyZUPT(double velocity, double position){
     double deviation = 0.0;
     int windowSIZE = 10;
-    for(int i=max(0,accelometers.length - windowSIZE);i<accelometers.length;i++){
+    if(accelometers.length < windowSIZE) return [velocity, position];
+
+    for(int i=accelometers.length - windowSIZE;i<accelometers.length;i++){
       deviation += accelometers[i].abs();
     }
-    deviation /= min(accelometers.length, windowSIZE);
-
-    if(deviation > 0.0002) return [velocity, position];
+    deviation /= windowSIZE;
+    // print(deviation);
+    //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
+    if(deviation > 0.002) return [velocity, position];
     //위치 보상 알고리즘
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
     position = compensatePosition(velocity, position);
@@ -105,8 +108,8 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
     cal_acc_z /= len-2;
 
     //가속도의 편차 줄이기
-    // double cal_acc = -cal_acc_y + cal_acc_z;
-    double cal_acc = -cal_acc_y;
+    // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
+    double cal_acc = -cal_acc_y; //y축만 고려하기
     double offset = 0.005;
     if(cal_acc > offset) cal_acc -= offset;
     else if(cal_acc < -offset) cal_acc += offset;
@@ -126,7 +129,6 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
     if(velocities.length > 100) velocities.removeAt(0);
     if(positions.length > 100) positions.removeAt(0);
   }
-
 }
 
 
@@ -166,16 +168,16 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   void _startListening() {
     setState(() {
       _isListening = true;
-      // PositionDisplay positionDisplay = new AirpodsCalMovingAvgZupt();
-      AirpodsCalMovingAvgZupt positionDisplay = AirpodsCalMovingAvgZupt();
-      accelometers = positionDisplay.accelometers;
-      velocities = positionDisplay.velocities;
-      positions = positionDisplay.positions;
+      PositionDisplay positionDisplay = new AirpodsCalMovingAvgZupt(); //외부에서 쓸 인터페이스
+      AirpodsCalMovingAvgZupt positionDisplayTest = positionDisplay as AirpodsCalMovingAvgZupt; //내부 테스트 용
+
+      accelometers = positionDisplayTest.accelometers;
+      velocities = positionDisplayTest.velocities;
+      positions = positionDisplayTest.positions;
       _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        print(positionDisplay.getPosition());
+        // print(positionDisplay.getPosition(100)); // 최대값100으로 scaling하여 위치 출력
         positionDisplay.processSensorData(data);
         setState(() {
-
         });
       }, onError: (error) {
         print('Error: $error');
@@ -244,8 +246,8 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
             child: LineChart(
               LineChartData(
                 borderData: FlBorderData(show: false),
-                minY: -0.01, // Y축 최소값 설정 측정값 크기 에 따라 수정 필요
-                maxY: 0.02, // Y축 최대값 설정
+                minY: 0.000, // Y축 최소값 설정 측정값 크기 에 따라 수정 필요
+                maxY: 0.015, // Y축 최대값 설정
                 lineBarsData: [
                   LineChartBarData(
                     spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
