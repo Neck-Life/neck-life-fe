@@ -50,6 +50,10 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
       position = positions[idx];
       print("거리보상 보상 알고리즘 발동!");
     }
+
+    ///위치 오차 보정 : 과도하게 커지거나 작아지면, limit값으로 강제 변경
+    if(position > 0.015) position = 0.0151;
+    else if(position < 0) position = -0.001;
     return position;
   }
 
