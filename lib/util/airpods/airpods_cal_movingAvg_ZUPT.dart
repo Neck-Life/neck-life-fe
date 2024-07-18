@@ -1,80 +1,30 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_airpods/models/user_acceleration.dart';
+import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 
-import 'Quaternion.dart';
-// import 'package:turtleneck/util/airpods/Quaternion.dart';
-// import
-// import 'package:turtleneck/util/filter/MovingAvgFilter.dart';
-//
-// import '../filter/Filter.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AirpodsExampleApp(),
-    );
-  }
-}
-
-class AirpodsExampleApp extends StatefulWidget {
-  @override
-  _AirpodsExampleAppState createState() => _AirpodsExampleAppState();
-}
-
-class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
-  StreamSubscription<DeviceMotionData>? _subscription;
-  bool _isListening = false;
-  Quaternion? initialQuaternion;
-  final double sampleRate = 1/0.04;
+///측정로직 클래스
+class AirpodsCalMovingAvgZupt extends PositionDisplay{
+  // final double sampleRate = 1/0.04;
   double lastTimestamp = 0.0;
-  List<double> accelometers  = [0.0];
+  List<double> accelometers = [0.0];
   List<double> velocities = [0.0];
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
   List<double> pastZ = [0.0]; //가속도Z 히스토리
-  double offset_y = 0.001543; //y축 초기 보정 - 임의 측정값임 없애도 됨
+  // double offset_y = 0.001543; //y축 초기 보정 - 임의 측정값임 없애도 됨
 
-  bool hasUp = false;
-  int time = 0;
   @override
-  void initState() {
-    super.initState();
+  double getPosition() {
+    return positions.last;
   }
 
-  void _startListening() {
-    setState(() {
-      _isListening = true;
-      _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        _processSensorData(data);
-      }, onError: (error) {
-        print('Error: $error');
-      });
-
-    });
-  }
-
-  void _stopListening() {
-    setState(() {
-      _isListening = false;
-      _subscription?.cancel();
-      _subscription = null;
-      positions.clear();
-      positions.add(0.0);
-      velocities.clear();
-      velocities.add(0.0);
-      lastTimestamp= 0.0;
-    });
-  }
-
+  ///compensatePosition : 비정상 속도히스토리,위치 보상 알고리즘
+  /// <- applyZUPT : 영속도 보정 알고리즘
+  ///  <- processSensorData : 측정 1틱 진입점
   double compensatePosition(double velocity, double position){
     //위치 보상 알고리즘
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
@@ -98,48 +48,30 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
         idx--;
       }
       position = positions[idx];
-      print("보상!");
+      print("거리보상 보상 알고리즘 발동!");
     }
     return position;
   }
 
+  //velocity, postion -> 개선된 velocity, position 제공
   List<double> applyZUPT(double velocity, double position){
     double deviation = 0.0;
-
-    for(int i=90;i<accelometers.length;i++){
+    int windowSIZE = 10;
+    for(int i=max(0,accelometers.length - windowSIZE);i<accelometers.length;i++){
       deviation += accelometers[i].abs();
     }
-    deviation /= max(1, accelometers.length - 90);
+    deviation /= min(accelometers.length, windowSIZE);
 
     if(deviation > 0.0002) return [velocity, position];
-
-    int idx = velocities.length - 1;
     //위치 보상 알고리즘
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
-
-    // position = positions[idx];
     position = compensatePosition(velocity, position);
     velocity = 0;
-
     return [velocity, position];
   }
 
-
-  void _processSensorData(DeviceMotionData data) {
-
-    // 초기 자세 측정
-    initialQuaternion ??= Quaternion(data.attitude.quaternion.w.toDouble(),
-      data.attitude.quaternion.x.toDouble(),
-      data.attitude.quaternion.y.toDouble(),
-      data.attitude.quaternion.z.toDouble(),
-    );
-    var nowQuaternion = Quaternion(data.attitude.quaternion.w.toDouble(),
-      data.attitude.quaternion.x.toDouble(),
-      data.attitude.quaternion.y.toDouble(),
-      data.attitude.quaternion.z.toDouble(),
-    );
-    var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
-
+  @override
+  void processSensorData(DeviceMotionData data) {
 
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     double deltaTime = positions.length==1 ? 0 : currentTime - lastTimestamp;
@@ -168,7 +100,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     cal_acc_y /= len-2;
     cal_acc_z /= len-2;
 
-
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z;
     double cal_acc = -cal_acc_y;
@@ -179,22 +110,82 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
 
     double velocity = velocities.last + cal_acc * deltaTime;
     double position = positions.last + velocity * deltaTime;
-
     //ZUPT : 영속도 업데이트
     [velocity, position] = applyZUPT(velocity, position);
 
+
+    //화면상에서 100개 정보만 출력
     accelometers.add(cal_acc);
     velocities.add(velocity);
     positions.add(position);
-
-
-    //화면상에서 100개 정보만 출력
     if(accelometers.length > 100) accelometers.removeAt(0);
     if(velocities.length > 100) velocities.removeAt(0);
     if(positions.length > 100) positions.removeAt(0);
+  }
+
+}
 
 
-    setState(() {});
+
+
+
+/**
+ * 테스트 환경 진입점
+ * */
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: AirpodsExampleApp(),
+    );
+  }
+}
+
+class AirpodsExampleApp extends StatefulWidget {
+  @override
+  _AirpodsExampleAppState createState() => _AirpodsExampleAppState();
+}
+
+class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
+  StreamSubscription<DeviceMotionData>? _subscription;
+  bool _isListening = false;
+  List<double> accelometers  = [0.0];
+  List<double> velocities = [0.0];
+  List<double> positions = [0.0];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _startListening() {
+    setState(() {
+      _isListening = true;
+      // PositionDisplay positionDisplay = new AirpodsCalMovingAvgZupt();
+      AirpodsCalMovingAvgZupt positionDisplay = AirpodsCalMovingAvgZupt();
+      accelometers = positionDisplay.accelometers;
+      velocities = positionDisplay.velocities;
+      positions = positionDisplay.positions;
+      _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
+        print(positionDisplay.getPosition());
+        positionDisplay.processSensorData(data);
+        setState(() {
+
+        });
+      }, onError: (error) {
+        print('Error: $error');
+      });
+
+    });
+  }
+
+  void _stopListening() {
+    setState(() {
+      _isListening = false;
+      _subscription?.cancel();
+      _subscription = null;
+    });
   }
 
   @override
@@ -221,8 +212,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
                 maxY: 0.2, // Y축 최대값 설정
                 lineBarsData: [
                   LineChartBarData(
-                    // spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-                    // spots: velocities.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
                     spots: accelometers.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
                     isCurved: true,
                     color: Colors.blue,
@@ -239,9 +228,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
                 maxY: 0.1, // Y축 최대값 설정
                 lineBarsData: [
                   LineChartBarData(
-                    // spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
                     spots: velocities.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-                    // spots: accelometers.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
                     isCurved: true,
                     color: Colors.blue,
                   ),
@@ -258,8 +245,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
                 lineBarsData: [
                   LineChartBarData(
                     spots: positions.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-                    // spots: velocities.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-                    // spots: accelometers.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
                     isCurved: true,
                     color: Colors.blue,
                   ),
