@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/util/MyAudioHandler.dart';
 import 'package:mocksum_flutter/util/filter/KalmanFilterPosition.dart';
 import 'package:mocksum_flutter/util/filter/KalmanFilterVelocity.dart';
 import 'package:mocksum_flutter/util/filter/MovementFilter.dart';
@@ -23,16 +25,13 @@ class Neck extends StatefulWidget {
 
 class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
-  // List<List<dynamic>> rows = [];
-
-
   late AnimationController _controller;
   double _rotateDeg = 0;
   double _pitch = 0;
   double _pitchTemp = 0;
   double _prevPitch = 0;
+  int _prevTickCount = 0;
   int _sameValueCnt = 0;
-  StreamSubscription<DeviceMotionData>? _subscription;
   bool _detectAvailable = false;
   int _minAlarmDelay = 0;
   int _stateTurtleNeck = 0;
@@ -58,6 +57,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   double neckPosition = 0;
   double neckPositionUI = 0;
 
+  var _audioHandler;
+
   final NotificationDetails _details = const NotificationDetails(
       android: AndroidNotificationDetails('temp1', 'asdf'),
       iOS: DarwinNotificationDetails(
@@ -71,7 +72,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   bool _isTurtle = false;
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _pitchTemp > _turtleThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
@@ -194,40 +195,83 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     );
   }
 
+  void _setAudioHandler() async {
+    _audioHandler = await AudioService.init(
+      builder: () => MyAudioHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
+        androidNotificationChannelName: 'Music playback',
+      )
+    );
+
+    _audioHandler.play();
+    _audioHandler.setRepeatMode(AudioServiceRepeatMode.one);
+    _audioHandler.customEventStream.listen((data) {
+    //   _detectAvailable = true;
+    //   // _processSensorData(data);
+    //   _pitchTemp = data.toJson()['pitch'];
+    //   DetectStatus.nowPitch = _pitchTemp;
+    //   // print(DetectStatus.initialPitch);
+    //   // print(_pitchTemp);
+    //   // print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
+    //   if (_minAlarmDelay > 0) {
+    //     _minAlarmDelay -= 1;
+    //   }
+    //   // print(_checkIsNowTurtle());
+    //   if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
+    //     _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
+    //   }
+    //   if (!_checkIsNowTurtle()) {
+    //     _stateTurtleNeck = 0;
+    //   }
+    //   // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+    //   if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
+    //     _showPushAlarm();
+    //     // Provider.of<DetectStatus>(context, listen: false)
+    //     _isTurtle = false;
+    //     _minAlarmDelay = 600;
+    //     _stateTurtleNeck = 0;
+    //   }
+    // }, onError: (error) {
+    //   print("error");
+    //   _detectAvailable = false;
+    });
+  }
+
   void _startAirpodSensing() {
     // DetectStatus ds = Provider.of(context);
     // if (!ds.nowDetecting) return;
     setState(() {
-      _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        _detectAvailable = true;
-        // _processSensorData(data);
-        _pitchTemp = data.toJson()['pitch'];
-        DetectStatus.nowPitch = _pitchTemp;
-        // print(DetectStatus.initialPitch);
-        // print(_pitchTemp);
-        // print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
-        if (_minAlarmDelay > 0) {
-          _minAlarmDelay -= 1;
-        }
-        // print(_checkIsNowTurtle());
-        if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
-          _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
-        }
-        if (!_checkIsNowTurtle()) {
-          _stateTurtleNeck = 0;
-        }
-        // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
-        if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
-          _showPushAlarm();
-          // Provider.of<DetectStatus>(context, listen: false)
-          _isTurtle = false;
-          _minAlarmDelay = 600;
-          _stateTurtleNeck = 0;
-        }
-      }, onError: (error) {
-        print("error");
-        _detectAvailable = false;
-      });
+    //   _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
+    //     _detectAvailable = true;
+    //     // _processSensorData(data);
+    //     _pitchTemp = data.toJson()['pitch'];
+    //     DetectStatus.nowPitch = _pitchTemp;
+    //     // print(DetectStatus.initialPitch);
+    //     // print(_pitchTemp);
+    //     // print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
+    //     if (_minAlarmDelay > 0) {
+    //       _minAlarmDelay -= 1;
+    //     }
+    //     // print(_checkIsNowTurtle());
+    //     if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
+    //       _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
+    //     }
+    //     if (!_checkIsNowTurtle()) {
+    //       _stateTurtleNeck = 0;
+    //     }
+    //     // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+    //     if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
+    //       _showPushAlarm();
+    //       // Provider.of<DetectStatus>(context, listen: false)
+    //       _isTurtle = false;
+    //       _minAlarmDelay = 600;
+    //       _stateTurtleNeck = 0;
+    //     }
+    //   }, onError: (error) {
+    //     print("error");
+    //     _detectAvailable = false;
+    //   });
     });
   }
 
@@ -237,32 +281,34 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     //
     // File f = File('est.csv');
     // f.writeAsString(csv);
-
+    // _audioHandler.stop();
     setState(() {
-      _subscription?.cancel();
-      // _positions.clear();
-      // _positions.add(0.0);
-      // _lastTimestamp = 0.0;
-      _subscription = null;
+      // _subscription?.cancel();
+      // // _positions.clear();
+      // // _positions.add(0.0);
+      // // _lastTimestamp = 0.0;
+      // _subscription = null;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    // List<dynamic> row = [];
-    // row.add("acc");
-    // row.add("vel");
-    // row.add("pos");
-    // rows.add(row);
-
+    _setAudioHandler();
     _startAirpodSensing();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 50));
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
-          _pitch = _pitchTemp;
+          _pitch = DetectStatus.nowPitch;
+          // print('$_pitch, $_prevPitch ${DetectStatus.tickCount} $_prevTickCount');
+          if (_pitch == 0 || DetectStatus.tickCount == _prevTickCount) {
+            _detectAvailable = false;
+          } else {
+            _detectAvailable = true;
+          }
+
           _isTurtle = _checkIsNowTurtle();
           // neckPositionUI = neckPosition*5;
           _rotateDeg = positions.last*50 > 0.5 ? 0.5 : positions.last*50;
@@ -272,6 +318,26 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         _controller.forward();
       }
     });
+
+    // bg.BackgroundGeolocation.onHeartbeat((bg.HeartbeatEvent event) {
+    //   print("[heartbeat]");
+    // });
+    //
+    // bg.BackgroundGeolocation.ready(bg.Config(
+    //   desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+    //   distanceFilter: 10.0,
+    //   stopOnTerminate: false,
+    //   startOnBoot: true,
+    //   debug: true,
+    //   logLevel: bg.Config.LOG_LEVEL_VERBOSE,
+    //   preventSuspend: true,
+    //   heartbeatInterval: 1,
+    // )).then((bg.State state) {
+    //   if (!state.enabled) {
+    //     bg.BackgroundGeolocation.start();
+    //     print('asdf');
+    //   }
+    // });
   }
 
   @override
@@ -295,7 +361,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         if (_sameValueCnt > 30) {
           Provider.of<DetectStatus>(context, listen: false).disavailableDetect();
           _prevPitch = 0;
-          _pitch = 0;
+          // _pitch = 0;
           _detectAvailable = false;
           _sameValueCnt = 0;
         }
@@ -307,6 +373,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         Provider.of<DetectStatus>(context, listen: false).availableDetect();
       }
       _prevPitch = _pitch;
+      _prevTickCount = DetectStatus.tickCount;
     });
   }
 

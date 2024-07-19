@@ -77,7 +77,7 @@ class _SettingState extends State<Settings> {
             decoration: const BoxDecoration(
               color: Colors.white
             ),
-            child: Text('안녕하세요, 안유성님',
+            child: Text('안녕하세요',
               style: TextStyle(
                 color: const Color(0xFF434343),
                 fontSize: responsive.fontSize(20),
