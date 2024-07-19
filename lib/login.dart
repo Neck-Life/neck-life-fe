@@ -103,11 +103,9 @@ class _LoginPageState extends State<LoginPage> {
         _currentUser = account;
       });
 
-      if (isAuthorizedTemp) {
-        print(account.email);
-        print(account.id);
-        print(account.serverAuthCode);
-      }
+      GoogleSignInAuthentication? googleAuth = await account?.authentication;
+
+
     });
 
     _googleSignIn.signInSilently();

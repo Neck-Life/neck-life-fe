@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:mocksum_flutter/settings.dart';
 import 'package:mocksum_flutter/login.dart';
 
-import 'main_page.dart';
+// import 'main_page.dart';
 
 void main() {
   runApp(const MyApp());

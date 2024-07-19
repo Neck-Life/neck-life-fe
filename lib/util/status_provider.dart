@@ -11,6 +11,7 @@ class DetectStatus with ChangeNotifier {
 
   static double initialPitch = 0;
   static double nowPitch = 0;
+  static int tickCount = 0;
 
   bool _nowDetecting = false;
   bool _detectAvailable = false;
