@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/util/filter/KalmanFilterPosition.dart';
+import 'package:mocksum_flutter/util/filter/KalmanFilterVelocity.dart';
+import 'package:mocksum_flutter/util/filter/MovementFilter.dart';
 import 'util/airpods/Quaternion.dart';
 import 'util/responsive.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -20,6 +23,9 @@ class Neck extends StatefulWidget {
 
 class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
+  // List<List<dynamic>> rows = [];
+
+
   late AnimationController _controller;
   double _rotateDeg = 0;
   double _pitch = 0;
@@ -29,14 +35,28 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   StreamSubscription<DeviceMotionData>? _subscription;
   bool _detectAvailable = false;
   int _minAlarmDelay = 0;
+  int _stateTurtleNeck = 0;
+  final List<double> _turtleThreshold = [0.3, 0.4, 0.5];
   // bool _nowDetecting = false;
+  int _initTick = 0;
 
   // for position calculating
-  Quaternion? _initialQuaternion;
-  final double _sampleRate = 1/0.04;
-  double _lastTimestamp = 0.0;
-  List<double> _positions = [0.0];
-  double _nowPosition = 0;
+  Quaternion? initialQuaternion;
+  final double sampleRate = 1/0.04;
+  double lastTimestamp = 0.0;
+  List<double> velocities = [0.0];
+  List<double> positions = [0.0];
+  List<double> accelerations = [0.0];
+  List<double> rotationRatesX = [0.0];
+  List<double> rotationRatesY = [0.0];
+  List<double> rotationRatesZ = [0.0];
+  List<double> roll = [0.0];
+  List<double> pitch = [0.0];
+  List<double> yaw = [0.0];
+  List<double> quaternionY = [0.0];
+  MovementFilter movementFilter = MovementFilter(5);
+  double neckPosition = 0;
+  double neckPositionUI = 0;
 
   final NotificationDetails _details = const NotificationDetails(
       android: AndroidNotificationDetails('temp1', 'asdf'),
@@ -51,7 +71,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   bool _isTurtle = false;
 
   bool _checkIsNowTurtle() {
-    if (_pitch < -0.3) {
+    if (DetectStatus.initialPitch - _pitchTemp > _turtleThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
@@ -59,8 +79,9 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   void _processSensorData(DeviceMotionData data) {
+
     // 초기 자세 측정
-    _initialQuaternion ??= Quaternion(data.attitude.quaternion.w.toDouble(),
+    initialQuaternion ??= Quaternion(data.attitude.quaternion.w.toDouble(),
       data.attitude.quaternion.x.toDouble(),
       data.attitude.quaternion.y.toDouble(),
       data.attitude.quaternion.z.toDouble(),
@@ -72,27 +93,94 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
       data.attitude.quaternion.z.toDouble(),
     );
 
-    var RotationAngle = calculateRotationAngle(_initialQuaternion!,nowQuaternion);
-
+    var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-    double deltaTime = _positions.length==1 ? 0 : currentTime - _lastTimestamp;
-    _lastTimestamp = currentTime;
+    double deltaTime = velocities.length==1 ? 0 : currentTime - lastTimestamp;
+    lastTimestamp = currentTime;
 
-    double currentAccelY = data.userAcceleration.y.toDouble();
+    double currentAccelY = data.userAcceleration.y.toDouble() * cos(RotationAngle);
 
-    if(currentAccelY.abs()*cos(RotationAngle) < 0.1) {
-      currentAccelY = 0;
+    // print(data.attitude.quaternion.y);
+
+    // print(" data rationRate: ${data.rotationRate.x} ${data.rotationRate.y} ${data.rotationRate.z} ");
+    if(data.rotationRate.x.abs()-rotationRatesX.last.abs()
+        + data.rotationRate.y.abs() -rotationRatesY.last.abs()
+        + data.rotationRate.z.abs() -rotationRatesZ.last.abs() > 0.0000000000001) {
+
+      currentAccelY =0;
     }
-    double velocityY = _positions.last + currentAccelY * deltaTime * cos(RotationAngle);
+    // if(currentAccelY.abs() < 0.01) currentAccelY = 0.0;
+
+    var kf_v = KalmanfilterVelocity();
+
+    kf_v.setDt(deltaTime);
+    kf_v.iterate([currentAccelY]);
+    var estimate_vel = kf_v.x_esti[0];
+
+    double velocityY = estimate_vel  ;
+
+    var kf_p = KalmanfilterPosition();
+
+    kf_p.setX([positions.last, 0]);
+
+    _initTick++;
+    if(_initTick >=3000){
+      kf_p.setX([0, 0]);
+    }
+    if(_initTick ==3005) {
+      _initTick=0;
+    }
+
+    kf_p.setDt(deltaTime);
+    kf_p.iterate([velocityY]);
+    var estimate_pos = kf_p.x_esti[0];
+
+
+    // 탐지로직
+    // 여기에 이동평균 씌워서 얼마나 이동했는지?
+    var update = movementFilter.update(estimate_pos);
+
+    if(update> 0.001){
+      print("목이 앞으로 이동");
+      // print(update);
+      neckPosition+=update;
+      movementFilter.clear();
+    }else if(update < -0.0001){
+      print("목이 뒤로 이동");
+      // print(update);
+      neckPosition+=update;
+      movementFilter.clear();
+    }
+
+
+    print("목 위치 : $neckPosition");
+
     // Store the position for visualization
-    if (_positions.length > 100) { // Keep last 100 data points
-      _positions.removeAt(0);
-    }
-    _positions.add(velocityY);
+    if (velocities.length > 5) { // Keep last 100 data points
+      velocities.removeAt(0);
+      // positions.clear();
+      positions.removeAt(0);
+      accelerations.removeAt(0);
+      rotationRatesX.removeAt(0);
+      rotationRatesY.removeAt(0);
+      rotationRatesZ.removeAt(0);
 
-    setState(() {
-      _nowPosition = velocityY;
-    });
+      quaternionY.remove(0);
+
+
+    }
+    accelerations.add(currentAccelY);
+    velocities.add(velocityY);
+    positions.add(estimate_pos);
+    rotationRatesX.add(data.rotationRate.x.toDouble());
+    rotationRatesY.add(data.rotationRate.y.toDouble());
+    rotationRatesZ.add(data.rotationRate.z.toDouble());
+
+    // List<dynamic> row = [];
+    // row.add(currentAccelY);
+    // row.add(velocityY);
+    // row.add(neckPosition);
+    // rows.add(row);
   }
 
   Future<void> _showPushAlarm() async {
@@ -114,16 +202,27 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         _detectAvailable = true;
         // _processSensorData(data);
         _pitchTemp = data.toJson()['pitch'];
-        print(_pitchTemp);
-        print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
+        DetectStatus.nowPitch = _pitchTemp;
+        // print(DetectStatus.initialPitch);
+        // print(_pitchTemp);
+        // print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
         if (_minAlarmDelay > 0) {
           _minAlarmDelay -= 1;
         }
-        if (DetectStatus.sNowDetecting && _pitchTemp < -0.3 && _minAlarmDelay == 0) {
+        // print(_checkIsNowTurtle());
+        if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
+          _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
+        }
+        if (!_checkIsNowTurtle()) {
+          _stateTurtleNeck = 0;
+        }
+        // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+        if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
           _showPushAlarm();
           // Provider.of<DetectStatus>(context, listen: false)
           _isTurtle = false;
           _minAlarmDelay = 600;
+          _stateTurtleNeck = 0;
         }
       }, onError: (error) {
         print("error");
@@ -133,11 +232,17 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   void _stopListening() {
+    // print('asdf');
+    // String csv = const ListToCsvConverter().convert(rows);
+    //
+    // File f = File('est.csv');
+    // f.writeAsString(csv);
+
     setState(() {
       _subscription?.cancel();
-      _positions.clear();
-      _positions.add(0.0);
-      _lastTimestamp = 0.0;
+      // _positions.clear();
+      // _positions.add(0.0);
+      // _lastTimestamp = 0.0;
       _subscription = null;
     });
   }
@@ -145,6 +250,12 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    // List<dynamic> row = [];
+    // row.add("acc");
+    // row.add("vel");
+    // row.add("pos");
+    // rows.add(row);
+
     _startAirpodSensing();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1));
     _controller.forward();
@@ -153,7 +264,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         setState(() {
           _pitch = _pitchTemp;
           _isTurtle = _checkIsNowTurtle();
-          // _rotateDeg = -_nowPosition*10;
+          // neckPositionUI = neckPosition*5;
+          _rotateDeg = positions.last*50 > 0.5 ? 0.5 : positions.last*50;
           // print("now pitch: $_pitch");
         });
         _controller.value = 0;
@@ -164,6 +276,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+    print("sdf");
     _controller.dispose();
     _stopListening();
     super.dispose();
@@ -258,8 +371,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Positioned(
-                      top: responsive.percentWidth(85)*0.15+sin(-_nowPosition*100).abs()*responsive.percentWidth(85)*0.15,
-                      left: responsive.percentWidth(85)*0.5-responsive.percentWidth(85)*0.03+cos_f(-_nowPosition*100, responsive.percentWidth(5)),
+                      top: responsive.percentWidth(85)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(85)*0.15,
+                      left: responsive.percentWidth(85)*0.5-responsive.percentWidth(85)*0.03+cos_f(_rotateDeg, responsive.percentWidth(5)),
                       child: Transform.rotate(
                           angle: -_pitch, // **calculated by pitch
                           origin: Offset(-responsive.percentWidth(15)*0.5+responsive.percentWidth(5)/2, responsive.percentWidth(15)*0.5-responsive.percentWidth(5)/2),
@@ -267,8 +380,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                             width: responsive.percentWidth(15),
                             height: responsive.percentWidth(15),
                             decoration: const BoxDecoration(
-                                color: Color(0xFFD9D9D9),
-                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
+                              color: Color(0xFFD9D9D9),
+                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
                             ),
                             child: Stack(
                               children: [
