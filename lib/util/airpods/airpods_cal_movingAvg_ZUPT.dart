@@ -7,14 +7,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 
 ///측정로직 클래스
-class AirpodsCalMovingAvgZupt extends PositionDisplay{
+class AirpodsCalMovingAvgZupt extends Filter{
   double lastTimestamp = 0.0;
   List<double> accelometers = [0.0];
   List<double> velocities = [0.0];
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
   List<double> pastZ = [0.0]; //가속도Z 히스토리
-  static const double threshold = 0.015;
+  static const double threshold = 0.015; //변위 최댓값 설정
 
   /// position값을 [0,limitValue]범위로 리턴, 비워두면 기존값그대로 리턴
   @override
@@ -22,64 +22,11 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
     return positions.last * (limitValue / threshold);
   }
 
+  /// <- processSensorData : 측정 1틱 진입점
   ///compensatePosition : 비정상 속도히스토리,위치 보상 알고리즘
   /// <- applyZUPT : 영속도 보정 알고리즘
-  ///  <- processSensorData : 측정 1틱 진입점
-  double compensatePosition(double velocity, double position){
-    ///위치 보상 알고리즘
-    ///속도가 비정상으로 뒤집힌 구간만큼 롤백
-    bool compensationFlag = false;
-    int idx = velocities.length -1;
-
-    while(idx>=0 && velocity * velocities[idx] > 0){
-      idx--;
-    }
-    while(idx>=0 && velocity * velocities[idx] < 0) {
-      if(velocities[idx].abs() > 0.001){
-        compensationFlag = true;
-        break;
-      }
-      idx--;
-    }
-    if(compensationFlag){
-      idx = velocities.length - 1;
-      while(idx>=0 && velocity * velocities[idx] > 0){
-        velocities[idx] = 0;
-        idx--;
-      }
-      position = positions[idx];
-      print("거리보상 보상 알고리즘 발동!");
-    }
-
-    ///위치 오차 보정 : 과도하게 커지거나 작아지면, limit값으로 강제 변경
-    if(position > threshold) position = threshold;
-    else if(position < 0) position = 0.0;
-    return position;
-  }
-
-  //velocity, postion -> 개선된 velocity, position 제공
-  List<double> applyZUPT(double velocity, double position){
-    double deviation = 0.0;
-    int windowSIZE = 10;
-    if(accelometers.length < windowSIZE) return [velocity, position];
-
-    for(int i=accelometers.length - windowSIZE;i<accelometers.length;i++){
-      deviation += accelometers[i].abs();
-    }
-    deviation /= windowSIZE;
-    // print(deviation);
-    //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.002) return [velocity, position];
-    //위치 보상 알고리즘
-    //속도가 비정상으로 뒤집힌 구간만큼 롤백
-    position = compensatePosition(velocity, position);
-    velocity = 0;
-    return [velocity, position];
-  }
-
   @override
   void processSensorData(DeviceMotionData data) {
-
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     double deltaTime = positions.length==1 ? 0 : currentTime - lastTimestamp;
     lastTimestamp = currentTime;
@@ -129,6 +76,63 @@ class AirpodsCalMovingAvgZupt extends PositionDisplay{
     if(velocities.length > 100) velocities.removeAt(0);
     if(positions.length > 100) positions.removeAt(0);
   }
+
+  //[velocity, postion] => [개선된 velocity, position] 제공
+  List<double> applyZUPT(double velocity, double position){
+    double deviation = 0.0;
+    int windowSIZE = 10;
+    if(accelometers.length < windowSIZE) return [velocity, position];
+
+    for(int i=accelometers.length - windowSIZE;i<accelometers.length;i++){
+      deviation += accelometers[i].abs();
+    }
+    deviation /= windowSIZE;
+    // print(deviation);
+    //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
+    if(deviation > 0.002) return [velocity, position];
+    //위치 보상 알고리즘
+    //속도가 비정상으로 뒤집힌 구간만큼 롤백
+    position = compensatePosition(velocity, position);
+    velocity = 0;
+    return [velocity, position];
+  }
+
+  ///위치 보상 알고리즘
+  ///속도가 비정상으로 뒤집힌 구간만큼 롤백
+  double compensatePosition(double velocity, double position){
+
+    bool compensationFlag = false;
+    int idx = velocities.length -1;
+
+    while(idx>=0 && velocity * velocities[idx] > 0){
+      idx--;
+    }
+    while(idx>=0 && velocity * velocities[idx] < 0) {
+      if(velocities[idx].abs() > 0.001){
+        compensationFlag = true;
+        break;
+      }
+      idx--;
+    }
+    if(compensationFlag){
+      idx = velocities.length - 1;
+      while(idx>=0 && velocity * velocities[idx] > 0){
+        velocities[idx] = 0;
+        idx--;
+      }
+      position = positions[idx];
+      print("거리보상 보상 알고리즘 발동!");
+    }
+
+    ///위치 오차 보정 : 과도하게 커지거나 작아지면, limit값으로 강제 변경
+    if(position > threshold) position = threshold;
+    else if(position < 0) position = 0.0;
+    return position;
+  }
+
+
+
+
 }
 
 
@@ -168,7 +172,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   void _startListening() {
     setState(() {
       _isListening = true;
-      PositionDisplay positionDisplay = new AirpodsCalMovingAvgZupt(); //외부에서 쓸 인터페이스
+      Filter positionDisplay = AirpodsCalMovingAvgZupt();
       AirpodsCalMovingAvgZupt positionDisplayTest = positionDisplay as AirpodsCalMovingAvgZupt; //내부 테스트 용
 
       accelometers = positionDisplayTest.accelometers;
