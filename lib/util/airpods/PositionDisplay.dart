@@ -13,9 +13,11 @@ abstract class Filter{
 
 
 /// strategy패턴의 context컴포넌트
-/// 외부에서는 PositionDisplay클래스만 사용할 것
+/// 외부에서는 PositionDisplay 클래스만 사용할 것
 class PositionDisplay{
   Filter filter = AirpodsCalMovingAvgZupt();
+  ///현재 y축 위치 리턴
+  ///limitValue : 최댓값 스케일링 계수
   double getPosition(double limitValue){
     return filter.getPosition(limitValue);
   }
