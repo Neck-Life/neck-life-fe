@@ -5,6 +5,7 @@ import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
+import 'Quaternion.dart';
 
 ///측정로직 클래스
 class AirpodsCalMovingAvgZupt extends Filter{
@@ -14,7 +15,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
   List<double> pastZ = [0.0]; //가속도Z 히스토리
-  static const double threshold = 0.015; //변위 최댓값 설정
+  static const double threshold = 0.015;
+
+  Quaternion? initialQuaternion; //변위 최댓값 설정
 
   /// position값을 [0,limitValue]범위로 리턴, 비워두면 기존값그대로 리턴
   @override
@@ -46,6 +49,18 @@ class AirpodsCalMovingAvgZupt extends Filter{
     sortedY.sort();
     sortedZ.sort();
 
+    // 초기 자세 측정
+    initialQuaternion ??= Quaternion(data.attitude.quaternion.w.toDouble(),
+      data.attitude.quaternion.x.toDouble(),
+      data.attitude.quaternion.y.toDouble(),
+      data.attitude.quaternion.z.toDouble(),
+    );
+    var nowQuaternion = Quaternion(data.attitude.quaternion.w.toDouble(),
+      data.attitude.quaternion.x.toDouble(),
+      data.attitude.quaternion.y.toDouble(),
+      data.attitude.quaternion.z.toDouble(),
+    );
+    var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
     //절사평균 : 추가 조정 필수
     for(int i = 1; i < sortedY.length-1;i++){
       cal_acc_y += sortedY[i];
@@ -53,10 +68,13 @@ class AirpodsCalMovingAvgZupt extends Filter{
     }
     cal_acc_y /= len-2;
     cal_acc_z /= len-2;
-
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
-    double cal_acc = -cal_acc_y; //y축만 고려하기
+    // double cal_acc = -cal_acc_z; //y축만 고려하기
+    double cal_acc = sqrt(cal_acc_y*cal_acc_y + cal_acc_z*cal_acc_z); //y,z축 방향제거된 norm값
+    cal_acc *= (1-RotationAngle);
+    cal_acc *= -cal_acc_y/(0.00001+cal_acc_y.abs()); // y축 경향으로 +- 따지기 + divided by zero 방지
+
     double offset = 0.005;
     if(cal_acc > offset) cal_acc -= offset;
     else if(cal_acc < -offset) cal_acc += offset;
@@ -77,7 +95,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     if(positions.length > 100) positions.removeAt(0);
   }
 
-  //[velocity, postion] => [개선된 velocity, position] 제공
+  ///[velocity, postion] => [개선된 velocity, position] 제공
   List<double> applyZUPT(double velocity, double position){
     double deviation = 0.0;
     int windowSIZE = 10;
@@ -100,7 +118,6 @@ class AirpodsCalMovingAvgZupt extends Filter{
   ///위치 보상 알고리즘
   ///속도가 비정상으로 뒤집힌 구간만큼 롤백
   double compensatePosition(double velocity, double position){
-
     bool compensationFlag = false;
     int idx = velocities.length -1;
 
@@ -174,7 +191,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       _isListening = true;
       Filter positionDisplay = AirpodsCalMovingAvgZupt();
       AirpodsCalMovingAvgZupt positionDisplayTest = positionDisplay as AirpodsCalMovingAvgZupt; //내부 테스트 용
-
+      print("zzzz");
       accelometers = positionDisplayTest.accelometers;
       velocities = positionDisplayTest.velocities;
       positions = positionDisplayTest.positions;
@@ -186,7 +203,6 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       }, onError: (error) {
         print('Error: $error');
       });
-
     });
   }
 
