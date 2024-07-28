@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -85,7 +86,6 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //ZUPT : 영속도 업데이트
     [velocity, position] = applyZUPT(velocity, position);
 
-
     //화면상에서 100개 정보만 출력
     accelometers.add(cal_acc);
     velocities.add(velocity);
@@ -93,6 +93,15 @@ class AirpodsCalMovingAvgZupt extends Filter{
     if(accelometers.length > 100) accelometers.removeAt(0);
     if(velocities.length > 100) velocities.removeAt(0);
     if(positions.length > 100) positions.removeAt(0);
+
+    /// 거북목 자세 탐지시 3초 정지, alert 및 센서 초기화
+    if(getPosition(100) == 100.0){
+      print("거북목 감지했습니다.");
+      sleep(Duration(seconds: 3));
+      accelometers.add(0.0);
+      velocities.add(0.0);
+      positions.add(0.0);
+    }
   }
 
   ///[velocity, postion] => [개선된 velocity, position] 제공
