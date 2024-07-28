@@ -32,7 +32,7 @@ class DetectStatus with ChangeNotifier {
   void init() async {
     // _nowDetecting = true;
     // _detectAvailable = true;
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? sensitivitySetting = await storage.read(key: 'sensitivity');
     String? alarmSetting = await storage.read(key: 'alarm');
     if (sensitivitySetting != null) {
@@ -49,7 +49,7 @@ class DetectStatus with ChangeNotifier {
     _nowDetecting = true;
     sNowDetecting = true;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '1');
   }
 
@@ -57,7 +57,7 @@ class DetectStatus with ChangeNotifier {
     _nowDetecting = false;
     sNowDetecting = false;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
   }
 
@@ -71,7 +71,7 @@ class DetectStatus with ChangeNotifier {
     _sensitivity = sensitivityVal.toInt();
     sSensitivity = _sensitivity;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'sensitivity', value: _sensitivity.toString());
   }
 
@@ -79,7 +79,7 @@ class DetectStatus with ChangeNotifier {
     _alarmGap = alarmGapVal;
     sAlarmGap = alarmGapVal;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'alarm', value: alarmGapVal.toString());
   }
 

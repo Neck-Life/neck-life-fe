@@ -1,43 +1,26 @@
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
-import 'package:just_audio/just_audio.dart';
-// import 'package:flutter/services.dart';
 
+class LocationHandler {
 
-class MyAudioHandler extends BaseAudioHandler {
-
-  // final MethodChannel _channel = const MethodChannel("flutter.airpods.sensor");
-
-
-  StreamSubscription<DeviceMotionData>? _subscription;
+  StreamSubscription<DeviceMotionData>? _airpodSubscription;
   double _nowPitch = 0;
+  double _tempForDependency = 0;
+  List<double> pitchList = [];
   int _minInterval = 0;
   int _turtleNeckStartedTimeStamp = 0;
   final List<double> _turtleNeckThreshold = [0.3, 0.4, 0.5];
 
-  final _audioPlayer = AudioPlayer();
-  
-  void _setAudioFile() async {
-    await _audioPlayer.setUrl('asset:///assets/test.mp3');
-  }
 
-  final _customEventController = StreamController<dynamic>.broadcast();
-  Timer? _backgroundTimer;
-
-  Stream<dynamic> get customEventStream => _customEventController.stream;
-  
-  MyAudioHandler() {
-    _setAudioFile();
-    // _startBackgroundTask();
-    _audioPlayer.setLoopMode(LoopMode.one);
-    _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-      _customEventController.add(data);
+  LocationHandler() {
+    _airpodSubscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
       _nowPitch = data.toJson()['pitch'];
+      _tempForDependency = data.toJson()['pitch'];
       DetectStatus.nowPitch = _nowPitch;
       DetectStatus.tickCount = (DetectStatus.tickCount+1) % 300;
       // print(_minInterval);
@@ -58,7 +41,15 @@ class MyAudioHandler extends BaseAudioHandler {
         _minInterval -= 1;
       }
     });
+
+    bg.BackgroundGeolocation.onHeartbeat((event) {
+      print('hb ${DateTime.now()}');
+      // _showPushAlarm(pitchList.length, pitchList.last);
+      // print('on hb $pitchList');
+      _tempForDependency += 1;
+    });
   }
+
 
   bool _checkIsNowTurtle() {
     if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity]) {
@@ -68,39 +59,14 @@ class MyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  // void _startBackgroundTask() {
-  //   _backgroundTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-  //     if (_audioPlayer.playing) {
-  //       // Only emit events if audio is playing
-  //       emitCustomEvent('Background task running at ${DateTime.now()}');
-  //     }
-  //   });
-  // }
-  //
-  // dynamic _getNowAirpodsSensor() async {
-  //   print('test1 start');
-  //   final data = await _channel.invokeMethod("getAirpodsSensorData");
-  //   print('test1 $data');
-
-  //   return data;
-  // }
-  //
-  // Future<void> emitCustomEvent(dynamic event) async {
-  //   print('emit start');
-  //   dynamic data = await _getNowAirpodsSensor();
-  //   // double pitch = data['pitch'];
-  //   print(data);
-  //   _customEventController.add(event);
-  //   print('emit end');
-  // }
-
   final NotificationDetails _details = const NotificationDetails(
-    android: AndroidNotificationDetails('temp1', 'asdf'),
-    iOS: DarwinNotificationDetails(
+      android: AndroidNotificationDetails('temp1', 'asdf'),
+      iOS: DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
-        presentSound: true
-    )
+        presentSound: true,
+        
+      )
   );
 
   Future<void> _showPushAlarm() async {
@@ -114,17 +80,26 @@ class MyAudioHandler extends BaseAudioHandler {
     );
   }
 
-  @override
-  Future<void> play() async {
-    _audioPlayer.play();
+  void startBackgroundDetection() {
+    bg.BackgroundGeolocation.ready(bg.Config(
+        stopOnTerminate: false,
+        startOnBoot: true,
+        debug: false,
+        heartbeatInterval: 10,
+        preventSuspend: true
+    )).then((bg.State state) {
+      if (!state.enabled) {
+        bg.BackgroundGeolocation.start();
+      }
+    });
   }
 
-  @override
-  Future<void> stop() async {
-    _subscription?.cancel();
-    _subscription = null;
-    _backgroundTimer?.cancel();
-    await super.stop();
+  void endBackgroundDetection() {
+    bg.BackgroundGeolocation.stop();
+  }
 
+  void endAllDetection() {
+    _airpodSubscription?.cancel();
+    _airpodSubscription = null;
   }
 }

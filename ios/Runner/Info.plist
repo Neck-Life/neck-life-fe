@@ -11,7 +11,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Mocksum Flutter</string>
+	<string>NeckLife</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -48,19 +48,25 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Location required in background</string>
+	<string>Location permission is required to detect the user's posture in the background. You can use the app without this permission, but posture detection will not work when the app is in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location required when app is in use</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Need microphone access for uploading audio</string>
+	<string>Location permission is required to detect the user's posture in the background. You can use the app without this permission, but posture detection will not work when the app is in the background.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Get AirPods movement and background</string>
+	<string>Get AirPods movement for detecting posture of the user</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>audio</string>
+		<string>fetch</string>
+		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
