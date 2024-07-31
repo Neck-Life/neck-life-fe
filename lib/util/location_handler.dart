@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
+
+import '../mac/flutter_airpods_mac.dart';
 
 class LocationHandler {
 
@@ -18,6 +23,45 @@ class LocationHandler {
 
 
   LocationHandler() {
+
+    //todo 플랫폼별 분기
+
+    if(Platform.isMacOS){
+      _airpodSubscription = FlutterAirpodsMac.getAirPodsDeviceMotionUpdates.listen((data){
+        _nowPitch = data.toJson()['pitch'];
+        _tempForDependency = data.toJson()['pitch'];
+        DetectStatus.nowPitch = _nowPitch;
+        DetectStatus.tickCount = (DetectStatus.tickCount+1) % 300;
+        // print(_minInterval);
+        if (_checkIsNowTurtle() && _turtleNeckStartedTimeStamp == 0 && DetectStatus.sNowDetecting) {
+          _turtleNeckStartedTimeStamp = DateTime.now().millisecondsSinceEpoch;
+        }
+        if (!_checkIsNowTurtle()) {
+          _turtleNeckStartedTimeStamp = 0;
+        }
+        // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+        if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minInterval == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp >= DetectStatus.sAlarmGap*1000) {
+          _showPushAlarm();
+          // Provider.of<DetectStatus>(context, listen: false)
+          _minInterval = 500;
+          _turtleNeckStartedTimeStamp = 0;
+        }
+        if (_minInterval > 0) {
+          _minInterval -= 1;
+        }
+      }) as StreamSubscription<DeviceMotionData>?;
+
+      bg.BackgroundGeolocation.onHeartbeat((event) {
+        print('hb ${DateTime.now()}');
+        // _showPushAlarm(pitchList.length, pitchList.last);
+        // print('on hb $pitchList');
+        _tempForDependency += 1;
+
+      });
+
+    }else{
+
+
     _airpodSubscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
       _nowPitch = data.toJson()['pitch'];
       _tempForDependency = data.toJson()['pitch'];
@@ -48,6 +92,7 @@ class LocationHandler {
       // print('on hb $pitchList');
       _tempForDependency += 1;
     });
+    }
   }
 
 
@@ -59,13 +104,26 @@ class LocationHandler {
     }
   }
 
+  Stream<DeviceMotionData> _getEventChannelStream() {
+    const EventChannel _eventChannel = EventChannel('flutter_airpods.motion.mac');
+    return _eventChannel.receiveBroadcastStream().map((event) {
+      Map<String, dynamic> json = jsonDecode(event);
+
+      /// Creates a [DeviceMotionData] from a JSON.
+      DeviceMotionData deviceMotionData = DeviceMotionData.fromJson(json);
+
+      /// Returns transformed [DeviceMotionData]
+      return deviceMotionData;
+    });
+  }
+
   final NotificationDetails _details = const NotificationDetails(
       android: AndroidNotificationDetails('temp1', 'asdf'),
       iOS: DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
-        
+
       )
   );
 

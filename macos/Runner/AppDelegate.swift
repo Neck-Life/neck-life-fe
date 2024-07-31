@@ -7,7 +7,7 @@ class AppDelegate: FlutterAppDelegate {
   override func applicationDidFinishLaunching(_ notification: Notification) {
     let controller: FlutterViewController = mainFlutterWindow!.contentViewController as! FlutterViewController
 
-    let eventChannel = FlutterEventChannel(name: "flutter_airpods.motion", binaryMessenger: controller.engine.binaryMessenger)
+    let eventChannel = FlutterEventChannel(name: "flutter_airpods_mac.motion", binaryMessenger: controller.engine.binaryMessenger)
     eventChannel.setStreamHandler(AirPodsStreamHandler())
 
     super.applicationDidFinishLaunching(notification)
