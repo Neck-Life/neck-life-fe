@@ -55,18 +55,13 @@
 		<key>NSAllowsArbitraryLoadsForMedia</key>
 		<true/>
 	</dict>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Location permission is required to detect the user's posture in the background. You can use the app without this permission, but posture detection will not work when the app is in the background.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location permission is required to detect the user's posture in the background. You can use the app without this permission, but posture detection will not work when the app is in the background.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Get AirPods movement for detecting posture of the user</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>fetch</string>
-		<string>location</string>
+		<string>audio</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -85,5 +80,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We track usage data to provide more convenient and personalized services.</string>
 </dict>
 </plist>

@@ -12,18 +12,21 @@ class DetectStatus with ChangeNotifier {
   static double initialPitch = 0;
   static double nowPitch = 0;
   static int tickCount = 0;
+  static bool sBgSoundActive = false;
 
   bool _nowDetecting = false;
   bool _detectAvailable = false;
   bool _isNowTurtle = false;
   int _sensitivity = 1;
   int _alarmGap = 15;
+  bool _bgSoungActive = false;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
   bool get isNowTurtle => _isNowTurtle;
   int get sensitivity => _sensitivity;
   int get alarmGap => _alarmGap;
+  bool get bgSoundActive => _bgSoungActive;
 
   DetectStatus() {
     init();
@@ -35,6 +38,7 @@ class DetectStatus with ChangeNotifier {
     const storage = FlutterSecureStorage();
     String? sensitivitySetting = await storage.read(key: 'sensitivity');
     String? alarmSetting = await storage.read(key: 'alarm');
+    String? bgSoundSetting = await storage.read(key: 'isBgActive');
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
       sSensitivity = _sensitivity;
@@ -42,6 +46,10 @@ class DetectStatus with ChangeNotifier {
     if (alarmSetting != null) {
       _alarmGap = int.parse(alarmSetting);
       sAlarmGap = _alarmGap;
+    }
+    if (bgSoundSetting != null) {
+      _bgSoungActive = bgSoundSetting == '1';
+      sBgSoundActive = _bgSoungActive;
     }
   }
 
@@ -81,6 +89,14 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'alarm', value: alarmGapVal.toString());
+  }
+
+  void setBgSoundActive(bool isActive) async {
+    _bgSoungActive = isActive;
+    sBgSoundActive = _bgSoungActive;
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
   }
 
   void disavailableDetect() {

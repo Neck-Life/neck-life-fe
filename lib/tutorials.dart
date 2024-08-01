@@ -317,12 +317,12 @@ class _TutorialState extends State<Tutorials> {
                 ),
                 TextButton(
                     onPressed: () {
-                      if(userStatus.isLogged) {
+                      // if(userStatus.isLogged) {
                         Navigator.of(context).pop();
-                      } else {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()));
-                      }
+                      // } else {
+                      //   Navigator.push(context,
+                      //       MaterialPageRoute(builder: (context) => const LoginPage()));
+                      // }
                     },
                     child: const Text('튜토리얼 끝내기')
                 )

@@ -24,17 +24,18 @@ class _HomeState extends State<Home> {
 
     Future.delayed(Duration.zero, () async {
       await _getNowIsFirstLaunch();
-      bool isLogged = await Provider.of<UserStatus>(context, listen: false)
-          .verifyToken();
-      Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
+      // bool isLogged = await Provider.of<UserStatus>(context, listen: false)
+      //     .verifyToken();
+      // Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
       if (_isFirstLaunch) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
-      } else {
-        if (!isLogged) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const LoginPage()));
-        }
       }
+      // else {
+      //   if (!isLogged) {
+      //     Navigator.push(context,
+      //         MaterialPageRoute(builder: (context) => const LoginPage()));
+      //   }
+      // }
     });
   }
 
@@ -46,6 +47,7 @@ class _HomeState extends State<Home> {
       _isFirstLaunch = true;
       await storage.write(key: 'first', value: '1');
     }
+    // _isFirstLaunch = true;
   }
 
   @override

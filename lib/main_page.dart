@@ -1,6 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/start_position.dart';
-import 'package:mocksum_flutter/util/location_handler.dart';
+import 'package:mocksum_flutter/util/audio_handler.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
 import 'neck.dart';
 import 'util/responsive.dart';
@@ -17,7 +18,14 @@ class MainPage extends StatefulWidget {
 class MainState extends State<MainPage> {
 
   bool _isHelpTextOpend = false;
-  LocationHandler? _locationHandler;
+  // LocationHandler? _locationHandler;
+  late MyAudioHandler _audioHandler;
+  // final AudioPlayer _nodiAudioPlayer = AudioPlayer();
+
+  // var item = const MediaItem(
+  //   id: 'assets/noti.mp3',
+  //   title: 'noti_sound',
+  // );
 
   Future<void> _initLocalNotification() async {
     FlutterLocalNotificationsPlugin localNotification =
@@ -39,17 +47,68 @@ class MainState extends State<MainPage> {
     );
   }
 
+  // void _setNotiAudioHandler() async {
+  //   await _nodiAudioPlayer.setAsset('assets/noti.mp3');
+  // }
+
+  void _setAudioHandler() async {
+    _audioHandler = await AudioService.init(
+        builder: () => MyAudioHandler(),
+        config: const AudioServiceConfig(
+          androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
+          androidNotificationChannelName: 'Music playback',
+        )
+    );
+
+    // _audioHandler.addQueueItem(item);
+
+    // _notiAudioHandler = await AudioService.init(
+    //     builder: () => NotiAudioHandler(),
+    //     config: const AudioServiceConfig(
+    //       androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
+    //       androidNotificationChannelName: 'Music playback',
+    //     )
+    // );
+
+    // _audioHandler.play();
+    // _audioHandler?.setRepeatMode(AudioServiceRepeatMode.one);
+    _audioHandler.customEventStream.listen((data) {
+      print(data);
+      if (data == 'turtle') {
+        // _nodiAudioPlayer.play();
+        // _audioHandler.skipToNext();
+        // _audioHandler.play();
+      }
+      if (data == 'end') {
+        // _audioHandler.pause();
+      }
+    });
+    // _notiAudioHandler?.play();
+  }
+
+  // void _skiptonect() {
+  //   if (_audioHandler != null) {
+  //     _audioHandler.skipToNext();
+  //     print('fuck');
+  //   }
+  // }
+
+
   @override
   void initState() {
     super.initState();
     _initLocalNotification();
-    _locationHandler = LocationHandler();
+    _setAudioHandler();
+    // _setNotiAudioHandler();
+    // _locationHandler = LocationHandler();
+    // _setAudioHandler();
+
   }
 
   @override
   void dispose() {
-    _locationHandler?.endAllDetection();
-    _locationHandler = null;
+    // _locationHandler?.endAllDetection();
+    // _locationHandler = null;
     super.dispose();
   }
 
@@ -170,12 +229,15 @@ class MainState extends State<MainPage> {
                                   )
                               );
                             } else if (!detectStatus.nowDetecting) {
-                              _locationHandler?.startBackgroundDetection();
+                              // _locationHandler?.startBackgroundDetection();
+                              _audioHandler.play();
+                              // _skiptonect();
                               Navigator.push(context, MaterialPageRoute(builder: (
                                   context) => const StartPosition()));
                             } else {
                               detectStatus.endDetecting();
-                              _locationHandler?.endBackgroundDetection();
+                              // _locationHandler?.endBackgroundDetection();
+                              _audioHandler.pause();
                             }
                           },
                           style: ElevatedButton.styleFrom(

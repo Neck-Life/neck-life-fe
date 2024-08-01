@@ -46,14 +46,13 @@ dependencies:
   google_sign_in: ^6.2.1
   http: ^1.2.1
   open_settings_plus: ^0.3.3
-  flutter_background_geolocation: ^4.15.5
   audio_service: ^0.18.14
   just_audio: 0.9.38
   audio_session: ^0.1.21
   sign_in_with_apple: ^6.1.1
   flutter_native_splash: ^2.4.1
   purchases_flutter: ^6.30.2
-
+  app_tracking_transparency: ^2.0.5
 
 
 

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
@@ -14,6 +15,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
 
   double _sensitivity = 1;
   int _alarmGap = 15;
+  bool _bgSoundActive = false;
 
   @override
   void initState() {
@@ -22,6 +24,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
       setState(() {
         _sensitivity = Provider.of<DetectStatus>(context, listen: false).sensitivity.toDouble();
         _alarmGap = Provider.of<DetectStatus>(context, listen: false).alarmGap;
+        _bgSoundActive = Provider.of<DetectStatus>(context, listen: false).bgSoundActive;
       });
     });
   }
@@ -243,6 +246,70 @@ class _AlarmSettingState extends State<AlarmSetting> {
                             },
                           ),
                         )
+                      ],
+                    )
+                ),
+              ],
+            ),
+            SizedBox(height: responsive.percentHeight(7)),
+            Container(
+              width: responsive.percentWidth(85),
+              margin: EdgeInsets.only(bottom: 10, left: responsive.percentWidth(7.5)),
+              child: Text('백색소음 설정',
+                style: TextStyle(
+                  color: const Color(0xFF434343),
+                  fontSize: responsive.fontSize(18),
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Column(
+              children: [
+                Container(
+                  width: responsive.percentWidth(85),
+                  margin: const EdgeInsets.only(
+                      bottom: 10),
+                  child: Text('백색소음과 함께 일의 집중력을 높여보세요.\n이 설정은 변경 후에 탐지를 중지 후 다시 시작해주세요.',
+                    style: TextStyle(
+                      color: const Color(0xFF434343),
+                      fontSize: responsive.fontSize(14),
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+                Container(
+                    width: responsive.percentWidth(95),
+                    margin: EdgeInsets.only(left: responsive.percentWidth(2.5)),
+                    padding: EdgeInsets.only(left: responsive.percentWidth(7.5), top: responsive.percentHeight(0.75), bottom: responsive.percentHeight(0.75), right: responsive.percentWidth(5)),
+                    decoration: ShapeDecoration(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('백색소음 켜기',
+                          style: TextStyle(
+                            color: const Color(0xFF434343),
+                            fontSize: responsive.fontSize(14),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        CupertinoSwitch(
+                          value: _bgSoundActive,
+                          activeColor: CupertinoColors.activeBlue,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _bgSoundActive = value ?? false;
+                              detectStatus.setBgSoundActive(_bgSoundActive);
+                            });
+                          },
+                        ),
                       ],
                     )
                 ),

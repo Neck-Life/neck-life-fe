@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/tutorials.dart';
-import 'package:mocksum_flutter/util/user_provider.dart';
+// import 'package:mocksum_flutter/util/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'login.dart';
 import 'util/responsive.dart';
@@ -20,156 +20,156 @@ class _SettingState extends State<Settings> {
   final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
   final Uri _PPUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Privacy-Policy-f50f241b48d44e74a4ffe9bbc9f87dcf?pvs=4');
 
-  void _showDeleteAccountAlert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text('정말 탈퇴하시겠습니까?',
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: MediaQuery.of(context).size.width*0.05,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 40),
-                      backgroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      shadowColor: const Color(0x19000000),
-                      side: const BorderSide(
-                          width: 1,
-                          color: Colors.black
-                      )
-                    ),
-                    onPressed: () async {
-                    UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
-                    bool success = await userStatus2.deleteAccount();
-                    if (success) {
-                      Navigator.push(context, MaterialPageRoute(builder: (
-                          context) => const LoginPage()));
-                      userStatus2.cleanAll();
-                    } else {
-                      await showDialog(
-                        context: context,
-                        builder: (contextIn) {
-                          return AlertDialog(
-                            content: Text('오류가 발생했습니다.\n다시 시도해주세요.',
-                              style: TextStyle(
-                                color: const Color(0xFF434343),
-                                fontSize: MediaQuery.of(context).size.width*0.05,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(80, 40),
-                                      backgroundColor: Colors.white,
-                                      surfaceTintColor: Colors.white,
-                                      shadowColor: const Color(0x19000000),
-                                      side: const BorderSide(
-                                          width: 1,
-                                          color: Colors.black
-                                      )
-                                  ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('닫기')
-                              )
-                            ],
-                          );
-                        }
-                      );
+  // void _showDeleteAccountAlert(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext ctx) {
+  //         return AlertDialog(
+  //           content: Text('정말 탈퇴하시겠습니까?',
+  //             style: TextStyle(
+  //               color: const Color(0xFF434343),
+  //               fontSize: MediaQuery.of(context).size.width*0.05,
+  //               fontFamily: 'Inter',
+  //               fontWeight: FontWeight.w300,
+  //             ),
+  //           ),
+  //           actions: [
+  //             ElevatedButton(
+  //                 style: ElevatedButton.styleFrom(
+  //                     minimumSize: const Size(80, 40),
+  //                     backgroundColor: Colors.white,
+  //                     surfaceTintColor: Colors.white,
+  //                     shadowColor: const Color(0x19000000),
+  //                     side: const BorderSide(
+  //                         width: 1,
+  //                         color: Colors.black
+  //                     )
+  //                   ),
+  //                   onPressed: () async {
+  //                   UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
+  //                   bool success = await userStatus2.deleteAccount();
+  //                   if (success) {
+  //                     Navigator.push(context, MaterialPageRoute(builder: (
+  //                         context) => const LoginPage()));
+  //                     userStatus2.cleanAll();
+  //                   } else {
+  //                     await showDialog(
+  //                       context: context,
+  //                       builder: (contextIn) {
+  //                         return AlertDialog(
+  //                           content: Text('오류가 발생했습니다.\n다시 시도해주세요.',
+  //                             style: TextStyle(
+  //                               color: const Color(0xFF434343),
+  //                               fontSize: MediaQuery.of(context).size.width*0.05,
+  //                               fontFamily: 'Inter',
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           ),
+  //                           actions: [
+  //                             ElevatedButton(
+  //                                 style: ElevatedButton.styleFrom(
+  //                                     minimumSize: const Size(80, 40),
+  //                                     backgroundColor: Colors.white,
+  //                                     surfaceTintColor: Colors.white,
+  //                                     shadowColor: const Color(0x19000000),
+  //                                     side: const BorderSide(
+  //                                         width: 1,
+  //                                         color: Colors.black
+  //                                     )
+  //                                 ),
+  //                               onPressed: () {
+  //                                 Navigator.of(context).pop();
+  //                               },
+  //                               child: const Text('닫기')
+  //                             )
+  //                           ],
+  //                         );
+  //                       }
+  //                     );
+  //
+  //                     Navigator.of(context).pop();
+  //                   }
+  //                 },
+  //                 child: const Text('네')
+  //             ),
+  //             ElevatedButton(
+  //                 style: ElevatedButton.styleFrom(
+  //                     minimumSize: const Size(80, 40),
+  //                     backgroundColor: Colors.white,
+  //                     surfaceTintColor: Colors.white,
+  //                     shadowColor: const Color(0x19000000),
+  //                     side: const BorderSide(
+  //                         width: 1,
+  //                         color: Colors.black
+  //                     )
+  //                 ),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('아니오')
+  //             ),
+  //           ],
+  //         );
+  //       }
+  //   );
+  // }
 
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text('네')
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 40),
-                      backgroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      shadowColor: const Color(0x19000000),
-                      side: const BorderSide(
-                          width: 1,
-                          color: Colors.black
-                      )
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('아니오')
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-  void _showLogoutAlert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            content: Text('로그아웃하시겠습니까?',
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: MediaQuery.of(context).size.width*0.05,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 40),
-                      backgroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      shadowColor: const Color(0x19000000),
-                      side: const BorderSide(
-                          width: 1,
-                          color: Colors.black
-                      )
-                  ),
-                  onPressed: () async {
-                    UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
-                    userStatus2.cleanAll();
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
-                    Navigator.push(context, MaterialPageRoute(builder: (
-                        context) => const LoginPage()));
-                    userStatus2.cleanAll();
-                  },
-                  child: const Text('네')
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 40),
-                      backgroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      shadowColor: const Color(0x19000000),
-                      side: const BorderSide(
-                          width: 1,
-                          color: Colors.black
-                      )
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('아니오')
-              ),
-            ],
-          );
-        }
-    );
-  }
+  // void _showLogoutAlert(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext ctx) {
+  //         return AlertDialog(
+  //           content: Text('로그아웃하시겠습니까?',
+  //             style: TextStyle(
+  //               color: const Color(0xFF434343),
+  //               fontSize: MediaQuery.of(context).size.width*0.05,
+  //               fontFamily: 'Inter',
+  //               fontWeight: FontWeight.w300,
+  //             ),
+  //           ),
+  //           actions: [
+  //             ElevatedButton(
+  //                 style: ElevatedButton.styleFrom(
+  //                     minimumSize: const Size(80, 40),
+  //                     backgroundColor: Colors.white,
+  //                     surfaceTintColor: Colors.white,
+  //                     shadowColor: const Color(0x19000000),
+  //                     side: const BorderSide(
+  //                         width: 1,
+  //                         color: Colors.black
+  //                     )
+  //                 ),
+  //                 onPressed: () async {
+  //                   UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
+  //                   userStatus2.cleanAll();
+  //                   Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+  //                   Navigator.push(context, MaterialPageRoute(builder: (
+  //                       context) => const LoginPage()));
+  //                   userStatus2.cleanAll();
+  //                 },
+  //                 child: const Text('네')
+  //             ),
+  //             ElevatedButton(
+  //                 style: ElevatedButton.styleFrom(
+  //                     minimumSize: const Size(80, 40),
+  //                     backgroundColor: Colors.white,
+  //                     surfaceTintColor: Colors.white,
+  //                     shadowColor: const Color(0x19000000),
+  //                     side: const BorderSide(
+  //                         width: 1,
+  //                         color: Colors.black
+  //                     )
+  //                 ),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('아니오')
+  //             ),
+  //           ],
+  //         );
+  //       }
+  //   );
+  // }
 
   Future<void> _launchUrl(url) async {
     if (!await launchUrl(url)) {
@@ -180,7 +180,7 @@ class _SettingState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
-    UserStatus userStatus = Provider.of(context);
+    // UserStatus userStatus = Provider.of(context);
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -370,59 +370,59 @@ class _SettingState extends State<Settings> {
               _launchUrl(_PPUrl);
             },
           ),
-          GestureDetector(
-            child: Container(
-              width: responsive.deviceWidth,
-              height: 50,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 15),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    // bottom: BorderSide(color: Colors.grey),
-                    top: BorderSide(color: Colors.grey.withOpacity(0.3))
-                  )
-              ),
-              child: Text('로그아웃',
-                style: TextStyle(
-                  color: const Color(0xFF434343),
-                  fontSize: responsive.fontSize(17),
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-            onTap: () async {
-              _showLogoutAlert(context);
-            },
-          ),
-          GestureDetector(
-            onTap: () async {
-              _showDeleteAccountAlert(context);
-            },
-            child: Container(
-              width: responsive.deviceWidth,
-              height: 50,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 15),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey.withOpacity(0.3)),
-                    top: BorderSide(color: Colors.grey.withOpacity(0.3)),
-
-                  )
-              ),
-              child: Text('회원 탈퇴',
-                style: TextStyle(
-                  color: const Color(0xFF434343),
-                  fontSize: responsive.fontSize(17),
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-          )
+          // GestureDetector(
+          //   child: Container(
+          //     width: responsive.deviceWidth,
+          //     height: 50,
+          //     alignment: Alignment.centerLeft,
+          //     padding: const EdgeInsets.only(left: 15),
+          //     decoration: BoxDecoration(
+          //         color: Colors.white,
+          //         border: Border(
+          //           // bottom: BorderSide(color: Colors.grey),
+          //           top: BorderSide(color: Colors.grey.withOpacity(0.3))
+          //         )
+          //     ),
+          //     child: Text('로그아웃',
+          //       style: TextStyle(
+          //         color: const Color(0xFF434343),
+          //         fontSize: responsive.fontSize(17),
+          //         fontFamily: 'Inter',
+          //         fontWeight: FontWeight.w300,
+          //       ),
+          //     ),
+          //   ),
+          //   onTap: () async {
+          //     _showLogoutAlert(context);
+          //   },
+          // ),
+          // GestureDetector(
+          //   onTap: () async {
+          //     _showDeleteAccountAlert(context);
+          //   },
+          //   child: Container(
+          //     width: responsive.deviceWidth,
+          //     height: 50,
+          //     alignment: Alignment.centerLeft,
+          //     padding: const EdgeInsets.only(left: 15),
+          //     decoration: BoxDecoration(
+          //         color: Colors.white,
+          //         border: Border(
+          //           bottom: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          //           top: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          //
+          //         )
+          //     ),
+          //     child: Text('회원 탈퇴',
+          //       style: TextStyle(
+          //         color: const Color(0xFF434343),
+          //         fontSize: responsive.fontSize(17),
+          //         fontFamily: 'Inter',
+          //         fontWeight: FontWeight.w300,
+          //       ),
+          //     ),
+          //   ),
+          // )
         ]
       ),
     );
