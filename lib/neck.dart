@@ -5,7 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mocksum_flutter/util/filter/KalmanFilterPosition.dart';
 import 'package:mocksum_flutter/util/filter/KalmanFilterVelocity.dart';
 import 'package:mocksum_flutter/util/filter/MovementFilter.dart';
-import 'util/airpods/Quaternion.dart';
+import 'util/airpods/position/Quaternion.dart';
 import 'util/responsive.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
