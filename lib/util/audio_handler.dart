@@ -18,7 +18,7 @@ class MyAudioHandler extends BaseAudioHandler {
   double _nowPitch = 0;
   int _minInterval = 0;
   int _turtleNeckStartedTimeStamp = 0;
-  final List<double> _turtleNeckThreshold = [0.3, 0.4, 0.5];
+  final List<double> _turtleNeckThreshold = [0.5, 0.4, 0.3];
 
   final _bgAudioPlayer = AudioPlayer();
   // final _noticeAudioPlayer = AudioPlayer();
@@ -40,14 +40,7 @@ class MyAudioHandler extends BaseAudioHandler {
   void _setAudioFile() async {
     await _bgAudioPlayer.setAsset('assets/noti.mp3'); //setAudioSource(playlist, initialIndex: 0, initialPosition: Duration.zero);
     await _bgAudioPlayer.setLoopMode(LoopMode.one);
-    // await _noticeAudioPlayer.setAsset('assets/noti.mp3');
-    if (DetectStatus.sBgSoundActive) {
-      await _bgAudioPlayer.setVolume(0.4);
-    } else {
-      await _bgAudioPlayer.setVolume(0);
-    }
-
-    // await _bgAudioPlayer.setClip(start: const Duration(seconds: 2), end: const Duration(seconds: 10));
+    await _bgAudioPlayer.setVolume(0);
   }
 
   final _customEventController = StreamController<dynamic>.broadcast();
@@ -81,11 +74,13 @@ class MyAudioHandler extends BaseAudioHandler {
       // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
       if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minInterval == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp >= DetectStatus.sAlarmGap*1000) {
         _showPushAlarm();
-        _bgAudioPlayer.setVolume(0.4);
         // _noticeAudioPlayer.play();
-        Timer(const Duration(seconds: 2), () {
-          _bgAudioPlayer.setVolume(0);
-        });
+        if (DetectStatus.sBgSoundActive) {
+          _bgAudioPlayer.setVolume(0.4);
+          Timer(const Duration(seconds: 2), () {
+            _bgAudioPlayer.setVolume(0);
+          });
+        }
         _isNowTurtle = true;
         emitCustomEvent('turtle');
         // _bgAudioPlayer.setClip(start: const Duration(seconds: 15), end: const Duration(seconds: 17));
@@ -153,11 +148,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
-    if (DetectStatus.sBgSoundActive) {
-      await _bgAudioPlayer.setVolume(0.4);
-    } else {
-      await _bgAudioPlayer.setVolume(0);
-    }
+    await _bgAudioPlayer.setVolume(0);
     _bgAudioPlayer.play();
   }
 

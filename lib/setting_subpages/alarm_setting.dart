@@ -255,7 +255,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
             Container(
               width: responsive.percentWidth(85),
               margin: EdgeInsets.only(bottom: 10, left: responsive.percentWidth(7.5)),
-              child: Text('백색소음 설정',
+              child: Text('소리 설정',
                 style: TextStyle(
                   color: const Color(0xFF434343),
                   fontSize: responsive.fontSize(18),
@@ -270,7 +270,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                   width: responsive.percentWidth(85),
                   margin: const EdgeInsets.only(
                       bottom: 10),
-                  child: Text('백색소음과 함께 일의 집중력을 높여보세요.\n이 설정은 변경 후에 탐지를 중지 후 다시 시작해주세요.',
+                  child: Text('거북목 탐지 시 알람 소리를 내줘요\n이 설정은 변경 후에 탐지를 중지 후 다시 시작해주세요.',
                     style: TextStyle(
                       color: const Color(0xFF434343),
                       fontSize: responsive.fontSize(14),
@@ -292,7 +292,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('백색소음 켜기',
+                        Text('소리알림 켜기',
                           style: TextStyle(
                             color: const Color(0xFF434343),
                             fontSize: responsive.fontSize(14),

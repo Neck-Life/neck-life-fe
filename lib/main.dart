@@ -10,13 +10,7 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) => initPlugin());
-
-  // If the system can show an authorization request dialog
-  if (await AppTrackingTransparency.trackingAuthorizationStatus ==
-      TrackingStatus.notDetermined) {
-    await AppTrackingTransparency.requestTrackingAuthorization();
-  }
+  WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -70,15 +64,4 @@ Future<void> initializeAudioSession() async {
     ),
     androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
   ));
-}
-
-// Platform messages are asynchronous, so we initialize in an async method.
-Future<void> initPlugin() async {
-  final TrackingStatus status =
-  await AppTrackingTransparency.trackingAuthorizationStatus;
-  // If the system can show an authorization request dialog
-  if (status == TrackingStatus.notDetermined) {
-    // Request system's tracking authorization dialog
-    final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization();
-  }
 }
