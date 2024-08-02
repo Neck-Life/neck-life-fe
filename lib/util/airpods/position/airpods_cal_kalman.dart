@@ -5,9 +5,9 @@ import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../filter/KalmanFilterPosition.dart';
-import '../filter/KalmanFilterVelocity.dart';
-import '../filter/MovementFilter.dart';
+import '../../filter/KalmanFilterPosition.dart';
+import '../../filter/KalmanFilterVelocity.dart';
+import '../../filter/MovementFilter.dart';
 import 'Quaternion.dart';
 
 
@@ -72,11 +72,8 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       _isListening = false;
       _subscription?.cancel();
       _subscription = null;
-      accelerations.clear();
       velocities.clear();
       velocities.add(0.0);
-      positions.clear(); //스탑버튼 누르면 위치 그래프 초기화
-      positions.add(0.0);
       lastTimestamp= 0.0;
     });
   }
@@ -108,21 +105,21 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
 
 
     double currentAccelY = data.userAcceleration.y.toDouble() * cos(RotationAngle);
-    // print(data.userAcceleration.y.toDouble());
+
     // print(data.attitude.quaternion.y);
 
 
 
 
     // print(" data rationRate: ${data.rotationRate.x} ${data.rotationRate.y} ${data.rotationRate.z} ");
-    // if(data.rotationRate.x.abs()-rotationRatesX.last.abs()
-    //     + data.rotationRate.y.abs() -rotationRatesY.last.abs()
-    //     + data.rotationRate.z.abs() -rotationRatesZ.last.abs() > 0.0000000000001) {
-    //
-    //   currentAccelY =0;
-    // }
+    if(data.rotationRate.x.abs()-rotationRatesX.last.abs()
+        + data.rotationRate.y.abs() -rotationRatesY.last.abs()
+        + data.rotationRate.z.abs() -rotationRatesZ.last.abs() > 0.0000000000001) {
+
+      currentAccelY =0;
+    }
     // if(currentAccelY.abs() < 0.01) currentAccelY = 0.0;
-    // print(currentAccelY);
+
 
 
 
@@ -130,17 +127,11 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
 
     kf_v.setDt(deltaTime);
     kf_v.iterate([currentAccelY]);
-    double estimate_acc = kf_v.x_esti[1];
-
-
-
     var estimate_vel = kf_v.x_esti[0];
 
-    double velocityY = velocities.last + estimate_vel * deltaTime;
-    // double velocityY = velocities.last +  estimate_acc * deltaTime;
-    if(velocityY > 0.0001) velocityY -= 0.0001;
-    else if(velocityY < -0.0001) velocityY += 0.0001;
-    else velocityY = 0;
+    double velocityY = estimate_vel  ;
+
+
 
 
     var kf_p = KalmanfilterPosition();
@@ -151,7 +142,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     kf_p.setDt(deltaTime);
     kf_p.iterate([velocityY]);
     var estimate_pos = kf_p.x_esti[0];
-    // estimate_vel = kf_p.x_esti[1];
+
 
     // 탐지로직
     // 여기에 이동평균 씌워서 얼마나 이동했는지?
@@ -169,10 +160,10 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       movementFilter.clear();
     }
 
-    // print("목 위치 : $neckPosition");
+    print("목 위치 : $neckPosition");
 
     // Store the position for visualization
-    if (velocities.length > 100) { // Keep last 100 data points
+    if (velocities.length > 5) { // Keep last 100 data points
       velocities.removeAt(0);
       // positions.clear();
       positions.removeAt(0);
@@ -182,7 +173,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       rotationRatesZ.removeAt(0);
 
       quaternionY.remove(0);
-
+      
 
     }
     accelerations.add(currentAccelY);
@@ -247,8 +238,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
           Expanded(
             child: LineChart(
               LineChartData(
-                minY: -0.0,
-                maxY: 0.2,
+
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
@@ -264,7 +254,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
             onPressed: _isListening ? _stopListening : _startListening,
             child: Text(_isListening ? "Stop Listening" : "Start Listening"),
           ),
-
+          
         ],
       ),
     );
