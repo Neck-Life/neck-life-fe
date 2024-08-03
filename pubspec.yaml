@@ -39,7 +39,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   provider: ^6.1.2
   flutter_airpods: ^1.0.5
-  flutter_background_service: ^5.0.6
   flutter_local_notifications: ^17.2.1
   url_launcher: ^6.3.0
   carousel_slider: ^4.2.1
@@ -47,11 +46,20 @@ dependencies:
   google_sign_in: ^6.2.1
   http: ^1.2.1
   open_settings_plus: ^0.3.3
+  audio_service: ^0.18.14
+  just_audio: 0.9.38
+  audio_session: ^0.1.21
+  sign_in_with_apple: ^6.1.1
+  flutter_native_splash: ^2.4.1
+  purchases_flutter: ^6.30.2
+  app_tracking_transparency: ^2.0.5
+#  permission_handler: ^11.3.1
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -59,6 +67,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

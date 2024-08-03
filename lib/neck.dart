@@ -1,14 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mocksum_flutter/util/filter/KalmanFilterPosition.dart';
-import 'package:mocksum_flutter/util/filter/KalmanFilterVelocity.dart';
-import 'package:mocksum_flutter/util/filter/MovementFilter.dart';
-import 'util/airpods/position/Quaternion.dart';
 import 'util/responsive.dart';
-import 'package:flutter_airpods/flutter_airpods.dart';
-import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
 
@@ -23,250 +16,44 @@ class Neck extends StatefulWidget {
 
 class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
-  // List<List<dynamic>> rows = [];
-
-
   late AnimationController _controller;
   double _rotateDeg = 0;
   double _pitch = 0;
-  double _pitchTemp = 0;
   double _prevPitch = 0;
+  int _prevTickCount = 0;
   int _sameValueCnt = 0;
-  StreamSubscription<DeviceMotionData>? _subscription;
   bool _detectAvailable = false;
-  int _minAlarmDelay = 0;
-  int _stateTurtleNeck = 0;
   final List<double> _turtleThreshold = [0.3, 0.4, 0.5];
-  // bool _nowDetecting = false;
-  int _initTick = 0;
 
-  // for position calculating
-  Quaternion? initialQuaternion;
-  final double sampleRate = 1/0.04;
-  double lastTimestamp = 0.0;
-  List<double> velocities = [0.0];
-  List<double> positions = [0.0];
-  List<double> accelerations = [0.0];
-  List<double> rotationRatesX = [0.0];
-  List<double> rotationRatesY = [0.0];
-  List<double> rotationRatesZ = [0.0];
-  List<double> roll = [0.0];
-  List<double> pitch = [0.0];
-  List<double> yaw = [0.0];
-  List<double> quaternionY = [0.0];
-  MovementFilter movementFilter = MovementFilter(5);
-  double neckPosition = 0;
-  double neckPositionUI = 0;
-
-  final NotificationDetails _details = const NotificationDetails(
-      android: AndroidNotificationDetails('temp1', 'asdf'),
-      iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true
-      )
-  );
 
   // temporary code for ui test
   bool _isTurtle = false;
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _pitchTemp > _turtleThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
     }
   }
 
-  void _processSensorData(DeviceMotionData data) {
-
-    // 초기 자세 측정
-    initialQuaternion ??= Quaternion(data.attitude.quaternion.w.toDouble(),
-      data.attitude.quaternion.x.toDouble(),
-      data.attitude.quaternion.y.toDouble(),
-      data.attitude.quaternion.z.toDouble(),
-    );
-
-    var nowQuaternion = Quaternion(data.attitude.quaternion.w.toDouble(),
-      data.attitude.quaternion.x.toDouble(),
-      data.attitude.quaternion.y.toDouble(),
-      data.attitude.quaternion.z.toDouble(),
-    );
-
-    var RotationAngle = calculateRotationAngle(initialQuaternion!,nowQuaternion);
-    double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-    double deltaTime = velocities.length==1 ? 0 : currentTime - lastTimestamp;
-    lastTimestamp = currentTime;
-
-    double currentAccelY = data.userAcceleration.y.toDouble() * cos(RotationAngle);
-
-    // print(data.attitude.quaternion.y);
-
-    // print(" data rationRate: ${data.rotationRate.x} ${data.rotationRate.y} ${data.rotationRate.z} ");
-    if(data.rotationRate.x.abs()-rotationRatesX.last.abs()
-        + data.rotationRate.y.abs() -rotationRatesY.last.abs()
-        + data.rotationRate.z.abs() -rotationRatesZ.last.abs() > 0.0000000000001) {
-
-      currentAccelY =0;
-    }
-    // if(currentAccelY.abs() < 0.01) currentAccelY = 0.0;
-
-    var kf_v = KalmanfilterVelocity();
-
-    kf_v.setDt(deltaTime);
-    kf_v.iterate([currentAccelY]);
-    var estimate_vel = kf_v.x_esti[0];
-
-    double velocityY = estimate_vel  ;
-
-    var kf_p = KalmanfilterPosition();
-
-    kf_p.setX([positions.last, 0]);
-
-    _initTick++;
-    if(_initTick >=3000){
-      kf_p.setX([0, 0]);
-    }
-    if(_initTick ==3005) {
-      _initTick=0;
-    }
-
-    kf_p.setDt(deltaTime);
-    kf_p.iterate([velocityY]);
-    var estimate_pos = kf_p.x_esti[0];
-
-
-    // 탐지로직
-    // 여기에 이동평균 씌워서 얼마나 이동했는지?
-    var update = movementFilter.update(estimate_pos);
-
-    if(update> 0.001){
-      print("목이 앞으로 이동");
-      // print(update);
-      neckPosition+=update;
-      movementFilter.clear();
-    }else if(update < -0.0001){
-      print("목이 뒤로 이동");
-      // print(update);
-      neckPosition+=update;
-      movementFilter.clear();
-    }
-
-
-    print("목 위치 : $neckPosition");
-
-    // Store the position for visualization
-    if (velocities.length > 5) { // Keep last 100 data points
-      velocities.removeAt(0);
-      // positions.clear();
-      positions.removeAt(0);
-      accelerations.removeAt(0);
-      rotationRatesX.removeAt(0);
-      rotationRatesY.removeAt(0);
-      rotationRatesZ.removeAt(0);
-
-      quaternionY.remove(0);
-
-
-    }
-    accelerations.add(currentAccelY);
-    velocities.add(velocityY);
-    positions.add(estimate_pos);
-    rotationRatesX.add(data.rotationRate.x.toDouble());
-    rotationRatesY.add(data.rotationRate.y.toDouble());
-    rotationRatesZ.add(data.rotationRate.z.toDouble());
-
-    // List<dynamic> row = [];
-    // row.add(currentAccelY);
-    // row.add(velocityY);
-    // row.add(neckPosition);
-    // rows.add(row);
-  }
-
-  Future<void> _showPushAlarm() async {
-    FlutterLocalNotificationsPlugin localNotification =
-    FlutterLocalNotificationsPlugin();
-
-    await localNotification.show(0,
-        '거북목 자세 감지',
-        '바른 자세를 유지해봅시다!',
-        _details
-    );
-  }
-
-  void _startAirpodSensing() {
-    // DetectStatus ds = Provider.of(context);
-    // if (!ds.nowDetecting) return;
-    setState(() {
-      _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-        _detectAvailable = true;
-        // _processSensorData(data);
-        _pitchTemp = data.toJson()['pitch'];
-        DetectStatus.nowPitch = _pitchTemp;
-        // print(DetectStatus.initialPitch);
-        // print(_pitchTemp);
-        // print('$_isTurtle $_minAlarmDelay ${DetectStatus.sNowDetecting}');
-        if (_minAlarmDelay > 0) {
-          _minAlarmDelay -= 1;
-        }
-        // print(_checkIsNowTurtle());
-        if (_checkIsNowTurtle() && _stateTurtleNeck == 0 && DetectStatus.sNowDetecting) {
-          _stateTurtleNeck = DateTime.now().millisecondsSinceEpoch;
-        }
-        if (!_checkIsNowTurtle()) {
-          _stateTurtleNeck = 0;
-        }
-        // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
-        if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minAlarmDelay == 0 && DateTime.now().millisecondsSinceEpoch - _stateTurtleNeck >= DetectStatus.sAlarmGap*1000) {
-          _showPushAlarm();
-          // Provider.of<DetectStatus>(context, listen: false)
-          _isTurtle = false;
-          _minAlarmDelay = 600;
-          _stateTurtleNeck = 0;
-        }
-      }, onError: (error) {
-        print("error");
-        _detectAvailable = false;
-      });
-    });
-  }
-
-  void _stopListening() {
-    // print('asdf');
-    // String csv = const ListToCsvConverter().convert(rows);
-    //
-    // File f = File('est.csv');
-    // f.writeAsString(csv);
-
-    setState(() {
-      _subscription?.cancel();
-      // _positions.clear();
-      // _positions.add(0.0);
-      // _lastTimestamp = 0.0;
-      _subscription = null;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    // List<dynamic> row = [];
-    // row.add("acc");
-    // row.add("vel");
-    // row.add("pos");
-    // rows.add(row);
-
-    _startAirpodSensing();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 50));
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
-          _pitch = _pitchTemp;
+          _pitch = DetectStatus.nowPitch;
+          if (_pitch == 0 || DetectStatus.tickCount == _prevTickCount) {
+            _detectAvailable = false;
+          } else {
+            _detectAvailable = true;
+          }
+
           _isTurtle = _checkIsNowTurtle();
-          // neckPositionUI = neckPosition*5;
-          _rotateDeg = positions.last*50 > 0.5 ? 0.5 : positions.last*50;
-          // print("now pitch: $_pitch");
         });
         _controller.value = 0;
         _controller.forward();
@@ -276,26 +63,21 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    print("sdf");
     _controller.dispose();
-    _stopListening();
     super.dispose();
   }
 
-  double cos_f(double d, double offset) {
+  double cosWithWeight(double d, double offset) {
     return d >= 0 ? (1-cos(d))*(offset*(1+d*5)) : (cos(d)-1)*offset*(1-5*(1/d));
   }
 
   void _checkDetectAvailable() {
     Future.delayed(Duration.zero, () {
-      // _nowDetecting = Provider.of<DetectStatus>(context, listen: false).nowDetecting;
-      // // print('$_isTurtle $_minAlarmDelay $_nowDetecting');
       if (_prevPitch != 0 && _prevPitch == _pitch) {
         _sameValueCnt += 1;
         if (_sameValueCnt > 30) {
           Provider.of<DetectStatus>(context, listen: false).disavailableDetect();
           _prevPitch = 0;
-          _pitch = 0;
           _detectAvailable = false;
           _sameValueCnt = 0;
         }
@@ -307,6 +89,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
         Provider.of<DetectStatus>(context, listen: false).availableDetect();
       }
       _prevPitch = _pitch;
+      _prevTickCount = DetectStatus.tickCount;
     });
   }
 
@@ -314,7 +97,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     _checkDetectAvailable();
-
+    // _pitch = -0.3;
+    // _isTurtle = true;
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -351,8 +135,8 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                     height: responsive.percentWidth(85)*0.3,
                     margin: EdgeInsets.only(top: responsive.percentWidth(85)*0.4),
                     decoration: const BoxDecoration(
-                        color: Color(0xFFD9D9D9),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                      color: Color(0xFFD9D9D9),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
                     ),
                   ),
                   Positioned(
@@ -372,7 +156,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                   ),
                   Positioned(
                       top: responsive.percentWidth(85)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(85)*0.15,
-                      left: responsive.percentWidth(85)*0.5-responsive.percentWidth(85)*0.03+cos_f(_rotateDeg, responsive.percentWidth(5)),
+                      left: responsive.percentWidth(85)*0.5-responsive.percentWidth(85)*0.03+cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
                       child: Transform.rotate(
                           angle: -_pitch, // **calculated by pitch
                           origin: Offset(-responsive.percentWidth(15)*0.5+responsive.percentWidth(5)/2, responsive.percentWidth(15)*0.5-responsive.percentWidth(5)/2),

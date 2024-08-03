@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/util/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'login.dart';
 import 'util/responsive.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -16,6 +19,7 @@ class _TutorialState extends State<Tutorials> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
+    UserStatus userStatus = Provider.of(context);
     return Scaffold(
       body: SingleChildScrollView(
           child: Container(
@@ -313,7 +317,12 @@ class _TutorialState extends State<Tutorials> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      // if(userStatus.isLogged) {
+                        Navigator.of(context).pop();
+                      // } else {
+                      //   Navigator.push(context,
+                      //       MaterialPageRoute(builder: (context) => const LoginPage()));
+                      // }
                     },
                     child: const Text('튜토리얼 끝내기')
                 )

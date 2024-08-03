@@ -11,18 +11,22 @@ class DetectStatus with ChangeNotifier {
 
   static double initialPitch = 0;
   static double nowPitch = 0;
+  static int tickCount = 0;
+  static bool sBgSoundActive = false;
 
   bool _nowDetecting = false;
   bool _detectAvailable = false;
   bool _isNowTurtle = false;
   int _sensitivity = 1;
   int _alarmGap = 15;
+  bool _bgSoungActive = false;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
   bool get isNowTurtle => _isNowTurtle;
   int get sensitivity => _sensitivity;
   int get alarmGap => _alarmGap;
+  bool get bgSoundActive => _bgSoungActive;
 
   DetectStatus() {
     init();
@@ -31,9 +35,10 @@ class DetectStatus with ChangeNotifier {
   void init() async {
     // _nowDetecting = true;
     // _detectAvailable = true;
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? sensitivitySetting = await storage.read(key: 'sensitivity');
     String? alarmSetting = await storage.read(key: 'alarm');
+    String? bgSoundSetting = await storage.read(key: 'isBgActive');
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
       sSensitivity = _sensitivity;
@@ -42,13 +47,17 @@ class DetectStatus with ChangeNotifier {
       _alarmGap = int.parse(alarmSetting);
       sAlarmGap = _alarmGap;
     }
+    if (bgSoundSetting != null) {
+      _bgSoungActive = bgSoundSetting == '1';
+      sBgSoundActive = _bgSoungActive;
+    }
   }
 
   void startDetecting() async {
     _nowDetecting = true;
     sNowDetecting = true;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '1');
   }
 
@@ -56,7 +65,7 @@ class DetectStatus with ChangeNotifier {
     _nowDetecting = false;
     sNowDetecting = false;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
   }
 
@@ -70,7 +79,7 @@ class DetectStatus with ChangeNotifier {
     _sensitivity = sensitivityVal.toInt();
     sSensitivity = _sensitivity;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'sensitivity', value: _sensitivity.toString());
   }
 
@@ -78,8 +87,16 @@ class DetectStatus with ChangeNotifier {
     _alarmGap = alarmGapVal;
     sAlarmGap = alarmGapVal;
     notifyListeners();
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'alarm', value: alarmGapVal.toString());
+  }
+
+  void setBgSoundActive(bool isActive) async {
+    _bgSoungActive = isActive;
+    sBgSoundActive = _bgSoungActive;
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
   }
 
   void disavailableDetect() {
