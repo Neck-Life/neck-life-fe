@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +14,24 @@ class Tutorials extends StatefulWidget {
 }
 
 class _TutorialState extends State<Tutorials> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   int _pageNum = 0;
   final CarouselController _btnController = CarouselController();
+
+  @override
+  void initState() {
+    super.initState();
+    // 페이지가 로드될 때 이벤트 로깅
+    analytics.logTutorialBegin();
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    // 페이지가 닫힐 때 이벤트 로깅
+    analytics.logTutorialComplete();
+  }
 
   @override
   Widget build(BuildContext context) {

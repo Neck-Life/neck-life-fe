@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -50,6 +51,9 @@ class MyAudioHandler extends BaseAudioHandler {
   MyAudioHandler() {
     _setAudioFile();
     _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
+      //FirebaseAnalytics
+      _gaRawDataEvent(data);
+
       // print(_playingSoundIdx);
       // _customEventController.add(data);
       _nowPitch = data.toJson()['pitch'];
@@ -172,7 +176,16 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() => _bgAudioPlayer.seekToPrevious();
 
+  Future<void> _gaRawDataEvent(DeviceMotionData data) async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: "raw_data",
+      parameters: data.toJson().map((key, value) => MapEntry(key, value as Object)),
+    );
+  }
+
 }
+
+
 
 
 // void _setAudioHandler() async {

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/tutorials.dart';
 // import 'package:mocksum_flutter/util/user_provider.dart';
@@ -15,6 +16,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingState extends State<Settings> {
+
+  //FirebaseAnalytics
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final Uri _fomrUrl = Uri.parse('https://forms.gle/bi2YK5wfAFXQN4DKA');
   final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
@@ -181,6 +185,8 @@ class _SettingState extends State<Settings> {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     // UserStatus userStatus = Provider.of(context);
+
+    analytics.logScreenView(screenName: 'settings');
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
