@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,9 @@ class StartPositionState extends State<StartPosition> {
   int _lastTime = 5;
   double _avgInitPitch = 0;
   Timer? _timer;
+
+  //FirebaseAnalytics
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   void _startTimer(DetectStatus detectStatus, BuildContext context) {
     _timerRunning = true;
@@ -41,6 +45,7 @@ class StartPositionState extends State<StartPosition> {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     DetectStatus detectStatus = Provider.of(context);
+    analytics.logScreenView(screenName: 'start_position');
 
     return Scaffold(
         body: SingleChildScrollView(

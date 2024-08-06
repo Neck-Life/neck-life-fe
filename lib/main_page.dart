@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/start_position.dart';
 import 'package:mocksum_flutter/util/audio_handler.dart';
@@ -26,6 +27,9 @@ class MainState extends State<MainPage> {
   //   id: 'assets/noti.mp3',
   //   title: 'noti_sound',
   // );
+
+  //FirebaseAnalytics
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   Future<void> _initLocalNotification() async {
     FlutterLocalNotificationsPlugin localNotification =
@@ -116,6 +120,8 @@ class MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     DetectStatus detectStatus = Provider.of(context);
+
+    analytics.logScreenView(screenName: 'main_page');
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -221,6 +227,15 @@ class MainState extends State<MainPage> {
                         ),
                         child: ElevatedButton.icon(
                           onPressed: () {
+                            FirebaseAnalytics.instance.logEvent(
+                              name: 'event_name',
+                              parameters: <String, Object>{
+                                'string_parameter': 'string',
+                                'int_parameter': 42,
+                              },
+                            );
+
+
                             if (!detectStatus.detectAvailable) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

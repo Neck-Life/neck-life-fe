@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,9 @@ class Paywall extends StatefulWidget {
 }
 
 class _PaywallState extends State<Paywall> {
+
+  //FirebaseAnalytics
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _PaywallState extends State<Paywall> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
+    analytics.logScreenView(screenName: 'paywall');
 
     return Scaffold(
       body: Column(

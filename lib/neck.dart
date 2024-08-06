@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/util/location_handler.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
@@ -24,6 +25,9 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   int _sameValueCnt = 0;
   bool _detectAvailable = false;
   final List<double> _turtleThreshold = [0.3, 0.4, 0.5];
+
+  //FirebaseAnalytics
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
 
   // temporary code for ui test
@@ -97,8 +101,9 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     _checkDetectAvailable();
-    // _pitch = -0.3;
-    // _isTurtle = true;
+
+    analytics.logScreenView(screenName: 'neck');
+
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
