@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:mocksum_flutter/util/location_handler.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
