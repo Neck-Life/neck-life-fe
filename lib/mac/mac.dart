@@ -227,26 +227,36 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //   idx--;
     // }
     // return position = positions[idx];
+
+    // 속도그래프가 봉우리 모양이 아닐때 탐지 및 복구
+    int idx_r = velocities.length -1;
+    double MAX_velocity = 0;
+    while(idx_r>=0 && MAX_velocity <= velocities[idx_r].abs()){
+      MAX_velocity = max(MAX_velocity, velocities[idx_r].abs());
+    }
+    if(MAX_velocity/2 < velocities.last.abs()){ // 어 왜 속도가 0이 아니지?싶은 순간
+      double lastVelocityValue = velocities.last;
+      int idx_l=  idx_r;
+      while(idx_l>=0 && velocities[idx_r].abs() < 0.001){
+        velocities[idx_l] -= 2*lastVelocityValue;
+        idx--;
+      }
+      //속도그래프의 삼각형구간을 역전시킨뒤 두배하여 위치를 복구함
+      position = positions[idx_r] - 2*(positions[idx_r] - positions[idx_l]);
+    }
+
+
+
     idx = velocities.length -1;
     while(idx>=0){
-      double temp;
-      if(velocities[idx]<0){
-        // temp = velocities[idx]+0.0010;
-        // velocities[idx] += 0.010;
-
-      }else{
-        // temp = velocities[idx]-0.001;
-        // velocities[idx] -= 0.01;
-      }
-
-
-      if(velocity *velocities[idx] > 0){
+      if(velocity * velocities[idx] > 0){
         idx--;
       }else{
         break;
       }
 
     }
+
     while(idx>=0 && velocity * velocities[idx] < 0) {
       compensationFlag = true;
       break;
