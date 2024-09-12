@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -45,6 +46,16 @@ class AirpodsCalMovingAvgZupt extends Filter{
   double cutoffFrequency = 5.0; // 컷오프 주파수 (Hz)
   double sampleRate = 25.0; // 샘플링 레이트 (Hz)
 
+  List<double> deltaTimes = [0.0];
+
+  List<double> positions2 = [0.0];
+  double last_zero_velocity = 0.0;
+  double last_zero_positon = 0.0;
+  bool isRotated = false;
+  bool shouldIgnoreData = false;
+
+
+
   /// position값을 [0,limitValue]범위로 리턴, 비워두면 기존값그대로 리턴
   @override
   double getPosition([double limitValue=threshold]){
@@ -59,6 +70,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
   /// <- applyZUPT : 영속도 보정 알고리즘
   @override
   void processSensorData(DeviceMotionData data) {
+
+
+
     double currentTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     double deltaTime = positions.length==1 ? 0 : currentTime - lastTimestamp;
     lastTimestamp = currentTime;
@@ -66,6 +80,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
     double currentAccelY = data.userAcceleration.y.toDouble();
     double currentAccelZ = data.userAcceleration.z.toDouble();
     double currentAccelX = data.userAcceleration.x.toDouble();
+
+    deltaTimes.add(deltaTime);
+
 
 
     rawY.add(currentAccelY);
@@ -119,11 +136,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
     double cal_acc = -cal_acc_y; //y축만 고려하기
     // cal_acc = hpfacc.process(cal_acc);
 
-    accelometers.add(cal_acc);
     double offset = 0.01;
     if(cal_acc > offset) cal_acc -= 0.001;
     else if(cal_acc < -offset) cal_acc += 0.001;
     else cal_acc = 0;
+    accelometers.add(cal_acc);
 
     double velocity = velocities.last + cal_acc * deltaTime;
     // double NotZUPTvelocity = NotZUPTvelocities.last + cal_acc * deltaTime;
@@ -139,7 +156,66 @@ class AirpodsCalMovingAvgZupt extends Filter{
     ;
     // NotZUPTvelocities.add(NotZUPTvelocity);
     // [velocity, position] = applyZUPT(velocity, position);
+
+
+
+
+
+    List<double> sublist = [];
+    if (accelometers.length > 10) {
+      sublist = accelometers.sublist(accelometers.length - 5, accelometers.length);
+    }
+
+    // 회전 하고 정지 , 처음 아님
+    if (isRotated  && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0 && position != last_zero_positon) {
+      print(1);
+
+
+    int inx = positions.length - 1;
+
+    // 롤백 조건 확인
+    print("체크포인트: ${positions[inx]}, 마지막 체크포인트: $last_zero_positon");
+
+    // 현재 위치가 체크포인트와 같아질 때까지 롤백
+    while (inx >= 0) {
+      if (positions[inx] == last_zero_positon) {
+        print("롤백 완료: $inx 번째 위치가 체크포인트와 일치함.");
+        break;  // 위치가 체크포인트와 같으면 롤백 중단
+      }
+      positions[inx] = last_zero_positon;  // 위치 롤백
+      velocities[inx] = 0;  // 속도 롤백
+      print("롤백 중: $inx 위치가 $last_zero_positon 으로 설정됨.");
+      inx--;
+    }
+
+    // 현재 속도와 위치를 체크포인트 값으로 복구
+    velocity = last_zero_velocity;
+    position = last_zero_positon;
+    isRotated = false;  // 롤백 완료 후 회전 상태 해제
+    }
+
+      // 가속도가 0이고 속도도 0일 때 체크포인트 설정
+    else if (!isRotated && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
+      print(2);
+
+        last_zero_velocity = velocity;
+        last_zero_positon = position;
+
+
+
+    } else if (hasRotated(data.attitude.pitch.toDouble(), data.attitude.roll.toDouble(), data.attitude.yaw.toDouble())) {
+      isRotated = true;
+      print("회전 발생");
+    }
+
+
+// ZUPT 적용
     [velocity, position] = applyZUPT(velocity, position);
+
+
+
+
+
 
     //화면상에서 100개 정보만 출력
     finalAccelometers.add(cal_acc);
@@ -147,7 +223,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // velocities.add(velocity);
 
     velocities.add(velocity);
+
     positions.add(position);
+    positions2.add(position);
     beforepositions.add(beforeposition);
     // accelometers.add(data.attitude.pitch.toDouble());
     // velocities.add(data.attitude.roll.toDouble());
@@ -166,19 +244,41 @@ class AirpodsCalMovingAvgZupt extends Filter{
     pitches.add(data.attitude.pitch.toDouble());
     rolls.add(data.attitude.roll.toDouble());
     yaws.add(data.attitude.yaw.toDouble());
-    if(pitches.length > 500) pitches.removeAt(0);
-    if(rolls.length > 500) rolls.removeAt(0);
-    if(yaws.length > 500) yaws.removeAt(0);
+    if(pitches.length > 100) pitches.removeAt(0);
+    if(rolls.length > 100) rolls.removeAt(0);
+    if(yaws.length > 100) yaws.removeAt(0);
+    if(deltaTimes.length>100) deltaTimes.removeAt(0);
 
 
-    if(accelometersNotSmooth.length > 500) accelometersNotSmooth.removeAt(0);
-    if(finalAccelometers.length > 500) finalAccelometers.removeAt(0);
-    if(accelometers.length > 500) accelometers.removeAt(0);
-    if(velocities.length > 500) velocities.removeAt(0);
-    if(NotZUPTvelocities.length > 500) NotZUPTvelocities.removeAt(0);
-    if(beforepositions.length > 500) beforepositions.removeAt(0);
-    if(positions.length > 500) positions.removeAt(0);
-    if(stablePositions.length > 500) stablePositions.removeAt(0);
+    if(accelometersNotSmooth.length > 100) accelometersNotSmooth.removeAt(0);
+    if(finalAccelometers.length > 100) finalAccelometers.removeAt(0);
+    if(accelometers.length > 100) accelometers.removeAt(0);
+    if(velocities.length > 100) velocities.removeAt(0);
+    if(NotZUPTvelocities.length > 100) NotZUPTvelocities.removeAt(0);
+    if(beforepositions.length > 100) beforepositions.removeAt(0);
+    if(positions.length > 100) positions.removeAt(0);
+    if(stablePositions.length > 100) stablePositions.removeAt(0);
+    if(positions2.length > 100) positions2.removeAt(0);
+  }
+
+  bool hasRotated(double currentPitch, double currentRoll, double currentYaw) {
+    // 변화량 계산
+    double deltaPitch = (currentPitch - pitches.last).abs();
+    double deltaRoll = (currentRoll - rolls.last).abs();
+    double deltaYaw = (currentYaw - yaws.last).abs();
+
+    // print("deltaPitch : $deltaPitch");
+    // print("deltaRoll : $deltaRoll");
+    // print("deltaYaw : $deltaYaw");
+
+
+    // 회전 여부 판단
+    bool rotated = deltaPitch > 0.1 || deltaRoll > 0.1|| deltaYaw > 0.08;
+
+    // 이전 값을 현재 값으로 업데이트
+
+
+    return rotated;
   }
 
   //[velocity, postion] => [개선된 velocity, position] 제공
@@ -191,13 +291,60 @@ class AirpodsCalMovingAvgZupt extends Filter{
       deviation += finalAccelometers[i].abs();
     }
     deviation /= windowSIZE;
-    print(deviation);
+
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.0015) return [velocity, position];
+    if(deviation > 0.0015){
+      return [velocity, position];
+    }
     //위치 보상 알고리즘
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
     position = compensatePosition(velocity, position);
+
+    //0으로 바꾸기전에 체크 하면 될려나
+    if(velocity.abs() > 0.001) {
+      bool flag = false;
+      for(int i=0;i<3;i++){
+        if(velocity == velocities[velocities.length-1 -  i]){
+          flag = true;
+          break;
+        }
+      }
+
+      if(flag){
+        int idx_r = velocities.length - 1;
+        double pos=0;
+        while(velocities[idx_r]!=0){
+          // if(velocities[idx_r] == velocity){
+          //   idx_r--;
+          //   continue;
+          // }
+          pos +=  velocities[idx_r] * deltaTimes[idx_r];
+          idx_r--;
+        }
+
+        if(pos>0){
+          print("뒤로이동");
+        }else{
+          print("앞으로 이동");
+        }
+        if(pos.abs()<0.0005){
+          positions2.add(position - (pos*2));
+        }else if(pos.abs()<0.001){
+          positions2.add(position - (pos*2));
+        }
+        else{
+          positions2.add(position - (pos*2));
+        }
+
+      }
+      else{
+        positions2.add(position);
+
+      }
+
+
+    }
     velocity = 0;
     isZUPT.last = true;
     stopFlag = false;
@@ -229,21 +376,75 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // return position = positions[idx];
 
     // 속도그래프가 봉우리 모양이 아닐때 탐지 및 복구
-    int idx_r = velocities.length -1;
-    double MAX_velocity = 0;
-    while(idx_r>=0 && MAX_velocity <= velocities[idx_r].abs()){
-      MAX_velocity = max(MAX_velocity, velocities[idx_r].abs());
-    }
-    if(MAX_velocity/2 < velocities.last.abs()){ // 어 왜 속도가 0이 아니지?싶은 순간
-      double lastVelocityValue = velocities.last;
-      int idx_l=  idx_r;
-      while(idx_l>=0 && velocities[idx_r].abs() < 0.001){
-        velocities[idx_l] -= 2*lastVelocityValue;
-        idx--;
-      }
-      //속도그래프의 삼각형구간을 역전시킨뒤 두배하여 위치를 복구함
-      position = positions[idx_r] - 2*(positions[idx_r] - positions[idx_l]);
-    }
+    // int idx_r = velocities.length -1;
+    // if(velocity == 0) {
+    //   MAX_velocity = 0.001;
+    // }else{
+    //   MAX_velocity = max(MAX_velocity, velocity.abs());
+    // }
+
+    // if(idx_r>0 && velocities.length> 10 && MAX_velocity>0.001){
+    //   bool isNotQuadratic = true;
+    //   for(int i=0;i<3;i++){
+    //     if(MAX_velocity/2< velocities[idx_r-i].abs() && velocities[idx_r] == velocity ){
+    //       isNotQuadratic = false;
+    //       break;
+    //     }
+    //   }
+    //   if(isNotQuadratic){
+    //     print("isNotQuadratic");
+    //
+    //     double sum =0;
+    //     while(idx_r>=0 && velocities[idx_r].abs() > 0.0001){
+    //       if(velocities[idx_r].abs() == velocity){
+    //         continue;
+    //       }
+    //       sum += velocities[idx_r];
+    //       idx_r--;
+    //     }
+    //     positions[velocities.length-1] = positions[idx_r] - sum*2;
+    //     print(sum);
+    //     print("속도그래프가 봉우리 모양이 아닐때 탐지 및 복구");
+    //
+    //
+    //     ///위치 오차 보정 : 과도하게 커지거나 작아지면, limit값으로 강제 변경
+    //     ///
+    //     if(position > threshold) position = threshold;
+    //     else if(position < 0) position = 0.0;
+    //
+    //     if(position == threshold){
+    //       print("중단");
+    //     }
+    //     return position;
+    //   }
+    //
+    //
+    //
+    // }
+
+
+    // if(MAX_velocity/2 < velocities.last.abs()){ // 어 왜 속도가 0이 아니지?싶은 순간
+    //   double lastVelocityValue = velocities.last;
+    //   int idx_l=  idx_r;
+    //   while(idx_l>=0 && velocities[idx_r].abs() < 0.001){
+    //     velocities[idx_l] -= 2*lastVelocityValue;
+    //     idx--;
+    //   }
+    //   //속도그래프의 삼각형구간을 역전시킨뒤 두배하여 위치를 복구함
+    //   position = positions[idx_r] - 2*(positions[idx_r] - positions[idx_l]);
+    // }
+    //
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -282,7 +483,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     else if(position < 0) position = 0.0;
 
     if(position == threshold){
-      print("중단");
+      // print("중단");
     }
     return position;
   }
@@ -330,6 +531,8 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
   List<double> rolls = [0.0];
   List<double> yaws = [0.0];
 
+  List<double> positions2 = [0.0];
+
   @override
   void initState() {
     super.initState();
@@ -356,6 +559,8 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       pitches = positionDisplayTest.pitches;
       rolls = positionDisplayTest.rolls;
       yaws = positionDisplayTest.yaws;
+
+      positions2 = positionDisplayTest.positions2;
 
       _subscription = FlutterAirpodsMac.getAirPodsDeviceMotionUpdates.listen((data) {
         // print(positionDisplay.getPosition(100)); // 최대값100으로 scaling하여 위치 출력
@@ -680,38 +885,99 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
           //   ),
           // ),
 
-          // Expanded(
-          //   child: Column(
-          //     children: [
-          //       Expanded(
-          //         child: LineChart(
-          //           LineChartData(
-          //             borderData: FlBorderData(show: false),
-          //             minY: 1.000,
-          //             maxY: -1.000,
-          //             lineBarsData: [
-          //               LineChartBarData(
-          //                 spots: yaws.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
-          //                 isCurved: true,
-          //                 color: Colors.blue,
-          //               ),
-          //             ],
-          //             titlesData: FlTitlesData(
-          //               bottomTitles: AxisTitles(
-          //                 sideTitles: SideTitles(showTitles: false), // X축 레이블 숨기기
-          //               ),
-          //               topTitles: AxisTitles(
-          //                 sideTitles: SideTitles(showTitles: false), // X축 상단 타이틀 숨기기
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       const Text('yaw Data'),
-          //     ],
-          //   ),
-          // ),
-          //
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: LineChart(
+                    LineChartData(
+                      borderData: FlBorderData(show: false),
+                                  minY: -1,
+                                  maxY: 1,
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: pitches.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+                          isCurved: true,
+                          color: Colors.blue,
+                        ),
+                      ],
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 레이블 숨기기
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 상단 타이틀 숨기기
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Text('pitches Data'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: LineChart(
+                    LineChartData(
+                      borderData: FlBorderData(show: false),
+                      minY: -1,
+                      maxY: 1,
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: rolls.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+                          isCurved: true,
+                          color: Colors.blue,
+                        ),
+                      ],
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 레이블 숨기기
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 상단 타이틀 숨기기
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Text('rolls Data'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: LineChart(
+                    LineChartData(
+                      borderData: FlBorderData(show: false),
+                      minY: -1,
+                      maxY: 1,
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: yaws.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value)).toList(),
+                          isCurved: true,
+                          color: Colors.blue,
+                        ),
+                      ],
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 레이블 숨기기
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false), // X축 상단 타이틀 숨기기
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Text('yaw Data'),
+              ],
+            ),
+          ),
           ElevatedButton(
             onPressed: _isListening ? _stopListening : _startListening,
             child: Text(_isListening ? "Stop Listening" : "Start Listening"),
