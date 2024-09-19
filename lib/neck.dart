@@ -29,31 +29,37 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   // temporary code for ui test
   bool _isTurtle = false;
 
-  bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
 
   @override
   void initState() {
     super.initState();
+    _initAnimation();
+  }
+
+  void _initAnimation() {
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 50));
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
           _pitch = DetectStatus.nowPitch;
+          // _rotateDeg = DetectStatus.nowPosition;
+          // if (DetectStatus.moveDirection == 1) {
+          //   if (_rotateDeg < 0.35) {
+          //     _rotateDeg += 0.025;
+          //   }
+          // } else if (DetectStatus.moveDirection == -1) {
+          //   if (_rotateDeg > 0) {
+          //     _rotateDeg -= 0.025;
+          //   }
+          // }
           if (_pitch == 0 || DetectStatus.tickCount == _prevTickCount) {
             _detectAvailable = false;
           } else {
             _detectAvailable = true;
           }
 
-          _isTurtle = _checkIsNowTurtle();
+          _isTurtle = _isNowTurtle();
         });
         _controller.value = 0;
         _controller.forward();
@@ -61,17 +67,19 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  bool _isNowTurtle() {
+    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  double cosWithWeight(double d, double offset) {
-    return d >= 0 ? (1-cos(d))*(offset*(1+d*5)) : (cos(d)-1)*offset*(1-5*(1/d));
+  double _cosWithWeight(double d, double offset) {
+    return d >= 0 ? (1-cos(d))*(offset*(1+d*5)) : (cos(d)-1)*offset-offset/5;
   }
 
-  void _checkDetectAvailable() {
+  void _updateDetectAvailable() {
     Future.delayed(Duration.zero, () {
       if (_prevPitch != 0 && _prevPitch == _pitch) {
         _sameValueCnt += 1;
@@ -94,11 +102,17 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
-    _checkDetectAvailable();
-    // _pitch = -0.3;
-    // _isTurtle = true;
+    _updateDetectAvailable();
+
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -127,69 +141,85 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                     width: 2,
                     height: responsive.percentWidth(85)*0.7,
                     decoration: const BoxDecoration(
-                        color: Color(0xFF000000)
-                    ),
-                  ),
-                  Container(
-                    width: responsive.percentWidth(20),
-                    height: responsive.percentWidth(85)*0.3,
-                    margin: EdgeInsets.only(top: responsive.percentWidth(85)*0.4),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFD9D9D9),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                      color: Color(0xFF000000)
                     ),
                   ),
                   Positioned(
-                    top: responsive.percentWidth(85)*0.28,
+                    top: responsive.percentWidth(85)*0.30,
                     child: Transform.rotate(
                       angle: _rotateDeg, // **calculate based on head pos
-                      origin: Offset(0, responsive.percentWidth(85)*0.1),
+                      origin: Offset(0, responsive.percentWidth(85)*0),
                       child: Container(
-                        width: responsive.percentWidth(5),
-                        height: responsive.percentWidth(85)*0.2,
+                        width: responsive.percentWidth(6),
+                        height: responsive.percentWidth(85)*0.30,
                         decoration: const BoxDecoration(
-                            color: Color(0xFFD9D9D9),
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                          color: Color(0xFFFFB59E),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                      top: responsive.percentWidth(85)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(85)*0.15,
-                      left: responsive.percentWidth(85)*0.5-responsive.percentWidth(85)*0.03+cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
+                      top: responsive.percentWidth(40)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(40)*0.15,
+                      left: responsive.percentWidth(65)*0.5-responsive.percentWidth(65)*0.03+_cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
                       child: Transform.rotate(
                           angle: -_pitch, // **calculated by pitch
-                          origin: Offset(-responsive.percentWidth(15)*0.5+responsive.percentWidth(5)/2, responsive.percentWidth(15)*0.5-responsive.percentWidth(5)/2),
+                          origin: Offset(-responsive.percentWidth(30)*0.5+responsive.percentWidth(5), responsive.percentWidth(30)*0.5-responsive.percentWidth(5)),
                           child: Container(
-                            width: responsive.percentWidth(15),
-                            height: responsive.percentWidth(15),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFD9D9D9),
-                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
-                            ),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: responsive.percentWidth(15)*0.3,
-                                  height: 5,
-                                  margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.2, left: responsive.percentWidth(15)*0.7),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.black
-                                  ),
-                                ),
-                                Container(
-                                  width: responsive.percentWidth(15)*0.1,
-                                  height: 5,
-                                  margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.7, left: responsive.percentWidth(15)*0.9),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.black
-                                  ),
-                                )
-                              ],
-                            ),
+                            width: responsive.percentWidth(30),
+                            height: responsive.percentWidth(30),
+                            child: Image.asset(
+                              "assets/head.png",
+                              width: responsive.percentWidth(50),
+                              height: responsive.percentWidth(50),
+                              fit: BoxFit.cover,
+                            )
                           )
+                          // Container(
+                          //   width: responsive.percentWidth(15),
+                          //   height: responsive.percentWidth(15),
+                          //   decoration: const BoxDecoration(
+                          //     color: Color(0xFFFFFFFF),
+                          //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
+                          //   ),
+                          //   child: Stack(
+                          //     children: [
+                          //       Container(
+                          //         width: responsive.percentWidth(15)*0.3,
+                          //         height: 5,
+                          //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.2, left: responsive.percentWidth(15)*0.7),
+                          //         decoration: const BoxDecoration(
+                          //             color: Colors.black
+                          //         ),
+                          //       ),
+                          //       Container(
+                          //         width: responsive.percentWidth(15)*0.1,
+                          //         height: 5,
+                          //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.7, left: responsive.percentWidth(15)*0.9),
+                          //         decoration: const BoxDecoration(
+                          //             color: Colors.black
+                          //         ),
+                          //       )
+                          //     ],
+                          //   ),
+                          // )
                       )
-                  )
+                  ),
+                  Container(
+                    width: responsive.percentWidth(50),
+                    height: responsive.percentWidth(85)*0.3,
+                    margin: EdgeInsets.only(top: responsive.percentWidth(85)*0.4),
+                    // decoration: const BoxDecoration(
+                    //   color: Color(0xFFD9D9D9),
+                    //   // borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                    // ),
+                    child: Image.asset(
+                      'assets/body.png',
+                      width: responsive.percentWidth(50),
+                      height: responsive.percentWidth(50),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ],
               )
           );

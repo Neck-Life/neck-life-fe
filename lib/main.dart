@@ -1,24 +1,40 @@
 import 'package:audio_session/audio_session.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/home.dart';
+import 'package:mocksum_flutter/util/global_timer.dart';
+import 'package:mocksum_flutter/util/history_provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
 import 'package:mocksum_flutter/util/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:amplitude_flutter/amplitude.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await dotenv.load(fileName: ".env");
 
+  await EasyLocalization.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   await initializeAudioSession();
+  await initGoogleMobileAds();
 
-  runApp(MyApp());
+  runApp(EasyLocalization(
+    supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],
+    path: 'assets/translations',
+    fallbackLocale: const Locale('en', 'US'),
+    child: const MyApp()
+  ));
 }
 
 
@@ -36,14 +52,19 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<DetectStatus>(create: (_) => DetectStatus()),
-        ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus())
+        ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus()),
+        ChangeNotifierProvider<HistoryStatus>(create: (_) => HistoryStatus()),
+        ChangeNotifierProvider<GlobalTimer>(create: (_) => GlobalTimer()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         title: 'NeckLife',
         theme: ThemeData(
-            useMaterial3: true,
-            scaffoldBackgroundColor: const Color(0xFFF9F9F9)
+          useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFF9F9F9)
         ),
         home: UpgradeAlert(
           child: const Home(),
@@ -51,6 +72,10 @@ class _MyAppState extends State<MyApp> {
       )
     );
   }
+}
+
+Future<InitializationStatus> initGoogleMobileAds() {
+  return MobileAds.instance.initialize();
 }
 
 Future<void> initializeAudioSession() async {

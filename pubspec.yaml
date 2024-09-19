@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -41,7 +41,7 @@ dependencies:
   flutter_airpods: ^1.0.5
   flutter_local_notifications: ^17.2.1
   url_launcher: ^6.3.0
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
   upgrader: ^10.3.0
   google_sign_in: ^6.2.1
   http: ^1.2.1
@@ -53,13 +53,23 @@ dependencies:
   flutter_native_splash: ^2.4.1
   purchases_flutter: ^6.30.2
   app_tracking_transparency: ^2.0.5
-#  permission_handler: ^11.3.1
+  dio: ^5.5.0+1
+  easy_localization: ^3.0.7
+  in_app_review: ^2.0.9
+  google_mobile_ads: ^5.1.0
+  amplitude_flutter: ^3.13.0
+  flutter_dotenv: ^5.1.0
+  internet_connection_checker_plus: ^2.5.1
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
+
+flutter_native_splash:
+  color: "#0866FF"
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -86,6 +96,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/translations/
+    - shorebird.yaml
+    - .env
   fonts:
     - family: MyFlutterApp
       fonts:

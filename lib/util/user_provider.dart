@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'https://necklife.shop/api/v1';
+  static const String serverAddress = 'http://3.34.251.190:8080/api/v1';
 
   bool _isLogged = false;
+  bool _isPremium = false;
   String _accessTokenTemp = '';
   String _refreshTokenTemp = '';
+  String _email = '';
 
   bool get isLogged => _isLogged;
+  bool get isPremium => _isPremium;
+  String get email => _email;
 
   UserStatus() {
     init();
@@ -22,14 +28,20 @@ class UserStatus with ChangeNotifier {
     if (_accessTokenTemp == '' || _refreshTokenTemp == '') {
       const storage = FlutterSecureStorage();
 
+      // await storage.write(key: 'accessToken', value: _accessTokenTemp);
+
       String? accessToken = await storage.read(key: 'accessToken');
       String? refreshToken = await storage.read(key: 'refreshToken');
+      String? email = await storage.read(key: 'email');
 
       _accessTokenTemp = accessToken ?? '';
       _refreshTokenTemp = refreshToken ?? '';
+      _email = email ?? '';
+
+      await _initSubscriptionState();
+
       print('init $_accessTokenTemp $_refreshTokenTemp');
     }
-    // jwt parsing을 통한 로그인 체크
   }
 
   void setIsLogged(bool isLogged) {
@@ -108,14 +120,17 @@ class UserStatus with ChangeNotifier {
     return res;
   }
 
-  Future<bool> deleteAccount() async {
+  Future<bool> deleteAccount(String deleteReason) async {
     print(_accessTokenTemp);
     if (_accessTokenTemp == '') {
       return false;
     }
+    Map<String, dynamic> body = {'reason': deleteReason};
 
+    print(deleteReason);
     final res = await http.delete(
       Uri.parse('$serverAddress/members'),
+      body: jsonEncode(body),
       headers: {
         "Content-Type": "application/json",
         HttpHeaders.authorizationHeader: 'Bearer $_accessTokenTemp'
@@ -123,6 +138,7 @@ class UserStatus with ChangeNotifier {
     );
     print(res.statusCode);
     if (res.statusCode ~/ 100 == 2) {
+      cleanAll();
       return true;
     }
 
@@ -134,8 +150,9 @@ class UserStatus with ChangeNotifier {
         '$serverAddress/members',
         {'code': idToken, 'provider': provider}
     );
-    print(res.statusCode);
-    print(res.body);
+    // print(res.statusCode);
+    // print(res.body);
+    // print(res.statusCode);
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {
       _isLogged = true;
@@ -187,5 +204,30 @@ class UserStatus with ChangeNotifier {
     await storage.write(key: 'accessToken', value: '');
     await storage.write(key: 'refreshToken', value: '');
     await storage.write(key: 'memberId', value: '');
+  }
+
+  Future<void> _initSubscriptionState() async {
+    String revenuecat_key = dotenv.get('REVENUECAT_KEY');
+
+    await Purchases.setLogLevel(LogLevel.debug);
+    await Purchases.configure(
+      PurchasesConfiguration(revenuecat_key)
+        ..appUserID = _email
+    );
+
+    await getUserIsPremium();
+  }
+
+  Future<bool> getUserIsPremium() async {
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    print(customerInfo);
+    _isPremium =  customerInfo.activeSubscriptions.isNotEmpty;
+    notifyListeners();
+    return _isPremium;
+  }
+
+  void setIsPremium(bool status) {
+    _isPremium = status;
+    notifyListeners();
   }
 }

@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/util/global_timer.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
-
 
 
 class StartPosition extends StatefulWidget {
@@ -29,9 +29,11 @@ class StartPositionState extends State<StartPosition> {
         _avgInitPitch += DetectStatus.nowPitch;
       }
       if (_lastTime <= 0) {
+
         timer.cancel();
         DetectStatus.initialPitch = _avgInitPitch / 3;
         detectStatus.startDetecting();
+        Provider.of<GlobalTimer>(context, listen: false).startTimer();
         Navigator.pop(context);
       }
     });

@@ -1,44 +1,36 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
+import 'package:mocksum_flutter/util/history_provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
 import 'package:just_audio/just_audio.dart';
-// import 'package:flutter/services.dart';
 
 
 class MyAudioHandler extends BaseAudioHandler {
 
-  // final MethodChannel _channel = const MethodChannel("flutter.airpods.sensor");
-
-
   StreamSubscription<DeviceMotionData>? _subscription;
   double _nowPitch = 0;
+  double _nowPosition = 0;
   int _minInterval = 0;
   int _turtleNeckStartedTimeStamp = 0;
   final List<double> _turtleNeckThreshold = [0.5, 0.4, 0.3];
+  final PositionDisplay _headPositionHandler = PositionDisplay();
+  Map<String, dynamic> _poseLog = {"history": {}};
+  bool _isPlaying = false;
 
   final _bgAudioPlayer = AudioPlayer();
-  // final _noticeAudioPlayer = AudioPlayer();
-  // final playlist = ConcatenatingAudioSource(
-  //   // Start loading next item just before reaching it
-  //   useLazyPreparation: true,
-  //   // Customise the shuffle algorithm
-  //   shuffleOrder: DefaultShuffleOrder(),
-  //   // Specify the playlist items
-  //   children: [
-  //     AudioSource.asset('assets/bg_sound.mp3'),
-  //     AudioSource.asset('assets/noti.mp3'),
-  //   ],
-  // );
-
-  // int _playingSoundIdx = 0;
   bool _isNowTurtle = false;
 
+  static const applicationLifecycleChannel = BasicMessageChannel<String>('applicationLifeCycle', StringCodec());
+  static const kApplicationWillTerminate = 'applicationWillTerminate';
+
   void _setAudioFile() async {
-    await _bgAudioPlayer.setAsset('assets/noti.mp3'); //setAudioSource(playlist, initialIndex: 0, initialPosition: Duration.zero);
+    await _bgAudioPlayer.setAsset('assets/noti.mp3');
     await _bgAudioPlayer.setLoopMode(LoopMode.one);
     await _bgAudioPlayer.setVolume(0);
   }
@@ -49,32 +41,51 @@ class MyAudioHandler extends BaseAudioHandler {
 
   MyAudioHandler() {
     _setAudioFile();
+    applicationLifecycleChannel.setMessageHandler((message) async {
+      switch(message) {
+        case kApplicationWillTerminate:
+          print('app end');
+          if (_isPlaying) {
+            _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
+            HistoryStatus.postMeasuredPoseData(_poseLog);
+          }
+          break;
+        default:
+          break;
+      }
+      return message!;
+    });
+
     _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
-      // print(_playingSoundIdx);
-      // _customEventController.add(data);
       _nowPitch = data.toJson()['pitch'];
+      _headPositionHandler.processSensorData(data);
+      _nowPosition = _headPositionHandler.getPosition(0.5);
       DetectStatus.nowPitch = _nowPitch;
+
+      DetectStatus.nowPosition = _nowPosition;
       DetectStatus.tickCount = (DetectStatus.tickCount+1) % 300;
-      // print(_minInterval);
       if (_checkIsNowTurtle() && _turtleNeckStartedTimeStamp == 0 && DetectStatus.sNowDetecting) {
         _turtleNeckStartedTimeStamp = DateTime.now().millisecondsSinceEpoch;
+        if (_minInterval <= 0) {
+          _poseLog['history'][DateTime.now().toIso8601String().split('.')[0]
+              .substring(0, 19)] = 'FORWARD';
+        }
       }
+
       if (!_checkIsNowTurtle()) {
         _turtleNeckStartedTimeStamp = 0;
         if (_isNowTurtle) {
+          _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'NORMAL';
           _isNowTurtle = false;
           emitCustomEvent('end');
-          // _bgAudioPlayer.setAsset('assets/test_bg.mp3');
         }
-        // if (_playingSoundIdx == 1) {
-        //   _bgAudioPlayer.seekToPrevious();
-        //   _playingSoundIdx = 0;
-        // }
       }
-      // print('test ${DetectStatus.sNowDetecting} ${} ${DateTime.now().millisecondsSinceEpoch}');
+
+      _isNowTurtle = _checkIsNowTurtle();
+
       if (DetectStatus.sNowDetecting && _checkIsNowTurtle() && _minInterval == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp >= DetectStatus.sAlarmGap*1000) {
         _showPushAlarm();
-        // _noticeAudioPlayer.play();
+        // _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'FORWARD';
         if (DetectStatus.sBgSoundActive) {
           _bgAudioPlayer.setVolume(0.4);
           Timer(const Duration(seconds: 2), () {
@@ -83,16 +94,15 @@ class MyAudioHandler extends BaseAudioHandler {
         }
         _isNowTurtle = true;
         emitCustomEvent('turtle');
-        // _bgAudioPlayer.setClip(start: const Duration(seconds: 15), end: const Duration(seconds: 17));
-        // _bgAudioPlayer.setAsset('assets/noti.mp3');
-        // _bgAudioPlayer.seekToNext();
-        _minInterval = 500;
+        _minInterval = 300;
         _turtleNeckStartedTimeStamp = 0;
       }
       if (_minInterval > 0) {
         _minInterval -= 1;
       }
     });
+
+    HistoryStatus.postDataNotPosted();
   }
 
   bool _checkIsNowTurtle() {
@@ -103,27 +113,9 @@ class MyAudioHandler extends BaseAudioHandler {
     }
   }
 
-  // void _startBackgroundTask() {
-  //   _backgroundTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-  //     if (_audioPlayer.playing) {
-  //       // Only emit events if audio is playing
-  //       emitCustomEvent('Background task running at ${DateTime.now()}');
-  //     }
-  //   });
-  // }
-  //
-  // dynamic _getNowAirpodsSensor() async {
-  //   print('test1 start');
-  //   final data = await _channel.invokeMethod("getAirpodsSensorData");
-  //   print('test1 $data');
 
-  //   return data;
-  // }
-  //
   Future<void> emitCustomEvent(dynamic event) async {
-    print('emit start');
     _customEventController.add(event);
-    print('emit end');
   }
 
   final NotificationDetails _details = const NotificationDetails(
@@ -148,20 +140,28 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
+    print('start!!!!');
+    _isPlaying = true;
+    _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'START';
+    print('start ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
     await _bgAudioPlayer.setVolume(0);
     _bgAudioPlayer.play();
   }
 
   @override
   Future<void> pause() {
+    print('sadfsadfsadf');
+    _isPlaying = false;
+    _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'END';
+    print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
+    HistoryStatus.postMeasuredPoseData(_poseLog);
+    print('poselog $_poseLog');
     _bgAudioPlayer.pause();
     return super.pause();
   }
 
   @override
   Future<void> stop() async {
-    // _subscription?.cancel();
-    // _subscription = null;
     _bgAudioPlayer.stop();
     await super.stop();
   }
@@ -173,20 +173,4 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> skipToPrevious() => _bgAudioPlayer.seekToPrevious();
 
 }
-
-
-// void _setAudioHandler() async {
-//   _audioHandler = await AudioService.init(
-//     builder: () => MyAudioHandler(),
-//     config: const AudioServiceConfig(
-//       androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
-//       androidNotificationChannelName: 'Music playback',
-//     )
-//   );
-//
-//   _audioHandler.play();
-//   _audioHandler.setRepeatMode(AudioServiceRepeatMode.one);
-//   _audioHandler.customEventStream.listen((data) {
-//   });
-// }
 

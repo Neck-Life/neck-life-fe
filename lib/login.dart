@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/home.dart';
 import 'package:mocksum_flutter/util/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'util/responsive.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocksum_flutter/tutorials.dart';
@@ -36,20 +37,27 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isFirstLaunch = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   });
+  // }
+
   Future<void> _launchUrl(url) async {
     if (!await launchUrl(url)) {
       throw Exception('Could not launch');
     }
   }
 
-  void _getNowIsFirstLaunch() async {
-    const storage = FlutterSecureStorage();
-    String? first = await storage.read(key: 'first');
-    if (first == null) {
-      _isFirstLaunch = true;
-      await storage.write(key: 'first', value: '1');
-    }
-  }
+  // void _getNowIsFirstLaunch() async {
+  //   const storage = FlutterSecureStorage();
+  //   String? first = await storage.read(key: 'first');
+  //   if (first == null) {
+  //     _isFirstLaunch = true;
+  //     await storage.write(key: 'first', value: '1');
+  //   }
+  // }
 
   Future<String?> _signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: scopes).signIn();
@@ -91,21 +99,6 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
     );
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    _getNowIsFirstLaunch();
-
-    Future.delayed(Duration.zero, () {
-      if (_isFirstLaunch) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
-      }
-      // _checkLogin(context);
-    });
   }
 
   @override

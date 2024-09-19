@@ -1,13 +1,21 @@
+import 'package:amplitude_flutter/amplitude.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/start_position.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/audio_handler.dart';
+import 'package:mocksum_flutter/util/global_timer.dart';
+import 'package:mocksum_flutter/util/history_provider.dart';
 import 'package:mocksum_flutter/util/status_provider.dart';
+import 'package:mocksum_flutter/util/user_provider.dart';
+import 'package:mocksum_flutter/widgets/text_default.dart';
 import 'neck.dart';
 import 'util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -17,15 +25,81 @@ class MainPage extends StatefulWidget {
 
 class MainState extends State<MainPage> {
 
-  bool _isHelpTextOpend = false;
-  // LocationHandler? _locationHandler;
-  late MyAudioHandler _audioHandler;
-  // final AudioPlayer _nodiAudioPlayer = AudioPlayer();
+  MyAudioHandler? _audioHandler;
+  final InAppReview inAppReview = InAppReview.instance;
+  AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
-  // var item = const MediaItem(
-  //   id: 'assets/noti.mp3',
-  //   title: 'noti_sound',
-  // );
+  late BannerAd _ad;
+  bool _isAdLoaded = false;
+  // bool _isPremium = false;
+
+  @override
+  void initState() {
+    super.initState();
+    print('sadf');
+    _initLocalNotification();
+    _setAudioHandler();
+    _amplitudeEventManager.viewEvent('mainpage');
+
+    _ad = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        }
+      ),
+      request: AdRequest()
+    );
+
+    _ad.load();
+
+    // Future.delayed(Duration.zero, () {
+    //   //showReviewRequestPopUp(context);
+    //   // bool isPremium = await UserStatus.getUserIsPremium();
+    //   // print('asdf $isPremium');
+    //   // setState(() {
+    //   //   print('asdf2 $isPremium');
+    //   //   _isPremium = isPremium;
+    //   // });
+    // });
+    
+    GlobalTimer.timeEventStream.listen((useMin) {
+      if (useMin >= 120) {
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
+        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        Provider.of<HistoryStatus>(context, listen: false).resetShouldChangeData();
+        _showPushAlarm();
+      }
+    });
+  }
+
+  Future<void> _showPushAlarm() async {
+    FlutterLocalNotificationsPlugin localNotification =
+    FlutterLocalNotificationsPlugin();
+
+    await localNotification.show(0,
+      '오늘의 무료 사용시간 종료',
+      '시간제한 없이 쓰고 싶다면 프리미엄 플랜을 사용해보세요!',
+      _details
+    );
+  }
+
+  final NotificationDetails _details = const NotificationDetails(
+      android: AndroidNotificationDetails('temp1', 'asdf'),
+      iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true
+      )
+  );
+
 
   Future<void> _initLocalNotification() async {
     FlutterLocalNotificationsPlugin localNotification =
@@ -47,68 +121,85 @@ class MainState extends State<MainPage> {
     );
   }
 
-  // void _setNotiAudioHandler() async {
-  //   await _nodiAudioPlayer.setAsset('assets/noti.mp3');
-  // }
 
   void _setAudioHandler() async {
-    _audioHandler = await AudioService.init(
-        builder: () => MyAudioHandler(),
-        config: const AudioServiceConfig(
-          androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
-          androidNotificationChannelName: 'Music playback',
-        )
-    );
-
-    // _audioHandler.addQueueItem(item);
-
-    // _notiAudioHandler = await AudioService.init(
-    //     builder: () => NotiAudioHandler(),
-    //     config: const AudioServiceConfig(
-    //       androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
-    //       androidNotificationChannelName: 'Music playback',
-    //     )
-    // );
-
-    // _audioHandler.play();
-    // _audioHandler?.setRepeatMode(AudioServiceRepeatMode.one);
-    _audioHandler.customEventStream.listen((data) {
-      print(data);
-      if (data == 'turtle') {
-        // _nodiAudioPlayer.play();
-        // _audioHandler.skipToNext();
-        // _audioHandler.play();
-      }
-      if (data == 'end') {
-        // _audioHandler.pause();
-      }
-    });
-    // _notiAudioHandler?.play();
+    print('sadfasdf');
+    if (_audioHandler == null) {
+      _audioHandler = await AudioService.init(
+          builder: () => MyAudioHandler(),
+          config: const AudioServiceConfig(
+            androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
+            androidNotificationChannelName: 'Music playback',
+          )
+      );
+    }
   }
 
-  // void _skiptonect() {
-  //   if (_audioHandler != null) {
-  //     _audioHandler.skipToNext();
-  //     print('fuck');
-  //   }
-  // }
+  void showReviewRequestPopUp(BuildContext context) {
+    if (!DetectStatus.hasWroteReview) {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            content: Text('앱 리뷰를 남겨주세요!\n여러분의 리뷰는 개발자에게 큰 힘이 됩니다.',
+              style: TextStyle(
+                color: const Color(0xFF434343),
+                fontSize: MediaQuery.of(context).size.width*0.04,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(80, 40),
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    shadowColor: const Color(0x19000000),
+                    side: const BorderSide(
+                        width: 1,
+                        color: Colors.black
+                    )
+                ),
+                onPressed: () async {
+                  DetectStatus.setHasWroteReview(true);
+                  inAppReview.openStoreListing(appStoreId: '6553973734');
+                },
+                child: const Text('좋아요')
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(80, 40),
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    shadowColor: const Color(0x19000000),
+                    side: const BorderSide(
+                        width: 1,
+                        color: Colors.black
+                    )
+                ),
+                onPressed: () {
+                  DetectStatus.setHasWroteReview(false);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('다음에 할게요')
+              ),
+            ],
+          );
+        }
+      );
+    }
+  }
 
-
-  @override
-  void initState() {
-    super.initState();
-    _initLocalNotification();
-    _setAudioHandler();
-    // _setNotiAudioHandler();
-    // _locationHandler = LocationHandler();
-    // _setAudioHandler();
-
+  void goToStoreReview() async {
+    if (await inAppReview.isAvailable()) {
+      inAppReview.openStoreListing(appStoreId: '6553973734');
+    }
   }
 
   @override
   void dispose() {
-    // _locationHandler?.endAllDetection();
-    // _locationHandler = null;
+    _ad.dispose();
     super.dispose();
   }
 
@@ -116,6 +207,9 @@ class MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive(context);
     DetectStatus detectStatus = Provider.of(context);
+    UserStatus userStatus = Provider.of(context);
+    HistoryStatus historyStatus = Provider.of(context);
+    GlobalTimer globalTimer = Provider.of(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -130,14 +224,7 @@ class MainState extends State<MainPage> {
                     Container(
                       width: responsive.percentWidth(85),
                       margin: const EdgeInsets.only(bottom: 10),
-                      child: Text('에어팟 연결 상태',
-                        style: TextStyle(
-                          color: const Color(0xFF434343),
-                          fontSize: responsive.fontSize(18),
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      child: const TextDefault(content: '에어팟 연결 상태', fontSize: 18, isBold: true),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -175,27 +262,19 @@ class MainState extends State<MainPage> {
                               Positioned(
                                 left: responsive.percentWidth(30),
                                 top: responsive.percentWidth(7),
-                                child: Text(
-                                  detectStatus.detectAvailable ? '에어팟이 연결되었어요' : '에어팟을 연결해주세요',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: responsive.fontSize(18),
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                child: TextDefault(
+                                  content: detectStatus.detectAvailable ? '에어팟이 연결되었어요' : '에어팟을 연결해주세요',
+                                  fontSize: 18,
+                                  isBold: true,
                                 ),
                               ),
                               Positioned(
                                 left: responsive.percentWidth(30),
                                 top: responsive.percentWidth(7)+25,
-                                child: Text(
-                                  detectStatus.detectAvailable ? '센서 작동 중' : '센서를 찾을 수 없어요',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: responsive.fontSize(14),
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w300,
-                                  ),
+                                child: TextDefault(
+                                  content: detectStatus.detectAvailable ? '센서 작동 중' : '센서를 찾을 수 없어요',
+                                  fontSize: 14,
+                                  isBold: false,
                                 ),
                               ),
                             ],
@@ -220,80 +299,66 @@ class MainState extends State<MainPage> {
                           ],
                         ),
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
                             if (!detectStatus.detectAvailable) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('에어팟을 연결해주세요'),
-                                    duration: Duration(seconds: 2),
-                                  )
+                                const SnackBar(
+                                  content: Text('에어팟을 연결해주세요'),
+                                  duration: Duration(seconds: 2),
+                                )
                               );
                             } else if (!detectStatus.nowDetecting) {
-                              // _locationHandler?.startBackgroundDetection();
-                              _audioHandler.play();
-                              // _skiptonect();
-                              Navigator.push(context, MaterialPageRoute(builder: (
-                                  context) => const StartPosition()));
+                              if (globalTimer.useMin >= 120) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('오늘의 2시간 무료사용시간이 종료되었습니다.'),
+                                      duration: Duration(seconds: 2),
+                                    )
+                                );
+                              } else {
+                                _audioHandler?.play();
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (
+                                        context) => const StartPosition()));
+                                _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+                              }
                             } else {
-                              detectStatus.endDetecting();
-                              // _locationHandler?.endBackgroundDetection();
-                              _audioHandler.pause();
+                              int executeCount = await detectStatus.endDetecting();
+                              _audioHandler?.pause();
+                              _amplitudeEventManager.actionEvent('mainpage', 'enddetection');
+                              globalTimer.stopTimer();
+                              historyStatus.resetShouldChangeData();
+                              if (executeCount >= DetectStatus.reviewRequestCount) {
+                                showReviewRequestPopUp(context);
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                              minimumSize: Size(responsive.percentWidth(85), 40),
-                              backgroundColor: detectStatus.detectAvailable ? Colors.white : Colors.grey,
-                              surfaceTintColor: Colors.white,
-                              shadowColor: const Color(0x19000000)
+                            minimumSize: Size(responsive.percentWidth(85), 40),
+                            backgroundColor: detectStatus.detectAvailable ? Colors.white : Colors.grey,
+                            surfaceTintColor: Colors.white,
+                            shadowColor: const Color(0x19000000)
                           ),
-                          label: Text(
-                            detectStatus.nowDetecting ? '거북목 탐지 중지' : '거북목 탐지 시작',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: responsive.fontSize(18),
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w600,
-                            ),
+                          label: TextDefault(
+                            content: detectStatus.nowDetecting ? '거북목 탐지 중지' : '거북목 탐지 시작',
+                            fontSize: 18,
+                            isBold: true,
                           ),
                           icon: detectStatus.nowDetecting ? const Icon(Icons.pause, color: Colors.black) : const Icon(Icons.play_arrow, color: Colors.black,),
                         )
                     ),
+                    !userStatus.isPremium ?
+                    Container(
+                      child: Text('${globalTimer.useMin}/120분'),
+                      alignment: Alignment.center,
+                    ) : const SizedBox(),
                     SizedBox(height: responsive.percentHeight(7)),
-                    // GestureDetector(
-                    //   child: Text(
-                    //     '* 에어팟을 연결해도 작동이 안되나요?',
-                    //     style: TextStyle(
-                    //       color: Colors.black,
-                    //       fontSize: responsive.fontSize(12),
-                    //       fontFamily: 'Inter',
-                    //       fontWeight: FontWeight.w300,
-                    //     ),
-                    //   ),
-                    //   onTap: () {
-                    //     setState(() {
-                    //       _isHelpTextOpend = !_isHelpTextOpend;
-                    //     });
-                    //   },
-                    // ),
-                    // Text(
-                    //   _isHelpTextOpend ? '- 현재 아이폰 외에 다른 기기와도 에어팟이 연결되어있다면 이를 끊어주세요' : '',
-                    //   style: TextStyle(
-                    //     color: Colors.black,
-                    //     fontSize: responsive.fontSize(10),
-                    //     fontFamily: 'Inter',
-                    //     fontWeight: FontWeight.w300,
-                    //   ),
-                    // ),
-                    // Text(
-                    //   _isHelpTextOpend ? '- 위 사항의 문제가 아니라면 음악이나 영상을 틀어 \n소리 재생을 확인한 후 앱을 켜보세요' : '',
-                    //   textAlign: TextAlign.center,
-                    //   style: TextStyle(
-                    //     color: Colors.black,
-                    //     fontSize: responsive.fontSize(10),
-                    //     fontFamily: 'Inter',
-                    //     fontWeight: FontWeight.w300,
-                    //   ),
-                    // ),
+                    userStatus.isPremium ? const SizedBox() : Container(
+                      child: AdWidget(ad: _ad),
+                      width: _ad.size.width.toDouble(),
+                      height: _ad.size.height.toDouble(),
+                      alignment: Alignment.center,
+                    )
                   ],
                 )
             ),

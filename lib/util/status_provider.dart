@@ -10,9 +10,13 @@ class DetectStatus with ChangeNotifier {
   static int sAlarmGap = 15;
 
   static double initialPitch = 0;
+  static double nowPosition = 0;
   static double nowPitch = 0;
+  static int moveDirection = 0;
   static int tickCount = 0;
   static bool sBgSoundActive = false;
+  static bool hasWroteReview = false;
+  static int reviewRequestCount = 5;
 
   bool _nowDetecting = false;
   bool _detectAvailable = false;
@@ -39,6 +43,7 @@ class DetectStatus with ChangeNotifier {
     String? sensitivitySetting = await storage.read(key: 'sensitivity');
     String? alarmSetting = await storage.read(key: 'alarm');
     String? bgSoundSetting = await storage.read(key: 'isBgActive');
+    String? rawHasWroteReview = await storage.read(key: 'hasWroteReview');
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
       sSensitivity = _sensitivity;
@@ -51,6 +56,10 @@ class DetectStatus with ChangeNotifier {
       _bgSoungActive = bgSoundSetting == '1';
       sBgSoundActive = _bgSoungActive;
     }
+    if (rawHasWroteReview != null) {
+      hasWroteReview = rawHasWroteReview == '1' ? true : false;
+      reviewRequestCount = 30;
+    }
   }
 
   void startDetecting() async {
@@ -61,12 +70,20 @@ class DetectStatus with ChangeNotifier {
     await storage.write(key: 'nowRunning', value: '1');
   }
 
-  void endDetecting() async {
+  Future<int> endDetecting() async {
     _nowDetecting = false;
     sNowDetecting = false;
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
+    String? executeCount = await storage.read(key: 'executeCount');
+    if (executeCount != null) {
+      await storage.write(key: 'executeCount', value: (int.parse(executeCount)+1).toString());
+      return int.parse(executeCount)+1;
+    } else {
+      await storage.write(key: 'executeCount', value: '1');
+      return 1;
+    }
   }
 
   void availableDetect() {
@@ -97,6 +114,15 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
+  }
+
+  static void setHasWroteReview(bool hasWrote) async {
+    hasWroteReview = hasWrote;
+    if (!hasWrote) {
+      reviewRequestCount = 30;
+    }
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'hasWroteReview', value: hasWrote ? '1' : '0');
   }
 
   void disavailableDetect() {

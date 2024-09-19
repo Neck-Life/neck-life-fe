@@ -1,0 +1,83 @@
+{
+  "att_msg": "본 앱은 보다 편리하고 개인화된 서비스를 위해 이메일 주소, 자세 측정 기록 등의 데이터를 사용할 수 있습니다.",
+  "att_continue": "계속",
+  "main_page": {
+    "conn_status": "에어팟 연결 상태",
+    "connected_msg": "에어팟이 연결되었어요",
+    "not_connected_msg": "에어팟을 연결해주세요",
+    "mini_connected_msg": "에어팟이 연결되었어요",
+    "mini_not_connected_msg": "에어팟을 연결해주세요",
+    "snackbar_msg": "에어팟을 연결해주세요",
+    "start_btn_msg": "거북목 탐지 시작",
+    "stop_btn_msg": "거묵목 탐지 중지"
+  },
+  "start_position": {
+    "explain_msg": "바른 자세를 5초 동안 \n유지해주세요!",
+    "measuring_msg": "측정중입니다..\n",
+    "btn_msg": "기준 자세 측정"
+  },
+  "setting": {
+    "quit_question": "정말 탈퇴하시겠습니까?",
+    "error_msg": "오류가 발생했습니다.\n다시 시도해주세요.",
+    "close": "닫기",
+    "yes": "네",
+    "no": "아니요",
+    "logout_question": "로그아웃하시겠습니까?",
+    "setting_txt": "설정",
+    "noti_setting": "거북목 알림 설정",
+    "tutorial": "튜토리얼 보기",
+    "feedback": "문의/피드백 보내기",
+    "term_of_service": "이용 약관",
+    "privacy": "개인정보 처리방침",
+    "logout": "로그아웃",
+    "quit": "회원 탈퇴"
+  },
+  "login": {
+    "error_msg": "오류가 발생했습니다.\\n다시 시도해주세요.",
+    "close": "닫기",
+    "explain_txt": "넥라이프와 함께\n에어팟만으로\n바른 자세를 유지해보세요",
+    "social_login_txt": "소셜 로그인으로 빠르게 시작하기",
+    "apple_login": "Apple 로그인",
+    "tos_msg": "로그인 시 본 서비스의 이용 약관과 개인정보 처리방침에\n동의한 것으로 간주됩니다.",
+    "term_of_service": "이용 약관",
+    "privacy": "개인정보 처리방침"
+  },
+  "tutorials": {
+    "prev_btn": "이전",
+    "next_btn": "다음",
+    "end_msg": "튜토리얼 끝내기",
+    "page1_txt": "에어팟 하나만으로\n바른 자세를 유지해보세요",
+    "page1_explain_txt1": "에어팟을 연결해주세요",
+    "page1_explain_txt2": "잘 연결된 경우 아래처럼 화면이 바뀔거예요",
+    "page1_explain_txt3": "주의) 아래 명시된 모델만 사용 가능해요",
+    "page2_explain_txt1": "측정의 기준이 될 바른 자세를\n알려주세요",
+    "page2_explain_txt2": "'Neck-Life' 서비스는 처음 측정해주신 바른\n자세를 기준으로 자세의 변화를 감지하여\n사용자의 자세를 판단해요.",
+    "page2_explain_txt3": "'거북목 탐지 시작' 버튼을 눌러주세요.",
+    "page2_explain_txt4": "등장하는 페이지에서 '기준 자세 측정' \n버튼을 누른 후, 5초 동안 바른 자세를\n유지해주세요.",
+    "page3_explain_txt1": "바른 자세와 함께 일에\n집중해보세요",
+    "page3_explain_txt2": "기준 자세 측정이 끝나면 자동으로\n메인 페이지로 돌아가고,\n자세 탐지가 시작됩니다.",
+    "page3_explain_txt3": "이제부터는 핸드폰을 내려놓고,\n일에 집중해보세요!",
+    "page3_explain_txt4": "무의식적으로 자세가 무너지는 것을\n탐지하면, 알림을 보내 알려드릴게요"
+  },
+  "history": {
+    "error_msg": "해당 날짜의 데이터를 찾을 수 없습니다.",
+    "score": "내 자세 점수",
+    "today_record": "오늘의 기록 >",
+    "today_txt": "오늘의 자세를 기록해보세요!",
+    "count_txt": "거북목 {}회",
+    "graph_txt": "점수의 변화를 확인해보세요",
+    "pose_txt": "자세를 기록해보세요!",
+    "goal_txt": "목표 설정 >",
+    "goal_erorr_msg": "목표 정보를 불러올 수 없습니다.",
+    "post_time_txt": "바른 자세를 유지한 시간",
+    "no_record_msg": "기록이 없습니다.",
+    "text_neck_txt": "거묵복 자세 감지"
+  },
+  "goal": {
+    "goal_txt": "목표를 설정하고 동기를 유지해보세요!",
+    "streak_txt": "{}일 연속 목표 달성 중!",
+    "setting_txt": "목표 설정",
+    "time_setting": "하루에 2시간 이상 측정",
+    "score_setting": "오늘의 자세 점수 80점 이상"
+  }
+}
