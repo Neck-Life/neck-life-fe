@@ -32,6 +32,8 @@ class MainState extends State<MainPage> {
   late BannerAd _ad;
   bool _isAdLoaded = false;
   // bool _isPremium = false;
+  bool _isLabMode = false;
+
 
   @override
   void initState() {
@@ -298,6 +300,9 @@ class MainState extends State<MainPage> {
                             )
                           ],
                         ),
+
+
+
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             if (!detectStatus.detectAvailable) {
@@ -347,6 +352,33 @@ class MainState extends State<MainPage> {
                           icon: detectStatus.nowDetecting ? const Icon(Icons.pause, color: Colors.black) : const Icon(Icons.play_arrow, color: Colors.black,),
                         )
                     ),
+
+                    Container(
+                      width: responsive.percentWidth(85),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const TextDefault(
+                            content: '실험실 모드',
+                            fontSize: 18,
+                            isBold: true,
+                          ),
+                          Switch(
+                            value: _isLabMode,
+                            onChanged: (bool value) {
+                              setState(() {
+                                _isLabMode = value;
+                                DetectStatus.isLabMode = value;
+
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+
                     !userStatus.isPremium ?
                     Container(
                       child: Text('${globalTimer.useMin}/120분'),

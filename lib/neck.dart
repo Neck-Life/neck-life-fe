@@ -43,6 +43,15 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
       if (status == AnimationStatus.completed) {
         setState(() {
           _pitch = DetectStatus.nowPitch;
+
+          if(DetectStatus.isLabMode){
+            _rotateDeg = DetectStatus.nowPosition;
+            // print(_rotateDeg);
+
+          }else{
+            _rotateDeg = 0;
+          }
+
           // _rotateDeg = DetectStatus.nowPosition;
           // if (DetectStatus.moveDirection == 1) {
           //   if (_rotateDeg < 0.35) {

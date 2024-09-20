@@ -9,6 +9,8 @@ class DetectStatus with ChangeNotifier {
   static int sSensitivity = 1;
   static int sAlarmGap = 15;
 
+  static bool isLabMode = false;
+
   static double initialPitch = 0;
   static double nowPosition = 0;
   static double nowPitch = 0;
@@ -31,6 +33,8 @@ class DetectStatus with ChangeNotifier {
   int get sensitivity => _sensitivity;
   int get alarmGap => _alarmGap;
   bool get bgSoundActive => _bgSoungActive;
+
+
 
   DetectStatus() {
     init();

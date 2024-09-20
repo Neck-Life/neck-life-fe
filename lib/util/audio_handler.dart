@@ -59,7 +59,13 @@ class MyAudioHandler extends BaseAudioHandler {
     _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
       _nowPitch = data.toJson()['pitch'];
       _headPositionHandler.processSensorData(data);
-      _nowPosition = _headPositionHandler.getPosition(0.5);
+
+      if(DetectStatus.isLabMode) {
+        _nowPosition = _headPositionHandler.getPosition(0.5);
+      }else{
+        _nowPosition = 0;
+      }
+
       DetectStatus.nowPitch = _nowPitch;
 
       DetectStatus.nowPosition = _nowPosition;
@@ -106,7 +112,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition > 0.35) {
       return true;
     } else {
       return false;

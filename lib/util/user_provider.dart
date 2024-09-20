@@ -8,7 +8,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'http://3.34.251.190:8080/api/v1';
+  static const String serverAddress = 'http://13.125.173.157:8080/api/v1';
 
   bool _isLogged = false;
   bool _isPremium = false;
