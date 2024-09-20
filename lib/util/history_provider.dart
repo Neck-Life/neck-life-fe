@@ -115,6 +115,7 @@ class HistoryStatus with ChangeNotifier {
       }
     } on Exception catch (e) {
       print(e);
+      _historyData = {'success': false};
     }
   }
 

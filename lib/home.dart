@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/login.dart';
 import 'package:mocksum_flutter/settings.dart';
 import 'package:mocksum_flutter/tutorials.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -21,10 +22,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _index = 0;
   bool _isFirstLaunch = false;
+  AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   @override
   void initState() {
-    print('sdf');
     Future.delayed(Duration.zero, () async {
       WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) => _initATTPlugin());
       await _updateIsFirstLaunch();
@@ -40,6 +41,8 @@ class _HomeState extends State<Home> {
 
       if (!isLogged) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      } else {
+        await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
     });
     super.initState();
@@ -114,6 +117,13 @@ class _HomeState extends State<Home> {
                   onTap: (newIndex) {
                     setState(() {
                       _index = newIndex;
+                      if (_index == 0) {
+                        _amplitudeEventManager.viewEvent('mainpage');
+                      } else if (_index == 1) {
+                        _amplitudeEventManager.viewEvent('history');
+                      } else if (_index == 2) {
+                        _amplitudeEventManager.viewEvent('setting');
+                      }
                     });
                   },
                 ),

@@ -33,13 +33,11 @@ class _SettingState extends State<Settings> {
   final _deleteReasonEditController = TextEditingController();
   final _feedbackEditController = TextEditingController();
   bool _reasonSelectEnd = false;
-  AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
 
   @override
   void initState() {
 
-    _amplitudeEventManager.viewEvent('setting');
     super.initState();
   }
 

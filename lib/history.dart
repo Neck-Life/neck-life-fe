@@ -20,13 +20,11 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
 
   late Map<String, int> poseCount;
-  AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
   late final _internetCheckListener;
   bool _isInternetConnected = true;
 
   @override
   void initState() {
-    _amplitudeEventManager.viewEvent('history');
     // setState(() async {
     //   _isInternetConnected = await InternetConnection().hasInternetAccess;
     // });
