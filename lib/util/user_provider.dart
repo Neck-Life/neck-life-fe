@@ -39,8 +39,6 @@ class UserStatus with ChangeNotifier {
       _email = email ?? '';
 
       await _initSubscriptionState();
-
-      print('init $_accessTokenTemp $_refreshTokenTemp');
     }
   }
 
@@ -75,11 +73,11 @@ class UserStatus with ChangeNotifier {
     }
 
     final payload = _decodeBase64(parts[1]);
-    print(payload);
+    // print(payload);
     final payloadMap = json.decode(payload);
-    print(payloadMap);
+    // print(payloadMap);
     if (payloadMap is! Map<dynamic, dynamic>) {
-      print('asdfasdfasdf');
+      // print('asdfasdfasdf');
       throw Exception('invalid payload');
     }
     return payloadMap;
@@ -94,11 +92,11 @@ class UserStatus with ChangeNotifier {
     _accessTokenTemp = accessToken ?? '';
     _refreshTokenTemp = refreshToken ?? '';
 
-    print('token: $_accessTokenTemp');
+    // print('token: $_accessTokenTemp');
     if (_accessTokenTemp != '') {
       try {
         var payload = _parseJwtPayLoad(_accessTokenTemp)['data'];
-        print(payload);
+        // print(payload);
         _isLogged = true;
         return true;
       } catch (e) {
@@ -121,13 +119,13 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<bool> deleteAccount(String deleteReason) async {
-    print(_accessTokenTemp);
+    // print(_accessTokenTemp);
     if (_accessTokenTemp == '') {
       return false;
     }
     Map<String, dynamic> body = {'reason': deleteReason};
 
-    print(deleteReason);
+    // print(deleteReason);
     final res = await http.delete(
       Uri.parse('$serverAddress/members'),
       body: jsonEncode(body),
@@ -136,7 +134,7 @@ class UserStatus with ChangeNotifier {
         HttpHeaders.authorizationHeader: 'Bearer $_accessTokenTemp'
       },
     );
-    print(res.statusCode);
+    // print(res.statusCode);
     if (res.statusCode ~/ 100 == 2) {
       cleanAll();
       return true;
@@ -220,8 +218,8 @@ class UserStatus with ChangeNotifier {
 
   Future<bool> getUserIsPremium() async {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    print(customerInfo);
-    _isPremium =  customerInfo.activeSubscriptions.isNotEmpty;
+    // print(customerInfo);
+    _isPremium =  customerInfo.entitlements.all['necklife']!.isActive;
     notifyListeners();
     return _isPremium;
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/my_subscription.dart';
 import 'package:mocksum_flutter/paywall.dart';
 import 'package:mocksum_flutter/tutorials.dart';
@@ -24,7 +25,6 @@ class Settings extends StatefulWidget {
 
 class _SettingState extends State<Settings> {
 
-  // final Uri _fomrUrl = Uri.parse('https://forms.gle/bi2YK5wfAFXQN4DKA');
   final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
   final Uri _PPUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Privacy-Policy-f50f241b48d44e74a4ffe9bbc9f87dcf?pvs=4');
 
@@ -210,7 +210,7 @@ class _SettingState extends State<Settings> {
                           value: 2,
                           groupValue: _deleteAccountReasonIdx,
                           onChanged: (int? value) {
-                            print('asdf $_deleteAccountReasonIdx');
+                            // print('asdf $_deleteAccountReasonIdx');
                             setState(() {
                               _deleteAccountReasonIdx = value!;
                             });
@@ -227,7 +227,7 @@ class _SettingState extends State<Settings> {
                           value: 3,
                           groupValue: _deleteAccountReasonIdx,
                           onChanged: (int? value) {
-                            print('asdf $_deleteAccountReasonIdx');
+                            // print('asdf $_deleteAccountReasonIdx');
                             setState(() {
                               _deleteAccountReasonIdx = value!;
                             });
@@ -266,11 +266,13 @@ class _SettingState extends State<Settings> {
                       const SizedBox(),
                       ElevatedButton(
                           onPressed: () async {
-                            print(_deleteReasonEditController.text);
+                            // print(_deleteReasonEditController.text);
                             UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
                             String deleteReason = _deleteAccountReasonIdx == 4 ? _deleteReasonEditController.text : _deleteReasonList[_deleteAccountReasonIdx];
                             bool success = await userStatus2.deleteAccount(deleteReason);
                             if (success) {
+                              const storage = FlutterSecureStorage();
+                              storage.deleteAll();
                               Navigator.push(context, MaterialPageRoute(builder: (
                                   context) => const LoginPage()));
                               // userStatus2.cleanAll();
@@ -315,7 +317,6 @@ class _SettingState extends State<Settings> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
-
                           ),
                           child: const TextDefault(content: '제출', fontSize: 15, isBold: true)
                       )
@@ -616,7 +617,7 @@ class _SettingState extends State<Settings> {
             ),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (
-                  context) => const Paywall()));
+                  context) => const MySubscription()));
             },
           ),
           GestureDetector(

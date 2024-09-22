@@ -217,7 +217,7 @@ bool hasRotated(double currentPitch, double currentRoll, double currentYaw) {
 
 
   // 회전 여부 판단
-  bool rotated = deltaPitch > 0.1 || deltaRoll > 0.1|| deltaYaw > 0.08;
+  bool rotated = deltaPitch > 0.1 || deltaYaw > 0.08;
 
   // 이전 값을 현재 값으로 업데이트
 

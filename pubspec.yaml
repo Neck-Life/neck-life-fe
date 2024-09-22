@@ -67,8 +67,6 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
-flutter_native_splash:
-  color: "#0866FF"
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -77,6 +75,11 @@ flutter_native_splash:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+
+
+flutter_native_splash:
+  color: "#F9F9F9"
+  image: "assets/logo.png"
 
 flutter_launcher_icons:
   android: "launcher_icon"

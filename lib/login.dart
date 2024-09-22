@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   static const _kFontFam = 'MyFlutterApp';
   static const String? _kFontPkg = null;
 
-  static const IconData apple = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData apple = IconData(0xf179, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   // static const IconData google = IconData(0xf1a0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 
   final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                             );
                             bool success = await userStatus.socialLogin(
                                 credential.authorizationCode, 'apple');
-                            print(success);
+                            // print(success);
                             if (success) {
                               Navigator.push(
                                   context, MaterialPageRoute(builder: (

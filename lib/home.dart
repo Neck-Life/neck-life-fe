@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
           .verifyToken();
-      print(isLogged);
+      // print(isLogged);
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
       if (_isFirstLaunch) {
@@ -129,10 +129,10 @@ class _HomeState extends State<Home> {
                 ),
               );
             } else {
-              return LoginPage();
+              return const LoginPage();
             }
           }
-          return const SizedBox();
+          return const Scaffold();
           // return MainPage();
         },
       )

@@ -77,7 +77,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   bool _isNowTurtle() {
-    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition >= 0.35) {
       return true;
     } else {
       return false;
@@ -146,73 +146,27 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Container(
-                    width: 2,
-                    height: responsive.percentWidth(85)*0.7,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF000000)
-                    ),
-                  ),
+                  // Container(
+                  //   width: 2,
+                  //   height: responsive.percentWidth(85)*0.7,
+                  //   decoration: const BoxDecoration(
+                  //     color: Color(0xFF000000)
+                  //   ),
+                  // ),
                   Positioned(
-                    top: responsive.percentWidth(85)*0.30,
+                    top: responsive.percentWidth(85)*0.35,
                     child: Transform.rotate(
                       angle: _rotateDeg, // **calculate based on head pos
-                      origin: Offset(0, responsive.percentWidth(85)*0),
+                      origin: Offset(0, -responsive.percentWidth(5)),
                       child: Container(
                         width: responsive.percentWidth(6),
-                        height: responsive.percentWidth(85)*0.30,
+                        height: responsive.percentWidth(85)*0.3,
                         decoration: const BoxDecoration(
                           color: Color(0xFFFFB59E),
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                      top: responsive.percentWidth(40)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(40)*0.15,
-                      left: responsive.percentWidth(65)*0.5-responsive.percentWidth(65)*0.03+_cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
-                      child: Transform.rotate(
-                          angle: -_pitch, // **calculated by pitch
-                          origin: Offset(-responsive.percentWidth(30)*0.5+responsive.percentWidth(5), responsive.percentWidth(30)*0.5-responsive.percentWidth(5)),
-                          child: Container(
-                            width: responsive.percentWidth(30),
-                            height: responsive.percentWidth(30),
-                            child: Image.asset(
-                              "assets/head.png",
-                              width: responsive.percentWidth(50),
-                              height: responsive.percentWidth(50),
-                              fit: BoxFit.cover,
-                            )
-                          )
-                          // Container(
-                          //   width: responsive.percentWidth(15),
-                          //   height: responsive.percentWidth(15),
-                          //   decoration: const BoxDecoration(
-                          //     color: Color(0xFFFFFFFF),
-                          //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
-                          //   ),
-                          //   child: Stack(
-                          //     children: [
-                          //       Container(
-                          //         width: responsive.percentWidth(15)*0.3,
-                          //         height: 5,
-                          //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.2, left: responsive.percentWidth(15)*0.7),
-                          //         decoration: const BoxDecoration(
-                          //             color: Colors.black
-                          //         ),
-                          //       ),
-                          //       Container(
-                          //         width: responsive.percentWidth(15)*0.1,
-                          //         height: 5,
-                          //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.7, left: responsive.percentWidth(15)*0.9),
-                          //         decoration: const BoxDecoration(
-                          //             color: Colors.black
-                          //         ),
-                          //       )
-                          //     ],
-                          //   ),
-                          // )
-                      )
                   ),
                   Container(
                     width: responsive.percentWidth(50),
@@ -228,6 +182,52 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                       height: responsive.percentWidth(50),
                       fit: BoxFit.contain,
                     ),
+                  ),
+                  Positioned(
+                      top: responsive.percentWidth(40)*0.15+sin(_rotateDeg).abs()*responsive.percentWidth(40)*0.15,
+                      left: responsive.percentWidth(65)*0.5-responsive.percentWidth(65)*0.03+_cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
+                      child: Transform.rotate(
+                          angle: -_pitch, // **calculated by pitch
+                          origin: Offset(-responsive.percentWidth(35)*0.5+responsive.percentWidth(7.5), responsive.percentWidth(35)*0.5-responsive.percentWidth(5)),
+                          child: Container(
+                              width: responsive.percentWidth(30),
+                              height: responsive.percentWidth(30),
+                              child: Image.asset(
+                                "assets/head.png",
+                                width: responsive.percentWidth(50),
+                                height: responsive.percentWidth(50),
+                                fit: BoxFit.cover,
+                              )
+                          )
+                        // Container(
+                        //   width: responsive.percentWidth(15),
+                        //   height: responsive.percentWidth(15),
+                        //   decoration: const BoxDecoration(
+                        //     color: Color(0xFFFFFFFF),
+                        //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))
+                        //   ),
+                        //   child: Stack(
+                        //     children: [
+                        //       Container(
+                        //         width: responsive.percentWidth(15)*0.3,
+                        //         height: 5,
+                        //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.2, left: responsive.percentWidth(15)*0.7),
+                        //         decoration: const BoxDecoration(
+                        //             color: Colors.black
+                        //         ),
+                        //       ),
+                        //       Container(
+                        //         width: responsive.percentWidth(15)*0.1,
+                        //         height: 5,
+                        //         margin: EdgeInsets.only(top: responsive.percentWidth(15)*0.7, left: responsive.percentWidth(15)*0.9),
+                        //         decoration: const BoxDecoration(
+                        //             color: Colors.black
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // )
+                      )
                   ),
                 ],
               )

@@ -126,7 +126,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                       }
                     });
                   }
-                  print('fuck ${snapshot.data?['poseTimerMap']}');
+                  // print('fuck ${snapshot.data?['poseTimerMap']}');
 
                   return Column(
                     children: [

@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'dart:io' show Platform;
 
+import 'home.dart';
+
 class Paywall extends StatefulWidget {
   const Paywall({super.key});
 
@@ -37,7 +39,7 @@ class _PaywallState extends State<Paywall> {
       Offerings offerings = await Purchases.getOfferings();
       if (offerings.current != null && offerings.current!.availablePackages.isNotEmpty) {
         // Display packages for sale
-        print(offerings.current!.availablePackages);
+        // print(offerings.current!.availablePackages);
         setState(() {
           _premiumSubscription = offerings.current!.availablePackages[0];
         });
@@ -60,6 +62,8 @@ class _PaywallState extends State<Paywall> {
         print('payed');
         userStatus.setIsPremium(true);
         _amplitudeEventManager.actionEvent('paywall', 'purchase');
+        Navigator.push(context, MaterialPageRoute(builder: (
+            context) => const Home()));
         return true;
       }
     } on PlatformException catch (e) {

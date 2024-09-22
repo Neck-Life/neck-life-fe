@@ -25,9 +25,13 @@ class MainPage extends StatefulWidget {
 
 class MainState extends State<MainPage> {
 
+  static const _kFontFam = 'MyFlutterApp';
+  static const String? _kFontPkg = null;
+  static const IconData question_circle_o = IconData(0xf29c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
   MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
-  AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
+  final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   late BannerAd _ad;
   bool _isAdLoaded = false;
@@ -38,7 +42,7 @@ class MainState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    print('sadf');
+    // print('sadf');
     _initLocalNotification();
     _setAudioHandler();
     _amplitudeEventManager.viewEvent('mainpage');
@@ -125,16 +129,14 @@ class MainState extends State<MainPage> {
 
 
   void _setAudioHandler() async {
-    print('sadfasdf');
-    if (_audioHandler == null) {
-      _audioHandler = await AudioService.init(
+    // print('sadfasdf');
+    _audioHandler ??= await AudioService.init(
           builder: () => MyAudioHandler(),
           config: const AudioServiceConfig(
             androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
             androidNotificationChannelName: 'Music playback',
           )
       );
-    }
   }
 
   void showReviewRequestPopUp(BuildContext context) {
@@ -284,7 +286,15 @@ class MainState extends State<MainPage> {
                       ),
                     ),
                     const Neck(),
-                    SizedBox(height: 20+responsive.percentHeight(5)),
+                    SizedBox(height: responsive.percentHeight(5)),
+                    !userStatus.isPremium ?
+                    Container(
+                      margin: EdgeInsets.only(bottom: responsive.percentHeight(1)),
+                      alignment: Alignment.center,
+                      child: TextDefault(content: '사용 시간: ${globalTimer.useMin}/120분', fontSize: 15, isBold: false,)
+                    ) : const SizedBox(),
+                    // SizedBox(height: responsive.percentHeight(7)),
+
                     Container(
                         decoration: ShapeDecoration(
                           color: detectStatus.detectAvailable ? Colors.white : Colors.grey,
@@ -355,42 +365,47 @@ class MainState extends State<MainPage> {
 
                     Container(
                       width: responsive.percentWidth(85),
-                      margin: const EdgeInsets.only(bottom: 10),
+                      margin: EdgeInsets.only(bottom: responsive.percentHeight(2), top: responsive.percentHeight(1)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const TextDefault(
-                            content: '실험실 모드',
-                            fontSize: 18,
-                            isBold: true,
+                          const Row(
+                            children: [
+                              TextDefault(
+                                content: '(Beta) 고개 수평이동 감지',
+                                fontSize: 16,
+                                isBold: true,
+                              ),
+                              // const SizedBox(width: 2,),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //
+                              //   },
+                              //   child: const Icon(question_circle_o, color: Colors.black),
+                              // )
+                            ],
                           ),
-                          Switch(
-                            value: _isLabMode,
-                            onChanged: (bool value) {
-                              setState(() {
-                                _isLabMode = value;
-                                DetectStatus.isLabMode = value;
-
-                              });
-                            },
+                          Transform.scale(
+                            scale: 0.8,
+                            child: Switch(
+                              value: _isLabMode,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  _isLabMode = value;
+                                  DetectStatus.isLabMode = value;
+                                });
+                              },
+                            )
                           ),
                         ],
                       ),
                     ),
-
-
-                    !userStatus.isPremium ?
-                    Container(
-                      child: Text('${globalTimer.useMin}/120분'),
-                      alignment: Alignment.center,
-                    ) : const SizedBox(),
-                    SizedBox(height: responsive.percentHeight(7)),
                     userStatus.isPremium ? const SizedBox() : Container(
                       child: AdWidget(ad: _ad),
                       width: _ad.size.width.toDouble(),
                       height: _ad.size.height.toDouble(),
                       alignment: Alignment.center,
-                    )
+                    ),
                   ],
                 )
             ),

@@ -17,7 +17,23 @@ class _ScoreChartState extends State<ScoreChart> {
   @override
   void initState() {
     super.initState();
-    _scoreValues = widget.scoreValues;
+
+    // 최근 일주일
+    DateTime now = DateTime.now();
+    now = now.subtract(const Duration(days: 6));
+
+    _scoreValues = Map();
+
+    for (int i = 0; i < 7; i++, now = now.add(const Duration(days: 1))) {
+      String dateStr = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      if (widget.scoreValues.containsKey(dateStr)) {
+        _scoreValues[dateStr] = widget.scoreValues[dateStr];
+      } else {
+        _scoreValues[dateStr] = 0;
+      }
+    }
+
+    // print(_scoreValues);
   }
 
   List<Color> gradientColors = [
@@ -45,24 +61,24 @@ class _ScoreChartState extends State<ScoreChart> {
             ),
           ),
         ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-              ),
-            ),
-          ),
-        ),
+        // SizedBox(
+        //   width: 60,
+        //   height: 34,
+        //   child: TextButton(
+        //     onPressed: () {
+        //       setState(() {
+        //         showAvg = !showAvg;
+        //       });
+        //     },
+        //     child: Text(
+        //       'avg',
+        //       style: TextStyle(
+        //         fontSize: 12,
+        //         color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -181,7 +197,7 @@ class _ScoreChartState extends State<ScoreChart> {
           //   // FlSpot(9.5, 3),
           //   // FlSpot(11, 4),
           // ],
-          isCurved: true,
+          isCurved: false,
           gradient: LinearGradient(
             colors: gradientColors,
           ),

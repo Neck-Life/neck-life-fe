@@ -19,20 +19,25 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
 
+  static const _kFontFam = 'MyFlutterApp';
+  static const String? _kFontPkg = null;
+  static const IconData question_circle_o = IconData(0xf29c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
   late Map<String, int> poseCount;
   late final _internetCheckListener;
   bool _isInternetConnected = true;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
-    // setState(() async {
-    //   _isInternetConnected = await InternetConnection().hasInternetAccess;
-    // });
-    _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) {
+    super.initState();
+    _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
       switch (status) {
         case InternetStatus.connected:
-          setState(() {
-            _isInternetConnected = true;
+          HistoryStatus.postDataNotPosted().then((val) {
+            setState(() {
+              _isInternetConnected = true;
+            });
           });
           break;
         case InternetStatus.disconnected:
@@ -42,11 +47,62 @@ class _HistoryState extends State<History> {
           break;
       }
     });
-    super.initState();
+
+    // Future.delayed(Duration.zero, () async {
+    //   bool isInternetConnected = await InternetConnection().hasInternetAccess;
+    //   setState(() {
+    //     _isInternetConnected = isInternetConnected;
+    //   });
+    // });
     // _historyStatus = HistoryStatus();
     // Future.delayed(Duration.zero, () {
     //   _chosenGoalSetting = HistoryStatus.chosenGoalSetting;
     // });
+  }
+
+  void showScoreExplain(Offset offset) {
+    removeHighlightOverlay();
+
+    final overlayEntry = Overlay.of(context);
+    Responsive responsive = Responsive(context);
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: offset.dx - responsive.percentWidth(40),
+        top: offset.dy,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            width: responsive.percentWidth(40),
+            // height: responsive.percentHeight(30),
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              shadows: const [
+                BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 4,
+                  offset: Offset(2, 2),
+                  spreadRadius: 3,
+                )
+              ],
+            ),
+            child: const Text('점수는 기본 70점에서 출발하여 바른 자세를 오랜 시간 유지할수록 점점 증가하고, 안 좋은 자세를 탐지할 때마다 감점됩니다.'),
+          ),
+        )
+      )
+    );
+
+    overlayEntry.insert(_overlayEntry!);
+
+  }
+
+  void removeHighlightOverlay() {
+    _overlayEntry?.remove();
+    // _overlayEntry?.dispose();
+    _overlayEntry = null;
   }
 
 
@@ -74,15 +130,15 @@ class _HistoryState extends State<History> {
                 width: responsive.deviceWidth,
                 // margin: EdgeInsets.only(top: responsive.percentHeight(7.5)),
                 alignment: Alignment.center,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFFFF4545),
                 ),
-                child: Text('인터넷 연결을 확인해주세요. 정보가 최신 버전이 아닐 수 있습니다.'),
+                child: const Text('인터넷 연결을 확인해주세요. 정보가 최신 버전이 아닐 수 있습니다.'),
               ) : const SizedBox(),
               FutureBuilder(
                 future: historyStatus.getTodayHistoryData(),
                 builder: (context, snapshot) {
-                  print('draw');
+                  // print('draw');
                   if (snapshot.hasData == false) {
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -98,7 +154,7 @@ class _HistoryState extends State<History> {
                             width: responsive.percentWidth(85),
                             height: responsive.percentWidth(85)*0.3,
                             margin: EdgeInsets.only(top: responsive.percentHeight(1)),
-                            padding: EdgeInsets.only(left: responsive.percentWidth(7.5), right: responsive.percentWidth(7.5)),
+                            padding: EdgeInsets.only(left: responsive.percentWidth(7.5)),
                             decoration: ShapeDecoration(
                               color: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -113,30 +169,63 @@ class _HistoryState extends State<History> {
                                 )
                               ],
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Stack(
                               children: [
-                                const TextDefault(content: '내 자세 점수', fontSize: 20, isBold: true),
-                                SizedBox(
-                                  width: responsive.percentWidth(15),
-                                  height: responsive.percentWidth(15),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        value: snapshot.data?['success'] ? (snapshot.data?['point'] / 100) : 0,
-                                        strokeWidth: 6,
-                                        backgroundColor: const Color(0xFFE2E2E2),
-                                        color: const Color(0xFF03A000),
-                                      ),
-                                      Center(
-                                        child: TextDefault(
-                                          content: snapshot.data?['success'] ? '${snapshot.data?['point']}점' : '',
-                                          fontSize: 16,
-                                          isBold: true,
+                                Positioned(
+                                  top: responsive.percentWidth(6),
+                                  child: SizedBox(
+                                    // padding: EdgeInsets.only(right: responsive.percentWidth(30)),
+                                    width: responsive.percentWidth(68),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const TextDefault(content: '내 자세 점수', fontSize: 20, isBold: true),
+                                        SizedBox(
+                                          width: responsive.percentWidth(15),
+                                          height: responsive.percentWidth(15),
+                                          child: Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                value: snapshot.data?['success'] ? (snapshot.data?['point'] / 100) : 0,
+                                                strokeWidth: 6,
+                                                backgroundColor: const Color(0xFFE2E2E2),
+                                                color: const Color(0xFF03A000),
+                                              ),
+                                              Center(
+                                                child: TextDefault(
+                                                  content: snapshot.data?['success'] ? '${snapshot.data?['point']}점' : '',
+                                                  fontSize: 16,
+                                                  isBold: true,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: responsive.percentWidth(70),
+                                  top: responsive.percentWidth(1),
+                                  child: GestureDetector(
+                                    onLongPressDown: (details) {
+                                      // print('asdf');
+                                      showScoreExplain(details.globalPosition);
+                                    },
+                                    onLongPressUp: () {
+                                      // print('asdf2');
+                                      removeHighlightOverlay();
+                                    },
+                                    child: SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Transform.scale(
+                                        scale: 0.8,
+                                        child: const Icon(question_circle_o, color: Colors.black),
                                       ),
-                                    ],
+                                    )
                                   ),
                                 ),
                               ],
@@ -198,56 +287,56 @@ class _HistoryState extends State<History> {
                   }
                 }
               ),
-              FutureBuilder(
-                future: historyStatus.getScoreSeries(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData == false) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('해당 날짜의 데이터를 찾을 수 없습니다.'),
-                    );
-                  } else {
-                    return Container(
-                      width: responsive.percentWidth(85),
-                      // height: responsive.percentWidth(85)*0.3,
-                      margin: EdgeInsets.only(top: responsive.percentHeight(2)),
-                      // padding: EdgeInsets.only(left: responsive.percentWidth(7.5), right: responsive.percentWidth(7.5)),
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x19000000),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            spreadRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(height: responsive.percentHeight(2),),
-                          Container(
-                            width: responsive.percentWidth(85),
-                            padding: EdgeInsets.only(left: responsive.percentWidth(5)),
-                            child: const TextDefault(content: '점수의 변화를 확인해보세요', fontSize: 16, isBold: true,),
-                          ),
-                          snapshot.data?['success'] ?
-                          ScoreChart(scoreValues: snapshot.data?['historyPointMap']) :
+              Container(
+                width: responsive.percentWidth(85),
+                // height: responsive.percentWidth(85)*0.3,
+                margin: EdgeInsets.only(top: responsive.percentHeight(2)),
+                // padding: EdgeInsets.only(left: responsive.percentWidth(7.5), right: responsive.percentWidth(7.5)),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x19000000),
+                      blurRadius: 4,
+                      offset: Offset(2, 2),
+                      spreadRadius: 3,
+                    )
+                  ],
+                ),
+                child: FutureBuilder(
+                  future: historyStatus.getScoreSeries(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData == false) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('해당 날짜의 데이터를 찾을 수 없습니다.'),
+                      );
+                    } else {
+                      return Column(
+                          children: [
+                            SizedBox(height: responsive.percentHeight(2),),
                             Container(
-                              margin: EdgeInsets.only(top: responsive.percentHeight(2), bottom: responsive.percentHeight(2)),
-                              child: const TextDefault(content: '자세를 기록해보세요!', fontSize: 16, isBold: true),
-                            )
-                        ],
-                      ),
-                    );
+                              width: responsive.percentWidth(85),
+                              padding: EdgeInsets.only(left: responsive.percentWidth(5)),
+                              child: const TextDefault(content: '최근 일주일의 점수를 확인해보세요', fontSize: 16, isBold: true,),
+                            ),
+                            snapshot.data?['success'] ?
+                            ScoreChart(scoreValues: snapshot.data?['historyPointMap']) :
+                              Container(
+                                margin: EdgeInsets.only(top: responsive.percentHeight(2), bottom: responsive.percentHeight(2)),
+                                child: const TextDefault(content: '자세를 기록해보세요!', fontSize: 16, isBold: true),
+                              )
+                          ],
+                        );
+                    }
                   }
-                }
+                )
               ),
               Container(
                 width: responsive.percentWidth(85),

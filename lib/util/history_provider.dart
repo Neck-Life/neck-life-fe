@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  static const String serverAddress = 'http://3.34.251.190:8080/api/v1';
+  static const String serverAddress = 'http://13.125.173.157:8080/api/v1';
 
   Map<String, dynamic>? _historyData;
   Map<String, int>? _date2idx;
@@ -55,13 +55,16 @@ class HistoryStatus with ChangeNotifier {
       dio.options.headers["authorization"] = "bearer $accessToken";
     }
 
-    print(accessToken);
+    String? dataNotPosted = await storage.read(key: 'dataNotPosted');
+    // print('dnp $dataNotPosted');
+
+    // print(accessToken);
     DateTime now = DateTime.now();
     // if (_historyData == null) {
     await updateHistoryData(now.year.toString(), now.month.toString());
     // }
     int cnt = 0;
-    if (_historyData != null) {
+    if (_historyData != null && _historyData?['success'] != false) {
       _date2idx = <String, int>{};
       for (Map<String, dynamic> data in _historyData?['daily']) {
         _date2idx?['${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${data['date'].toString().padLeft(2, '0')}'] = cnt++;
@@ -77,12 +80,15 @@ class HistoryStatus with ChangeNotifier {
     String year = parsedDate[0];
     String month = parsedDate[1].replaceAll(RegExp(r'^0+(?=.)'), '');
     // print(_historyData);
-    if (_historyData == null) {
-      return {'date': '1970-01-01', 'success': false};
-    }
-    if (_shouldChangeData || _historyData?['year'] != year || _historyData?['month'] != month) {
+    if (_historyData == null || _shouldChangeData || _historyData?['year'] != year || _historyData?['month'] != month) {
       await updateHistoryData(year, month);
     }
+
+    if (_historyData == null) {
+      // print('asdfsadffuck');
+      return {'date': '1970-01-01', 'success': false};
+    }
+
     // print('test11 $date $_date2idx');
     // print(_date2idx!.containsKey(date));
     if (_date2idx!.containsKey(date)) {
@@ -96,8 +102,8 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<void> updateHistoryData(String year, String month) async {
+    const storage = FlutterSecureStorage();
     try {
-      const storage = FlutterSecureStorage();
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {
         dio.options.headers["authorization"] = "bearer $accessToken";
@@ -105,13 +111,22 @@ class HistoryStatus with ChangeNotifier {
 
       Response res = await dio.get(
           '$serverAddress/history/monthly?year=${int.parse(year)}&month=${int.parse(month)}');
+      // print(res.data);
       if (res.data['code'] == 'success') {
         _historyData = res.data['data'];
         _dateDataUpdated = true;
+        storage.write(key: 'posehistoryLocal', value: json.encode(_historyData));
         if (_scoreSeriesUpdated) {
           _shouldChangeData = false;
         }
         notifyListeners();
+      }
+    } on DioException catch(e) {
+      String? historyDataStr = await storage.read(key: 'posehistoryLocal');
+      if (historyDataStr == null) {
+        _historyData =  {'success': false};
+      } else {
+        _historyData = json.decode(historyDataStr);
       }
     } on Exception catch (e) {
       print(e);
@@ -125,8 +140,8 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getScoreSeries() async {
+    const storage = FlutterSecureStorage();
     try {
-      const storage = FlutterSecureStorage();
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {
         dio.options.headers["authorization"] = "bearer $accessToken";
@@ -142,6 +157,7 @@ class HistoryStatus with ChangeNotifier {
           // print('scores $_scoreSeries');
           // notifyListeners();
           _scoreSeriesUpdated = true;
+          storage.write(key: 'scoreserieslocal', value: json.encode(_scoreSeries));
           if (_dateDataUpdated) {
             _shouldChangeData = false;
           }
@@ -154,6 +170,15 @@ class HistoryStatus with ChangeNotifier {
         return _scoreSeries!;
       }
 
+    } on DioException catch(e) {
+      String? scoreSeriesStr = await storage.read(key: 'scoreserieslocal');
+      if (scoreSeriesStr == null) {
+        _scoreSeries =  {'success': false};
+      } else {
+        _scoreSeries = json.decode(scoreSeriesStr);
+      }
+
+      return _scoreSeries!;
     } on Exception catch (e) {
       // print(e);
       return {'success': false};
@@ -161,8 +186,8 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getUserGoalSetting() async {
+    const storage = FlutterSecureStorage();
     try {
-      const storage = FlutterSecureStorage();
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {
         dio.options.headers["authorization"] = "bearer $accessToken";
@@ -173,6 +198,7 @@ class HistoryStatus with ChangeNotifier {
       if (res.data['code'] == 'success') {
         _goalsList = res.data['data'];
         _goalsList?['success'] = true;
+        storage.write(key: 'goallistlocal', value: json.encode(_goalsList));
       } else {
         throw Exception();
       }
@@ -180,6 +206,15 @@ class HistoryStatus with ChangeNotifier {
       // notifyListeners();
       return _goalsList!;
 
+    } on DioException catch(e) {
+      String? goalListStr = await storage.read(key: 'goallistlocal');
+      if (goalListStr == null) {
+        _goalsList =  {'goals': [], 'success': false};
+      } else {
+        _goalsList = json.decode(goalListStr);
+      }
+
+      return _goalsList!;
     } on Exception catch (e) {
       print(e);
       return {'success': false};
@@ -203,10 +238,6 @@ class HistoryStatus with ChangeNotifier {
     };
 
     // 나중에 success 안에 넣기
-    postData['order'] = _goalsList?['goals'].length > 0 ? (_goalsList?['goals'].last()['order']+1) : 1;
-    _goalsList?['goals'].add(postData);
-    // print('fuck $_goalsList');
-    notifyListeners();
 
     try {
       Response res = await dio.post(
@@ -214,6 +245,10 @@ class HistoryStatus with ChangeNotifier {
 
       if (res.data['code'] == 'success') {
         // print('success');
+        postData['order'] = _goalsList?['goals'].length > 0 ? (_goalsList?['goals'].last()['order']+1) : 1;
+        _goalsList?['goals'].add(postData);
+        // print('fuck $_goalsList');
+        notifyListeners();
         return true;
       } else {
         throw Exception();
@@ -238,11 +273,11 @@ class HistoryStatus with ChangeNotifier {
           '$serverAddress/goals', data: {'goalsIds': [id]});
 
       // 추후 success 절 안에 넣기
-      _goalsList?['goals'].removeWhere((item) => item['order'] == id);
-      notifyListeners();
       // print(_goalsList);
       if (res.data['code'] == 'success') {
         print('success');
+        _goalsList?['goals'].removeWhere((item) => item['order'] == id);
+        notifyListeners();
         return true;
       } else {
         throw Exception();
@@ -312,6 +347,7 @@ class HistoryStatus with ChangeNotifier {
       dio.options.headers["authorization"] = "bearer $accessToken";
     }
 
+    print('history post');
     // print({'historys': [poseHistory]});
 
     try {
@@ -319,6 +355,7 @@ class HistoryStatus with ChangeNotifier {
       Response res = await dio.post(
           '$serverAddress/history', data: {'historys': [poseHistory['history']]});
 
+      print(res.data);
       if (res.data['code'] == 'success') {
         print('success');
         return;
@@ -331,8 +368,8 @@ class HistoryStatus with ChangeNotifier {
       dataNotPosted ??= '[]';
 
       List<dynamic> dataNotPostedList = json.decode(dataNotPosted);
-      dataNotPostedList.add(poseHistory);
-
+      dataNotPostedList.add(poseHistory['history']);
+      // print(dataNotPostedList);
       await storage.write(key: 'dataNotPosted', value: json.encode(dataNotPostedList));
     }
   }
@@ -340,6 +377,7 @@ class HistoryStatus with ChangeNotifier {
   static Future<void> postDataNotPosted() async {
     const storage = FlutterSecureStorage();
 
+    // print('post not posted');
     String? accessToken = await storage.read(key: 'accessToken');
     if (accessToken != null && accessToken != '') {
       dio.options.headers["authorization"] = "bearer $accessToken";
@@ -354,15 +392,15 @@ class HistoryStatus with ChangeNotifier {
       Response res = await dio.post(
           '$serverAddress/history', data: {'historys': json.decode(dataNotPosted)});
       if (res.data['code'] == 'success') {
-        print('success');
-        print('sened $dataNotPosted');
+        // print('success');
+        // print('sened $dataNotPosted');
         await storage.write(key: 'dataNotPosted', value: '[]');
         return;
       } else {
         throw Exception();
       }
     } on Exception {
-      print('adsfasffsdfdsfsd');
+      // print('adsfasffsdfdsfsd');
       return;
     }
   }
