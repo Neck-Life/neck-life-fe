@@ -8,6 +8,7 @@ import 'util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
+import 'util/adMob/reward_admob.dart'; // 분리된 RewardedAdButton import
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,6 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class MainState extends State<MainPage> {
+
+  final RewardedAdManager adManager = RewardedAdManager(); // RewardedAdManager 생성
 
   bool _isHelpTextOpend = false;
   // LocationHandler? _locationHandler;
@@ -259,6 +262,8 @@ class MainState extends State<MainPage> {
                         )
                     ),
                     SizedBox(height: responsive.percentHeight(7)),
+                    // 리워드 광고 버튼 (별도의 파일에서 가져옴)
+                    RewardedAdButton(adManager: adManager),
                     // GestureDetector(
                     //   child: Text(
                     //     '* 에어팟을 연결해도 작동이 안되나요?',

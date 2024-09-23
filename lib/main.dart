@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +18,7 @@ void main() async {
   ]);
   await initializeAudioSession();
 
+  MobileAds.instance.initialize();  // Google Mobile Ads SDK 초기화
   runApp(MyApp());
 }
 
