@@ -161,7 +161,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     double cal_acc = -cal_acc_y; //y축만 고려하기
     // cal_acc = hpfacc.process(cal_acc);
 
-    double offset = 0.001;
+    double offset = 0.007;
     if(cal_acc > offset) cal_acc -= 0.00;
     else if(cal_acc < -offset) cal_acc += 0.00;
     else cal_acc = 0;
@@ -195,9 +195,6 @@ class AirpodsCalMovingAvgZupt extends Filter{
     if (isRotated  && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0 && position != last_zero_positon) {
       // print(1);
 
-
-
-
       int inx = positions.length - 1;
 
       // 롤백 조건 확인
@@ -222,7 +219,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
       }
 
       // 가속도가 0이고 속도도 0일 때 체크포인트 설정
-    else if (!isRotated && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
+     if (!isRotated && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
       // print(2);
 
         last_zero_velocity = velocity;
@@ -307,7 +304,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
     // 회전 여부 판단
-    bool rotated = deltaPitch > 0.1 || deltaRoll > 0.1|| deltaYaw > 0.08;
+    bool rotated =   deltaRoll > 0.1|| deltaYaw > 0.08;
 
     // 이전 값을 현재 값으로 업데이트
 
@@ -322,7 +319,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> compensatePositionOnZ(double velocity, double position){
 
     double deviation = 0.0;
-    int windowSIZE = 10;
+    int windowSIZE = 20;
     if(rawZ.length < windowSIZE) return [velocity,position];
 
     for(int i=rawZ.length - windowSIZE;i<rawZ.length;i++){
@@ -332,7 +329,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.0015){
+    if(deviation > 0.002){
       return [velocity,position];
     }
 
@@ -395,7 +392,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
   //[velocity, postion] => [개선된 velocity, position] 제공
   List<double> applyZUPT(double velocity, double position){
     double deviation = 0.0;
-    int windowSIZE = 20;
+    int windowSIZE = 10;
     if(finalAccelometers.length < windowSIZE) return [velocity, position];
 
     for(int i=finalAccelometers.length - windowSIZE;i<finalAccelometers.length;i++){
@@ -405,7 +402,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.0015){
+    if(deviation > 0.01){
       return [velocity, position];
     }
     //위치 보상 알고리즘
@@ -422,33 +419,33 @@ class AirpodsCalMovingAvgZupt extends Filter{
         }
       }
 
-      if(flag){
-        int idx_r = velocities.length - 1;
-        double pos=0;
-        while(velocities[idx_r]!=0){
-          // if(velocities[idx_r] == velocity){
-          //   idx_r--;
-          //   continue;
-          // }
-          pos +=  velocities[idx_r] * deltaTimes[idx_r];
-          idx_r--;
-        }
-
-        if(pos>0){
-          print("뒤로이동");
-        }else{
-          print("앞으로 이동");
-        }
-        if(pos.abs()<0.0005){
-          position = (position - (pos*2));
-        }else if(pos.abs()<0.001){
-          position = (position - (pos*2));
-        }
-        else{
-          position = (position - (pos*2));
-        }
-
-      }
+      // if(flag){
+      //   int idx_r = velocities.length - 1;
+      //   double pos=0;
+      //   while(velocities[idx_r]!=0){
+      //     // if(velocities[idx_r] == velocity){
+      //     //   idx_r--;
+      //     //   continue;
+      //     // }
+      //     pos +=  velocities[idx_r] * deltaTimes[idx_r];
+      //     idx_r--;
+      //   }
+      //
+      //   if(pos>0){
+      //     print("뒤로이동");
+      //   }else{
+      //     print("앞으로 이동");
+      //   }
+      //   if(pos.abs()<0.0005){
+      //     position = (position - (pos*2));
+      //   }else if(pos.abs()<0.001){
+      //     position = (position - (pos*2));
+      //   }
+      //   else{
+      //     position = (position - (pos*2));
+      //   }
+      //
+      // }
 
 
     }
