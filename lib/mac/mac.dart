@@ -158,14 +158,32 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // print(tmp);
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
-    double cal_acc = -cal_acc_y; //y축만 고려하기
+    double cal_acc = cal_acc_y; //y축만 고려하기
     // cal_acc = hpfacc.process(cal_acc);
+
+
+
 
     double offset = 0.007;
     if(cal_acc > offset) cal_acc -= 0.00;
     else if(cal_acc < -offset) cal_acc += 0.00;
     else cal_acc = 0;
     accelometers.add(cal_acc);
+
+    if(cal_acc.abs() < 0.05){
+      // if(cal_acc.abs() < 0){
+      //   cal_acc = 0;
+      // }
+
+      cal_acc *= 1.5;
+    }
+
+    if(cal_acc<0){
+      cal_acc = cal_acc*1.2;
+    }
+
+
+
 
     double velocity = velocities.last + cal_acc * deltaTime;
     // double NotZUPTvelocity = NotZUPTvelocities.last + cal_acc * deltaTime;
@@ -227,15 +245,18 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
 
-    } else if (hasRotated(data.attitude.pitch.toDouble(), data.attitude.roll.toDouble(), data.attitude.yaw.toDouble())) {
+    }
+
+     if (hasRotated(data.attitude.pitch.toDouble(), data.attitude.roll.toDouble(), data.attitude.yaw.toDouble())) {
       isRotated = true;
       print("회전 발생");
     }
 
 
 // ZUPT 적용
-    [velocity, position] = applyZUPT(velocity, position);
-
+    else {
+      [velocity, position] = applyZUPT(velocity, position);
+    }
 
 
 
@@ -393,16 +414,26 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> applyZUPT(double velocity, double position){
     double deviation = 0.0;
     int windowSIZE = 10;
+    int zeroCount= 0;
     if(finalAccelometers.length < windowSIZE) return [velocity, position];
 
     for(int i=finalAccelometers.length - windowSIZE;i<finalAccelometers.length;i++){
-      deviation += finalAccelometers[i].abs();
+      deviation += finalAccelometers[i];
+      if(finalAccelometers[i] == 0){
+        zeroCount++;
+      }
     }
     deviation /= windowSIZE;
 
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.01){
+    if(deviation.abs() > 0.025){
+      if(zeroCount>1){
+        velocity = 0;
+        position = positions.last;
+      }
+
+
       return [velocity, position];
     }
     //위치 보상 알고리즘
