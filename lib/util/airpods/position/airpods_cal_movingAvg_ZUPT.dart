@@ -72,7 +72,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = -cal_acc_y; //y축만 고려하기
-    double offset = 0.01;
+    double offset = 0.007;
     if(cal_acc.abs() < offset) cal_acc = 0;
 
 
@@ -153,7 +153,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
     deviation /= windowSIZE;
     // print(deviation);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation > 0.0015) return [velocity, position];
+    if(deviation > 0.01) return [velocity, position];
+
+
     //위치 보상 알고리즘
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
 
@@ -217,7 +219,7 @@ bool hasRotated(double currentPitch, double currentRoll, double currentYaw) {
 
 
   // 회전 여부 판단
-  bool rotated = deltaPitch > 0.1 || deltaRoll > 0.1|| deltaYaw > 0.08;
+  bool rotated =  deltaRoll > 0.1|| deltaYaw > 0.08;
 
   // 이전 값을 현재 값으로 업데이트
 
