@@ -427,7 +427,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation.abs() > 0.025){
+    if(deviation.abs() > 0.035){
       if(zeroCount>1){
         velocity = 0;
         position = positions.last;
