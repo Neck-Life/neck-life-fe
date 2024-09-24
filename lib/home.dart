@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
       await _updateIsFirstLaunch();
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
-          .verifyToken();
+          .checkAndUpdateToken();
       print(isLogged);
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
@@ -95,7 +95,7 @@ class _HomeState extends State<Home> {
     return PopScope(
       canPop: false,
       child: FutureBuilder(
-        future: userStatus.verifyToken(),
+        future: userStatus.checkAndUpdateToken(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!) {
