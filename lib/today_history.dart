@@ -101,7 +101,7 @@ class _TodayHistoryState extends State<TodayHistory> {
               ],
             ),
             FutureBuilder(
-              future: historyStatus.getHistoryWithDate('${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}'),
+              future: historyStatus.getPastHistoryWithDate('${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}'),
               builder: (innerContext, snapshot) {
                 if (snapshot.hasData == false) {
                   return const Center(

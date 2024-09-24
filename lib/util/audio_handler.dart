@@ -48,6 +48,7 @@ class MyAudioHandler extends BaseAudioHandler {
           if (_isPlaying) {
             _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
             HistoryStatus.postMeasuredPoseData(_poseLog);
+
           }
           break;
         default:
@@ -75,12 +76,14 @@ class MyAudioHandler extends BaseAudioHandler {
         if (_minInterval <= 0) {
           _poseLog['history'][DateTime.now().toIso8601String().split('.')[0]
               .substring(0, 19)] = 'FORWARD';
+          print('FORWARD');
         }
       }
 
       if (!_checkIsNowTurtle()) {
         _turtleNeckStartedTimeStamp = 0;
         if (_isNowTurtle) {
+          print('NORMAL');
           _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'NORMAL';
           _isNowTurtle = false;
           emitCustomEvent('end');
@@ -100,7 +103,7 @@ class MyAudioHandler extends BaseAudioHandler {
         }
         _isNowTurtle = true;
         emitCustomEvent('turtle');
-        _minInterval = 300;
+        _minInterval = 25;
         _turtleNeckStartedTimeStamp = 0;
       }
       if (_minInterval > 0) {
@@ -158,9 +161,13 @@ class MyAudioHandler extends BaseAudioHandler {
     _isPlaying = false;
     _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'END';
     // print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
-    HistoryStatus.postMeasuredPoseData(_poseLog);
+    print(_poseLog);
+    // HistoryStatus.postMeasuredPoseData(_poseLog);
     // print('poselog $_poseLog');
     _bgAudioPlayer.pause();
+    _minInterval = 0;
+    _turtleNeckStartedTimeStamp = 0;
+    _poseLog = {"history": {}};
     return super.pause();
   }
 

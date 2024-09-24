@@ -72,7 +72,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = -cal_acc_y; //y축만 고려하기
-    double offset = 0.01;
+    double offset = 0.008;
     if(cal_acc.abs() < offset) cal_acc = 0;
 
 

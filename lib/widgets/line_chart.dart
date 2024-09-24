@@ -24,16 +24,19 @@ class _ScoreChartState extends State<ScoreChart> {
 
     _scoreValues = Map();
 
+    print('score ${widget.scoreValues}');
+
     for (int i = 0; i < 7; i++, now = now.add(const Duration(days: 1))) {
       String dateStr = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       if (widget.scoreValues.containsKey(dateStr)) {
+        print(dateStr);
         _scoreValues[dateStr] = widget.scoreValues[dateStr];
       } else {
         _scoreValues[dateStr] = 0;
       }
     }
 
-    // print(_scoreValues);
+    print(_scoreValues);
   }
 
   List<Color> gradientColors = [
@@ -183,6 +186,8 @@ class _ScoreChartState extends State<ScoreChart> {
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(_scoreValues.length, (idx) {
+            // print(_scoreValues.keys.toList());
+            // print()
             return FlSpot((idx).toDouble(), _scoreValues[_scoreValues.keys.toList()[idx]].toDouble());
           }),
           // spots: _scoreValues.keys.toList().generate(_scoreValues.length, (idx) {
@@ -219,7 +224,7 @@ class _ScoreChartState extends State<ScoreChart> {
       lineTouchData: LineTouchData(
         touchTooltipData: LineTouchTooltipData(
           getTooltipItems: (value) {
-            return value.map((e) => LineTooltipItem("${_scoreValues.keys.toList()[e.x.toInt()-1]}\n${e.y}", const TextStyle(
+            return value.map((e) => LineTooltipItem("${_scoreValues.keys.toList()[e.x.toInt()]}\n${e.y}", const TextStyle(
               color: Colors.black,
               fontFamily: 'Inter',
               fontWeight: FontWeight.w600,

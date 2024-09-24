@@ -34,10 +34,9 @@ class _HistoryState extends State<History> {
     _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
       switch (status) {
         case InternetStatus.connected:
-          HistoryStatus.postDataNotPosted().then((val) {
-            setState(() {
-              _isInternetConnected = true;
-            });
+          await HistoryStatus.postDataNotPosted();
+          setState(() {
+            _isInternetConnected = true;
           });
           break;
         case InternetStatus.disconnected:
@@ -48,16 +47,9 @@ class _HistoryState extends State<History> {
       }
     });
 
-    // Future.delayed(Duration.zero, () async {
-    //   bool isInternetConnected = await InternetConnection().hasInternetAccess;
-    //   setState(() {
-    //     _isInternetConnected = isInternetConnected;
-    //   });
-    // });
-    // _historyStatus = HistoryStatus();
-    // Future.delayed(Duration.zero, () {
-    //   _chosenGoalSetting = HistoryStatus.chosenGoalSetting;
-    // });
+    Future.delayed(Duration.zero, () async {
+      _isInternetConnected = await InternetConnection().hasInternetAccess;
+    });
   }
 
   void showScoreExplain(Offset offset) {
@@ -96,6 +88,10 @@ class _HistoryState extends State<History> {
     );
 
     overlayEntry.insert(_overlayEntry!);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      removeHighlightOverlay();
+    });
 
   }
 
@@ -207,8 +203,8 @@ class _HistoryState extends State<History> {
                                   ),
                                 ),
                                 Positioned(
-                                  left: responsive.percentWidth(70),
-                                  top: responsive.percentWidth(1),
+                                  left: responsive.percentWidth(65),
+                                  top: -responsive.percentWidth(3.5),
                                   child: GestureDetector(
                                     onLongPressDown: (details) {
                                       // print('asdf');
@@ -218,9 +214,12 @@ class _HistoryState extends State<History> {
                                       // print('asdf2');
                                       removeHighlightOverlay();
                                     },
+                                    // onLongPressStart: () {
+                                    //   removeHighlightOverlay();
+                                    // },
                                     child: SizedBox(
-                                      width: 50,
-                                      height: 50,
+                                      width: responsive.percentWidth(16),
+                                      height: responsive.percentWidth(16),
                                       child: Transform.scale(
                                         scale: 0.8,
                                         child: const Icon(question_circle_o, color: Colors.black),
@@ -338,127 +337,127 @@ class _HistoryState extends State<History> {
                   }
                 )
               ),
-              Container(
-                width: responsive.percentWidth(85),
-                // height: responsive.percentWidth(85)*0.3,
-                margin: EdgeInsets.only(top: responsive.percentHeight(2)),
-                padding: EdgeInsets.only(bottom: responsive.percentWidth(5)),
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  shadows: const [
-                    BoxShadow(
-                      color: Color(0x19000000),
-                      blurRadius: 4,
-                      offset: Offset(2, 2),
-                      spreadRadius: 3,
-                    )
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: responsive.percentHeight(2),),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => const GoalSetting()));
-                      },
-                      child: Container(
-                        width: responsive.percentWidth(85),
-                        padding: EdgeInsets.only(left: responsive.percentWidth(5)),
-                        child: const TextDefault(content: '목표 설정 >', fontSize: 16, isBold: true),
-                      ),
-                    ),
-                    historyStatus.goalsList() != null ?
-                    Column(
-                      children: historyStatus.goalsList()?['goals'].map<Widget>((item) {
-                        return Container(
-                          width: responsive.percentWidth(70),
-                          // height: responsive.percentWidth(85)*0.3,
-                          margin: EdgeInsets.only(
-                              top: responsive.percentHeight(2)),
-                          padding: EdgeInsets.only(
-                              left: responsive.percentWidth(7.5),
-                              top: responsive.percentWidth(2),
-                              bottom: responsive.percentWidth(2)),
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFECECEC),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            shadows: const [
-                              BoxShadow(
-                                color: Color(0x19000000),
-                                blurRadius: 4,
-                                offset: Offset(0, 0),
-                                spreadRadius: 1,
-                              )
-                            ],
-                          ),
-                          child: TextDefault(
-                            content: item['description'],
-                            fontSize: 14,
-                            isBold: false,
-                          ),
-                        );
-                      }).toList()
-                    ) :
-                    FutureBuilder(
-                      future: historyStatus.getUserGoalSetting(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData == false) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return const Center(
-                            child: Text('목표 정보를 불러올 수 없습니다.'),
-                          );
-                        } else {
-                          if (snapshot.data?['success'] == false) {
-                            return const SizedBox();
-                          }
-                          return Column(
-                            children: (snapshot.data?['goals'].map<Widget>((item) {
-                              return Container(
-                                width: responsive.percentWidth(70),
-                                // height: responsive.percentWidth(85)*0.3,
-                                margin: EdgeInsets.only(
-                                    top: responsive.percentHeight(2)),
-                                padding: EdgeInsets.only(
-                                    left: responsive.percentWidth(7.5),
-                                    top: responsive.percentWidth(2),
-                                    bottom: responsive.percentWidth(2)),
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFECECEC),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  shadows: const [
-                                    BoxShadow(
-                                      color: Color(0x19000000),
-                                      blurRadius: 4,
-                                      offset: Offset(0, 0),
-                                      spreadRadius: 1,
-                                    )
-                                  ],
-                                ),
-                                child: TextDefault(
-                                  content: item['description'],
-                                  fontSize: 14,
-                                  isBold: false,
-                                ),
-                              );
-                            }).toList()),
-                          );
-                        }
-                      }
-                    )
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: responsive.percentWidth(85),
+              //   // height: responsive.percentWidth(85)*0.3,
+              //   margin: EdgeInsets.only(top: responsive.percentHeight(2)),
+              //   padding: EdgeInsets.only(bottom: responsive.percentWidth(5)),
+              //   decoration: ShapeDecoration(
+              //     color: Colors.white,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     shadows: const [
+              //       BoxShadow(
+              //         color: Color(0x19000000),
+              //         blurRadius: 4,
+              //         offset: Offset(2, 2),
+              //         spreadRadius: 3,
+              //       )
+              //     ],
+              //   ),
+              //   child: Column(
+              //     children: [
+              //       SizedBox(height: responsive.percentHeight(2),),
+              //       GestureDetector(
+              //         onTap: () {
+              //           Navigator.push(context, MaterialPageRoute(
+              //               builder: (context) => const GoalSetting()));
+              //         },
+              //         child: Container(
+              //           width: responsive.percentWidth(85),
+              //           padding: EdgeInsets.only(left: responsive.percentWidth(5)),
+              //           child: const TextDefault(content: '목표 설정 >', fontSize: 16, isBold: true),
+              //         ),
+              //       ),
+              //       historyStatus.goalsList() != null ?
+              //       Column(
+              //         children: historyStatus.goalsList()?['goals'].map<Widget>((item) {
+              //           return Container(
+              //             width: responsive.percentWidth(70),
+              //             // height: responsive.percentWidth(85)*0.3,
+              //             margin: EdgeInsets.only(
+              //                 top: responsive.percentHeight(2)),
+              //             padding: EdgeInsets.only(
+              //                 left: responsive.percentWidth(7.5),
+              //                 top: responsive.percentWidth(2),
+              //                 bottom: responsive.percentWidth(2)),
+              //             decoration: ShapeDecoration(
+              //               color: const Color(0xFFECECEC),
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(20),
+              //               ),
+              //               shadows: const [
+              //                 BoxShadow(
+              //                   color: Color(0x19000000),
+              //                   blurRadius: 4,
+              //                   offset: Offset(0, 0),
+              //                   spreadRadius: 1,
+              //                 )
+              //               ],
+              //             ),
+              //             child: TextDefault(
+              //               content: item['description'],
+              //               fontSize: 14,
+              //               isBold: false,
+              //             ),
+              //           );
+              //         }).toList()
+              //       ) :
+              //       FutureBuilder(
+              //         future: historyStatus.getUserGoalSetting(),
+              //         builder: (context, snapshot) {
+              //           if (snapshot.hasData == false) {
+              //             return const Center(
+              //               child: CircularProgressIndicator(),
+              //             );
+              //           } else if (snapshot.hasError) {
+              //             return const Center(
+              //               child: Text('목표 정보를 불러올 수 없습니다.'),
+              //             );
+              //           } else {
+              //             if (snapshot.data?['success'] == false) {
+              //               return const SizedBox();
+              //             }
+              //             return Column(
+              //               children: (snapshot.data?['goals'].map<Widget>((item) {
+              //                 return Container(
+              //                   width: responsive.percentWidth(70),
+              //                   // height: responsive.percentWidth(85)*0.3,
+              //                   margin: EdgeInsets.only(
+              //                       top: responsive.percentHeight(2)),
+              //                   padding: EdgeInsets.only(
+              //                       left: responsive.percentWidth(7.5),
+              //                       top: responsive.percentWidth(2),
+              //                       bottom: responsive.percentWidth(2)),
+              //                   decoration: ShapeDecoration(
+              //                     color: const Color(0xFFECECEC),
+              //                     shape: RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(20),
+              //                     ),
+              //                     shadows: const [
+              //                       BoxShadow(
+              //                         color: Color(0x19000000),
+              //                         blurRadius: 4,
+              //                         offset: Offset(0, 0),
+              //                         spreadRadius: 1,
+              //                       )
+              //                     ],
+              //                   ),
+              //                   child: TextDefault(
+              //                     content: item['description'],
+              //                     fontSize: 14,
+              //                     isBold: false,
+              //                   ),
+              //                 );
+              //               }).toList()),
+              //             );
+              //           }
+              //         }
+              //       )
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 10,)
             ],
           )

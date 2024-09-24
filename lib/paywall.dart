@@ -22,6 +22,10 @@ class _PaywallState extends State<Paywall> {
   Package? _premiumSubscription = null;
   AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
+  static const _kFontFam = 'MyFlutterApp';
+  static const String? _kFontPkg = null;
+  static const IconData adversal = IconData(0xf36a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+
   @override
   void initState() {
     super.initState();
@@ -221,6 +225,60 @@ class _PaywallState extends State<Paywall> {
                       )
                   ),
                   SizedBox(height: responsive.percentHeight(2),),
+                  // Container(
+                  //     width: responsive.percentWidth(85),
+                  //     height: responsive.percentWidth(85)*0.3,
+                  //     decoration: ShapeDecoration(
+                  //       color: Colors.white,
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(20),
+                  //       ),
+                  //       shadows: const [
+                  //         BoxShadow(
+                  //           color: Color(0x19000000),
+                  //           blurRadius: 4,
+                  //           offset: Offset(2, 2),
+                  //           spreadRadius: 3,
+                  //         )
+                  //       ],
+                  //     ),
+                  //     child: Stack(
+                  //       children: [
+                  //         Positioned(
+                  //             left: responsive.percentWidth(5),
+                  //             top: responsive.percentWidth(7),
+                  //             child: Image.asset("assets/bg_icon.png", width: responsive.percentWidth(12.5),)
+                  //         ),
+                  //         Positioned(
+                  //           left: responsive.percentWidth(25),
+                  //           top: responsive.percentWidth(7),
+                  //           child: Text(
+                  //             '백그라운드 알림',
+                  //             style: TextStyle(
+                  //               color: Colors.black,
+                  //               fontSize: responsive.fontSize(18),
+                  //               fontFamily: 'Inter',
+                  //               fontWeight: FontWeight.w600,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         Positioned(
+                  //           left: responsive.percentWidth(25),
+                  //           top: responsive.percentWidth(7)+25,
+                  //           child: Text(
+                  //             '백그라운드에서도 동작하는 자세 탐지',
+                  //             style: TextStyle(
+                  //               color: Colors.black,
+                  //               fontSize: responsive.fontSize(14),
+                  //               fontFamily: 'Inter',
+                  //               fontWeight: FontWeight.w300,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     )
+                  // ),
+                  // SizedBox(height: responsive.percentHeight(2),),
                   Container(
                       width: responsive.percentWidth(85),
                       height: responsive.percentWidth(85)*0.3,
@@ -241,69 +299,18 @@ class _PaywallState extends State<Paywall> {
                       child: Stack(
                         children: [
                           Positioned(
-                              left: responsive.percentWidth(5),
-                              top: responsive.percentWidth(7),
-                              child: Image.asset("assets/bg_icon.png", width: responsive.percentWidth(12.5),)
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7),
-                            child: Text(
-                              '백그라운드 알림',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(18),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7)+25,
-                            child: Text(
-                              '백그라운드에서도 동작하는 자세 탐지',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(14),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                  SizedBox(height: responsive.percentHeight(2),),
-                  Container(
-                      width: responsive.percentWidth(85),
-                      height: responsive.percentWidth(85)*0.3,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x19000000),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            spreadRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: responsive.percentWidth(5),
-                            top: responsive.percentWidth(7),
-                            child: Image.asset("assets/bg_icon.png", width: responsive.percentWidth(12.5),)
+                            left: responsive.percentWidth(9),
+                            top: responsive.percentWidth(10),
+                            child: Transform.scale(
+                              scale: 1.5,
+                              child: const Icon(adversal, color: Colors.black),
+                            )
                           ),
                           Positioned(
                             left: responsive.percentWidth(25),
                             top: responsive.percentWidth(6),
                             child: Text(
-                              '탐지 기록 및 통계 제공',
+                              '광고 배너 제거',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: responsive.fontSize(18),
@@ -316,7 +323,7 @@ class _PaywallState extends State<Paywall> {
                             left: responsive.percentWidth(25),
                             top: responsive.percentWidth(7)+25,
                             child: Text(
-                              '자세 모니터링 기록을 이용하여 \n자세에 대한 다양한 정보와 통계 제공',
+                              '광고 없이 보다 편안한 앱 사용',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: responsive.fontSize(14),

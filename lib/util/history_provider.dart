@@ -7,9 +7,10 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  static const String serverAddress = 'http://13.125.173.157:8080/api/v1';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
 
   Map<String, dynamic>? _historyData;
+  Map<String, dynamic>? _pastHistoryData;
   Map<String, int>? _date2idx;
   Map<String, dynamic>? _scoreSeries;
   Map<String, dynamic>? _goalsList;
@@ -64,9 +65,11 @@ class HistoryStatus with ChangeNotifier {
     await updateHistoryData(now.year.toString(), now.month.toString());
     // }
     int cnt = 0;
+    // print(_historyData);
     if (_historyData != null && _historyData?['success'] != false) {
       _date2idx = <String, int>{};
       for (Map<String, dynamic> data in _historyData?['daily']) {
+        // print(data);
         _date2idx?['${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${data['date'].toString().padLeft(2, '0')}'] = cnt++;
       }
     }
@@ -75,17 +78,49 @@ class HistoryStatus with ChangeNotifier {
 
   }
 
+
+  Future<Map<String, dynamic>> getPastHistoryWithDate(String date) async {
+    List<String> parsedDate = date.split('-');
+    String year = parsedDate[0];
+    String month = parsedDate[1].replaceAll(RegExp(r'^0+(?=.)'), '');
+    // print(_historyData);
+    // print('test $_historyData $_shouldChangeData');
+    // print('getHistoryWithDate $date');
+    if (_historyData == null || _shouldChangeData || _pastHistoryData?['year'] != year || _pastHistoryData?['month'] != month) {
+      await updateHistoryData(year, month);
+    }
+
+    if (_pastHistoryData == null) {
+      // print('check1');
+      return {'date': '1970-01-01', 'success': false};
+    }
+
+    // print('test11 $date $_date2idx');
+    // print(_date2idx!.containsKey(date));
+    if (_date2idx!.containsKey(date)) {
+      _pastHistoryData?['daily'][_date2idx?[date]]['success'] = true;
+      // print('return');
+      return _pastHistoryData?['daily'][_date2idx?[date]];
+    } else {
+      // print('asdf');
+      return {'date': '1970-01-01', 'success': false};
+    }
+  }
+
+
   Future<Map<String, dynamic>> getHistoryWithDate(String date) async {
     List<String> parsedDate = date.split('-');
     String year = parsedDate[0];
     String month = parsedDate[1].replaceAll(RegExp(r'^0+(?=.)'), '');
     // print(_historyData);
+    // print('test $_historyData $_shouldChangeData');
+    // print('getHistoryWithDate $date');
     if (_historyData == null || _shouldChangeData || _historyData?['year'] != year || _historyData?['month'] != month) {
       await updateHistoryData(year, month);
     }
 
     if (_historyData == null) {
-      // print('asdfsadffuck');
+      // print('check1');
       return {'date': '1970-01-01', 'success': false};
     }
 
@@ -102,6 +137,7 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<void> updateHistoryData(String year, String month) async {
+    // print('updateHistoryDate $year $month');
     const storage = FlutterSecureStorage();
     try {
       String? accessToken = await storage.read(key: 'accessToken');
@@ -112,14 +148,40 @@ class HistoryStatus with ChangeNotifier {
       Response res = await dio.get(
           '$serverAddress/history/monthly?year=${int.parse(year)}&month=${int.parse(month)}');
       // print(res.data);
+      // print('get history');
+      DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
-        _historyData = res.data['data'];
-        _dateDataUpdated = true;
-        storage.write(key: 'posehistoryLocal', value: json.encode(_historyData));
-        if (_scoreSeriesUpdated) {
-          _shouldChangeData = false;
+        // print('$year $month, ${now.year.toString()} ${now.month.toString().padLeft(2, '0')}');
+        if (year != now.year.toString() || month != now.month.toString()) {
+          _pastHistoryData = res.data['data'];
+          int cnt = 0;
+          for (Map<String, dynamic> data in _historyData?['daily']) {
+            _date2idx?['$year-${month.padLeft(2, '0')}-${data['date']
+                .toString()
+                .padLeft(2, '0')}'] = cnt++;
+          }
+          notifyListeners();
+        } else {
+          // print('ok');
+          _historyData = res.data['data'];
+          _pastHistoryData = res.data['data'];
+          // print(_historyData);
+          _dateDataUpdated = true;
+          _date2idx = <String, int>{};
+          int cnt = 0;
+          // DateTime now = DateTime.now();
+          for (Map<String, dynamic> data in _historyData?['daily']) {
+            _date2idx?['$year-${month.padLeft(2, '0')}-${data['date']
+                .toString()
+                .padLeft(2, '0')}'] = cnt++;
+          }
+          storage.write(
+              key: 'posehistoryLocal', value: json.encode(_historyData));
+          if (_scoreSeriesUpdated) {
+            _shouldChangeData = false;
+          }
+          notifyListeners();
         }
-        notifyListeners();
       }
     } on DioException catch(e) {
       String? historyDataStr = await storage.read(key: 'posehistoryLocal');
@@ -348,7 +410,7 @@ class HistoryStatus with ChangeNotifier {
     }
 
     print('history post');
-    // print({'historys': [poseHistory]});
+    print({'historys': [poseHistory]});
 
     try {
       // print(poseHistory);
@@ -407,7 +469,7 @@ class HistoryStatus with ChangeNotifier {
 
   static Future<bool> sendFeedback(String content) async {
     try {
-      print('feedback asdf');
+      print('feedback $content');
       Response res = await dio.post(
         '$serverAddress/members/inquiry',
         data: {"title": "문의", "content": content}

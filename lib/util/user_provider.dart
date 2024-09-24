@@ -8,7 +8,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'http://13.125.173.157:8080/api/v1';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
 
   bool _isLogged = false;
   bool _isPremium = false;
@@ -33,6 +33,7 @@ class UserStatus with ChangeNotifier {
       String? accessToken = await storage.read(key: 'accessToken');
       String? refreshToken = await storage.read(key: 'refreshToken');
       String? email = await storage.read(key: 'email');
+      // print(accessToken);
 
       _accessTokenTemp = accessToken ?? '';
       _refreshTokenTemp = refreshToken ?? '';
@@ -123,7 +124,7 @@ class UserStatus with ChangeNotifier {
     if (_accessTokenTemp == '') {
       return false;
     }
-    Map<String, dynamic> body = {'reason': deleteReason};
+    Map<String, dynamic> body = {'withDrawReason': deleteReason};
 
     // print(deleteReason);
     final res = await http.delete(
@@ -136,7 +137,7 @@ class UserStatus with ChangeNotifier {
     );
     // print(res.statusCode);
     if (res.statusCode ~/ 100 == 2) {
-      cleanAll();
+      // cleanAll();
       return true;
     }
 
@@ -158,6 +159,8 @@ class UserStatus with ChangeNotifier {
 
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];
+      print(_accessTokenTemp);
+      print(resData['data']['accessToken']);
 
       const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: resData['data']['accessToken']);

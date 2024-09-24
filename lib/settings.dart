@@ -269,6 +269,7 @@ class _SettingState extends State<Settings> {
                             // print(_deleteReasonEditController.text);
                             UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
                             String deleteReason = _deleteAccountReasonIdx == 4 ? _deleteReasonEditController.text : _deleteReasonList[_deleteAccountReasonIdx];
+                            print(deleteReason);
                             bool success = await userStatus2.deleteAccount(deleteReason);
                             if (success) {
                               const storage = FlutterSecureStorage();

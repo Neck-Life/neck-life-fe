@@ -122,6 +122,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     Responsive responsive = Responsive(context);
     _updateDetectAvailable();
 
+
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -188,7 +189,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
                       left: responsive.percentWidth(65)*0.5-responsive.percentWidth(65)*0.03+_cosWithWeight(_rotateDeg, responsive.percentWidth(5)),
                       child: Transform.rotate(
                           angle: -_pitch, // **calculated by pitch
-                          origin: Offset(-responsive.percentWidth(35)*0.5+responsive.percentWidth(7.5), responsive.percentWidth(35)*0.5-responsive.percentWidth(5)),
+                          origin: Offset(-responsive.percentWidth(30)*0.5+responsive.percentWidth(10), responsive.percentWidth(30)*0.5-responsive.percentWidth(5)),
                           child: Container(
                               width: responsive.percentWidth(30),
                               height: responsive.percentWidth(30),

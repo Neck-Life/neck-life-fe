@@ -42,6 +42,7 @@ class _HomeState extends State<Home> {
       if (!isLogged) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
+        print('email ${Provider.of<UserStatus>(context, listen: false).email}');
         await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
     });
