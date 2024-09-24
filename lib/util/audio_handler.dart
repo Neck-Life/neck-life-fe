@@ -150,6 +150,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> play() async {
     _isPlaying = true;
+    _poseLog['history'] = {};
     _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'START';
     // print('start ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
     await _bgAudioPlayer.setVolume(0);
@@ -162,7 +163,7 @@ class MyAudioHandler extends BaseAudioHandler {
     _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'END';
     // print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
     print(_poseLog);
-    // HistoryStatus.postMeasuredPoseData(_poseLog);
+    HistoryStatus.postMeasuredPoseData(_poseLog);
     // print('poselog $_poseLog');
     _bgAudioPlayer.pause();
     _minInterval = 0;
