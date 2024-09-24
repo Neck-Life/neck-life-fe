@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "459320335633",
+    "project_id": "project-2822832438279962877",
+    "storage_bucket": "project-2822832438279962877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459320335633:android:3baa9eb80b8ec8c41880b0",
+        "android_client_info": {
+          "package_name": "com.necklife.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6skAUfRlx63Zd14oBiFF_Ea9jWuawu6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

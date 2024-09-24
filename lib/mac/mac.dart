@@ -59,9 +59,10 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> ZPositions = [0.0];
 
   double currentTime = 0.0;
-  String state = "앉은 상태"; // 상태를 저장할 변수
 
   double offset = 0.006;
+
+  List<double> deltaAcc =[0.0];
 
 
 
@@ -87,10 +88,12 @@ class AirpodsCalMovingAvgZupt extends Filter{
     lastTimestamp = currentTime;
 
     double currentAccelY = data.userAcceleration.y.toDouble();
+
     double currentAccelZ = data.userAcceleration.z.toDouble();
     double currentAccelX = data.userAcceleration.x.toDouble();
 
     deltaTimes.add(deltaTime);
+
 
     //
     // // Z축
@@ -136,7 +139,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // print(["calibration 가속도 평균값:", accSum]);
     pastY.add(currentAccelY);
     pastZ.add(currentAccelZ);
-    int len = 5;
+    int len = 4;
     if(pastY.length > len) pastY.removeAt(0);
     if(pastZ.length > len) pastZ.removeAt(0);
 
@@ -168,126 +171,121 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
 
-    // if(cal_acc.abs() < offset){
-    //   if(finalAccelometers.last.abs()<=0.0000000001){
-    //     cal_acc = 0.000000;
-    //   }else if (finalAccelometers.last.abs()<=0.000000001)
-    //     cal_acc = 0.0000000001;
-    //   else if (finalAccelometers.last.abs()<=0.00001)
-    //     cal_acc = 0.000000001;
-    //   // else if (finalAccelometers.last.abs()<=0.0000001)
-    //   //   cal_acc = 0.00000001;
-    //   // else if (finalAccelometers.last.abs()<=0.000001)
-    //   //   cal_acc = 0.0000001;
-    //   // else if (finalAccelometers.last.abs()<=0.00001)
-    //   //   cal_acc = 0.000001;
-    //   else
-    //     cal_acc = 0.00001;
-    //
+    // print("cal_acc : ${cal_acc}");
+
+    // if(cal_acc.abs() > 0.08) {
+    //   offset = 0.03;
+    //   isMoving = true;
     // }
 
-    if(cal_acc.abs() < offset) {
-      cal_acc = 0;
-    }
 
-
-    print("cal_acc : ${cal_acc}");
-
-    if(cal_acc.abs() > 0.3) {
-      offset = 0.02;
-      Timer(Duration(seconds: 3), () {
-        offset = 0.006;
-      });
-    }
-
-
-
-    accelometers.add(cal_acc);
-
-    // if(cal_acc.abs() < 0.05){
-    //   // if(cal_acc.abs() < 0){
-    //   //   cal_acc = 0;
-    //   // }
-    //
-    //   cal_acc *= 1.5;
-    // }
 
     if(cal_acc<0){
-      cal_acc = cal_acc*1.2;
+      cal_acc*=1.4;
     }
+
+
+    if(cal_acc>0 && cal_acc < offset*1.5) {
+      cal_acc = 0;
+    }else if (cal_acc<0 &&cal_acc> -offset){
+      cal_acc=0;
+
+    }
+
+
+
+
+    deltaAcc.add(cal_acc - accelometers.last);
+    accelometers.add(cal_acc);
+
+    // print(deltaAcc.last);
+
+
+    if(deltaAcc.length>100){
+      deltaAcc.removeAt(0);
+    }
+
 
 
 
 
     double velocity = velocities.last + cal_acc * deltaTime;
 
-    if(velocity < 0){
-      velocity = velocity * 1.2;
-      }
-
-    if(velocity>0.015){
-      velocity = 0.015;
-    }else if(velocity<-0.015){
-      velocity = -0.018;
-    }
 
     // print("수정 전 ${velocity}");
 
-    double NotZUPTvelocity = NotZUPTvelocities.last + cal_acc * deltaTime;
 
 
-    double deviation = 0.0;
+    double deltaAccel = 0.0;
     int windowSIZE = 8;
     int zeroCount= 0;
     if(finalAccelometers.length < windowSIZE){
 
 
     }else {
-      for (int i = finalAccelometers.length - windowSIZE+1; i <
-          finalAccelometers.length; i++) {
-        deviation += finalAccelometers[i].abs();
+      for (int i = finalAccelometers.length - windowSIZE+1; i < finalAccelometers.length; i++) {
+
         if (finalAccelometers[i] == 0) {
           zeroCount++;
         }
       }
 
+
       // print(deviatio n);
       //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
 
-        if (zeroCount > 1) {
-
-
-          velocity = 0;
+      if (zeroCount > 1 ) {
+        velocity = 0;
       }
-
-
-
     }
+
 
 
     double temp;
 
 
     if(velocity.abs() < 0.0002){
-      velocity = velocity *20;
-      print("1");
+      velocity = velocity *15;
+      // print("1");
     }else if(velocity.abs() < 0.0008){
-      velocity = velocity *16;
-      print("2");
+      velocity = velocity *13;
+      // print("2");
     }else if(velocity.abs() < 0.0012){
-      velocity = velocity *14;
-      print("3");
+      velocity = velocity *12;
+      // print("3");
     }else if(velocity.abs() < 0.002){
-      velocity = velocity *10;
-      print("4");
-    }else if(velocity.abs() < 0.006){
+      velocity = velocity *6;
+      // print("4");
+    }
+    else if(velocity.abs() < 0.006){
       velocity = velocity *2;
-      print("5");
+      // print("5");
+    }
+
+
+    if(velocity < 0){
+      velocity = velocity * 3;
+    }else{
+      velocity = velocity * 1.2;
     }
 
 
 
-      temp = velocity * deltaTime;
+
+    // if(velocity>0.015){
+    //   velocity = 0.015;
+    // }else if(velocity<-0.015){
+    //   velocity = -0.018;
+    // }
+
+
+
+
+
+
+
+
+    temp = velocity * deltaTime *1.2;
 
 
     // double temp = velocity * deltaTime;
@@ -337,27 +335,27 @@ class AirpodsCalMovingAvgZupt extends Filter{
       velocity = last_zero_velocity;
       position = last_zero_positon;
       isRotated = false;  // 롤백 완료 후 회전 상태 해제
-      }
+    }
 
-      // 가속도가 0이고 속도도 0일 때 체크포인트 설정
-     if (!isRotated  && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
+    // 가속도가 0이고 속도도 0일 때 체크포인트 설정
+    if (!isRotated  && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
       // print(2);
 
-        last_zero_velocity = velocity;
-        last_zero_positon = position;
+      last_zero_velocity = velocity;
+      last_zero_positon = position;
 
 
 
     }
 
-     if (hasRotated(data.attitude.pitch.toDouble(), data.attitude.roll.toDouble(), data.attitude.yaw.toDouble())) {
+    if (hasRotated(data.attitude.pitch.toDouble(), data.attitude.roll.toDouble(), data.attitude.yaw.toDouble())) {
       isRotated = true;
       print("회전 발생");
-    }else{
+    }
 // ZUPT 적용
 
-       [velocity, position] = applyZUPT(velocity, position);
-}
+    [velocity, position] = applyZUPT(velocity, position);
+
 
 
     if(position > threshold) position = threshold;
@@ -461,11 +459,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation.abs() > 0.01){
+    if(deviation.abs() > 0.015){
       // print(deviation);
       // 처음으로 0이 아닌게 나온 시점에는 오차가 존재해서 무시할 필요가 있음
       if(zeroCount>1){
-        // velocity = 0;
+        velocity = 0;
         position = positions.last;
       }
 
