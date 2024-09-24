@@ -115,7 +115,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition > 0.35) {
+    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition > 0.2) {
       return true;
     } else {
       return false;

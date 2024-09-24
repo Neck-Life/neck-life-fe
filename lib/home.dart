@@ -31,8 +31,8 @@ class _HomeState extends State<Home> {
       await _updateIsFirstLaunch();
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
-          .verifyToken();
-      // print(isLogged);
+          .checkAndUpdateToken();
+      print(isLogged);
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
       if (_isFirstLaunch) {
@@ -42,7 +42,6 @@ class _HomeState extends State<Home> {
       if (!isLogged) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
-        print('email ${Provider.of<UserStatus>(context, listen: false).email}');
         await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
     });
@@ -96,7 +95,7 @@ class _HomeState extends State<Home> {
     return PopScope(
       canPop: false,
       child: FutureBuilder(
-        future: userStatus.verifyToken(),
+        future: userStatus.checkAndUpdateToken(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!) {
@@ -130,10 +129,10 @@ class _HomeState extends State<Home> {
                 ),
               );
             } else {
-              return const LoginPage();
+              return LoginPage();
             }
           }
-          return const Scaffold();
+          return const SizedBox();
           // return MainPage();
         },
       )
