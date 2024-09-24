@@ -116,9 +116,6 @@ class UserStatus with ChangeNotifier {
     _accessTokenTemp = accessToken ?? '';
     _refreshTokenTemp = refreshToken ?? '';
 
-    accessToken ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6IjY2ZWQzMWEzNTRmMDUzNzIxZjVjYjM5YiIsIm1lbWJlclJvbGUiOiJbUk9MRV9VU0VSXSIsImlhdCI6MTcyNzE4OTc4MSwiZXhwIjoxNzI3MTg5NzgyfQ.mcAIU-dyooU63sS1Dzvg2DeW5b80xdyegAWM63ppFnk";
-    refreshToken ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6IjY2ZWQzMWEzNTRmMDUzNzIxZjVjYjM5YiIsIm1lbWJlclJvbGUiOiJbUk9MRV9VU0VSXSIsImlhdCI6MTcyNzE4OTc4MSwiZXhwIjoxNzU4NzQ3MzgxfQ.yHokzJ04LUMrnI2gvemgSrgkJBihyFq1vxBJoHjHkEg";
-
     if (accessToken != null && !isTokenExpired(accessToken)) {
       // accessToken이 만료되지 않았을 경우
       print('AccessToken 유효');
