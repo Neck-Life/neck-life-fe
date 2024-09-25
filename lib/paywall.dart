@@ -21,6 +21,7 @@ class _PaywallState extends State<Paywall> {
 
   Package? _premiumSubscription = null;
   AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
+  bool _isLoading = false;
 
   static const _kFontFam = 'MyFlutterApp';
   static const String? _kFontPkg = null;
@@ -59,11 +60,17 @@ class _PaywallState extends State<Paywall> {
       if (_premiumSubscription == null) {
         throw PlatformException(code: 'subscription information is not loaded');
       }
+      setState(() {
+        _isLoading = true;
+      });
       CustomerInfo customerInfo = await Purchases.purchasePackage(_premiumSubscription!);
       if (customerInfo.entitlements.all["necklife"]!.isActive) {
         // Unlock that great "pro" content
         // Provider.of<UserStatus>(context, listen: false).setIsPremium(true);
         print('payed');
+        setState(() {
+          _isLoading = false;
+        });
         userStatus.setIsPremium(true);
         _amplitudeEventManager.actionEvent('paywall', 'purchase');
         Navigator.push(context, MaterialPageRoute(builder: (
@@ -77,6 +84,9 @@ class _PaywallState extends State<Paywall> {
         _showErrorPopUp();
       }
     }
+    setState(() {
+      _isLoading = false;
+    });
     return false;
   }
 
@@ -123,24 +133,41 @@ class _PaywallState extends State<Paywall> {
     UserStatus userStatus = Provider.of(context);
 
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          SizedBox(height: responsive.percentHeight(7.5),),
-          Center(
-            child: Column(
-              children: [
-                Text('NeckLife',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: const Color(0xFF000000),
-                    fontSize: responsive.fontSize(36),
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                  ),
+          Column(
+            children: [
+              SizedBox(height: responsive.percentHeight(7.5),),
+              Center(
+                child: Column(
+                  children: [
+                    Text('NeckLife',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF000000),
+                        fontSize: responsive.fontSize(36),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: responsive.percentHeight(5),),
+                    Text('프리미엄 플랜으로\n더 많은 기능을 누려보세요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF000000),
+                        fontSize: responsive.fontSize(20),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: responsive.percentHeight(5),),
-                Text('프리미엄 플랜으로\n더 많은 기능을 누려보세요!',
-                  textAlign: TextAlign.center,
+              ),
+              Container(
+                width: responsive.deviceWidth,
+                padding: EdgeInsets.only(left: responsive.percentWidth(7.5)),
+                margin: EdgeInsets.only(top: responsive.percentHeight(5), bottom: 10),
+                child: Text('핵심 기능',
                   style: TextStyle(
                     color: const Color(0xFF000000),
                     fontSize: responsive.fontSize(20),
@@ -148,317 +175,314 @@ class _PaywallState extends State<Paywall> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            width: responsive.deviceWidth,
-            padding: EdgeInsets.only(left: responsive.percentWidth(7.5)),
-            margin: EdgeInsets.only(top: responsive.percentHeight(5), bottom: 10),
-            child: Text('핵심 기능',
-              style: TextStyle(
-                color: const Color(0xFF000000),
-                fontSize: responsive.fontSize(20),
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
               ),
-            ),
-          ),
-          SizedBox(
-            width: responsive.deviceWidth,
-            height: responsive.percentHeight(45),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 10,),
-                  Container(
-                      width: responsive.percentWidth(85),
-                      height: responsive.percentWidth(85)*0.3,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x19000000),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            spreadRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                              left: responsive.percentWidth(5),
-                              top: responsive.percentWidth(7),
-                              child: Image.asset("assets/head_icon.png", width: responsive.percentWidth(12.5),)
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7),
-                            child: Text(
-                              '실시간 거북목 탐지',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(18),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                              ),
+              SizedBox(
+                width: responsive.deviceWidth,
+                height: responsive.percentHeight(45),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10,),
+                      Container(
+                          width: responsive.percentWidth(85),
+                          height: responsive.percentWidth(85)*0.3,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7)+25,
-                            child: Text(
-                              '시간 제한 없는 실시간 자세 모니터링',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(14),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                  SizedBox(height: responsive.percentHeight(2),),
-                  // Container(
-                  //     width: responsive.percentWidth(85),
-                  //     height: responsive.percentWidth(85)*0.3,
-                  //     decoration: ShapeDecoration(
-                  //       color: Colors.white,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       shadows: const [
-                  //         BoxShadow(
-                  //           color: Color(0x19000000),
-                  //           blurRadius: 4,
-                  //           offset: Offset(2, 2),
-                  //           spreadRadius: 3,
-                  //         )
-                  //       ],
-                  //     ),
-                  //     child: Stack(
-                  //       children: [
-                  //         Positioned(
-                  //             left: responsive.percentWidth(5),
-                  //             top: responsive.percentWidth(7),
-                  //             child: Image.asset("assets/bg_icon.png", width: responsive.percentWidth(12.5),)
-                  //         ),
-                  //         Positioned(
-                  //           left: responsive.percentWidth(25),
-                  //           top: responsive.percentWidth(7),
-                  //           child: Text(
-                  //             '백그라운드 알림',
-                  //             style: TextStyle(
-                  //               color: Colors.black,
-                  //               fontSize: responsive.fontSize(18),
-                  //               fontFamily: 'Inter',
-                  //               fontWeight: FontWeight.w600,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         Positioned(
-                  //           left: responsive.percentWidth(25),
-                  //           top: responsive.percentWidth(7)+25,
-                  //           child: Text(
-                  //             '백그라운드에서도 동작하는 자세 탐지',
-                  //             style: TextStyle(
-                  //               color: Colors.black,
-                  //               fontSize: responsive.fontSize(14),
-                  //               fontFamily: 'Inter',
-                  //               fontWeight: FontWeight.w300,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     )
-                  // ),
-                  // SizedBox(height: responsive.percentHeight(2),),
-                  Container(
-                      width: responsive.percentWidth(85),
-                      height: responsive.percentWidth(85)*0.3,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x19000000),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            spreadRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: responsive.percentWidth(9),
-                            top: responsive.percentWidth(10),
-                            child: Transform.scale(
-                              scale: 1.5,
-                              child: const Icon(adversal, color: Colors.black),
-                            )
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(6),
-                            child: Text(
-                              '광고 배너 제거',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(18),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7)+25,
-                            child: Text(
-                              '광고 없이 보다 편안한 앱 사용',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(14),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                height: 1.0
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                  SizedBox(height: responsive.percentHeight(2),),
-                  Container(
-                      width: responsive.percentWidth(85),
-                      height: responsive.percentWidth(85)*0.3,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x19000000),
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
-                            spreadRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                              left: responsive.percentWidth(8),
-                              top: responsive.percentWidth(2),
-                              child: Text(
-                                '+',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: responsive.fontSize(50),
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            shadows: const [
+                              BoxShadow(
+                                color: Color(0x19000000),
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
+                                spreadRadius: 3,
                               )
+                            ],
                           ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7),
-                            child: Text(
-                              '더 많은 추가 기능',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(18),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  left: responsive.percentWidth(5),
+                                  top: responsive.percentWidth(7),
+                                  child: Image.asset("assets/head_icon.png", width: responsive.percentWidth(12.5),)
                               ),
-                            ),
-                          ),
-                          Positioned(
-                            left: responsive.percentWidth(25),
-                            top: responsive.percentWidth(7)+25,
-                            child: Text(
-                              '앞으로 다양한 부가 기능 탑재 계획',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: responsive.fontSize(14),
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(7),
+                                child: Text(
+                                  '실시간 거북목 탐지',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: responsive.fontSize(18),
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(7)+25,
+                                child: Text(
+                                  '시간 제한 없는 실시간 자세 모니터링',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: responsive.fontSize(14),
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                      SizedBox(height: responsive.percentHeight(2),),
+                      // Container(
+                      //     width: responsive.percentWidth(85),
+                      //     height: responsive.percentWidth(85)*0.3,
+                      //     decoration: ShapeDecoration(
+                      //       color: Colors.white,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(20),
+                      //       ),
+                      //       shadows: const [
+                      //         BoxShadow(
+                      //           color: Color(0x19000000),
+                      //           blurRadius: 4,
+                      //           offset: Offset(2, 2),
+                      //           spreadRadius: 3,
+                      //         )
+                      //       ],
+                      //     ),
+                      //     child: Stack(
+                      //       children: [
+                      //         Positioned(
+                      //             left: responsive.percentWidth(5),
+                      //             top: responsive.percentWidth(7),
+                      //             child: Image.asset("assets/bg_icon.png", width: responsive.percentWidth(12.5),)
+                      //         ),
+                      //         Positioned(
+                      //           left: responsive.percentWidth(25),
+                      //           top: responsive.percentWidth(7),
+                      //           child: Text(
+                      //             '백그라운드 알림',
+                      //             style: TextStyle(
+                      //               color: Colors.black,
+                      //               fontSize: responsive.fontSize(18),
+                      //               fontFamily: 'Inter',
+                      //               fontWeight: FontWeight.w600,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Positioned(
+                      //           left: responsive.percentWidth(25),
+                      //           top: responsive.percentWidth(7)+25,
+                      //           child: Text(
+                      //             '백그라운드에서도 동작하는 자세 탐지',
+                      //             style: TextStyle(
+                      //               color: Colors.black,
+                      //               fontSize: responsive.fontSize(14),
+                      //               fontFamily: 'Inter',
+                      //               fontWeight: FontWeight.w300,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     )
+                      // ),
+                      // SizedBox(height: responsive.percentHeight(2),),
+                      Container(
+                          width: responsive.percentWidth(85),
+                          height: responsive.percentWidth(85)*0.3,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
+                            shadows: const [
+                              BoxShadow(
+                                color: Color(0x19000000),
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
+                                spreadRadius: 3,
+                              )
+                            ],
                           ),
-                        ],
-                      )
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  left: responsive.percentWidth(9),
+                                  top: responsive.percentWidth(10),
+                                  child: Transform.scale(
+                                    scale: 1.5,
+                                    child: const Icon(adversal, color: Colors.black),
+                                  )
+                              ),
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(6),
+                                child: Text(
+                                  '광고 배너 제거',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: responsive.fontSize(18),
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(7)+25,
+                                child: Text(
+                                  '광고 없이 보다 편안한 앱 사용',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: responsive.fontSize(14),
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.0
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                      SizedBox(height: responsive.percentHeight(2),),
+                      Container(
+                          width: responsive.percentWidth(85),
+                          height: responsive.percentWidth(85)*0.3,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            shadows: const [
+                              BoxShadow(
+                                color: Color(0x19000000),
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
+                                spreadRadius: 3,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  left: responsive.percentWidth(8),
+                                  top: responsive.percentWidth(2),
+                                  child: Text(
+                                    '+',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: responsive.fontSize(50),
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  )
+                              ),
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(7),
+                                child: Text(
+                                  '더 많은 추가 기능',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: responsive.fontSize(18),
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: responsive.percentWidth(25),
+                                top: responsive.percentWidth(7)+25,
+                                child: Text(
+                                  '앞으로 다양한 부가 기능 탑재 계획',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: responsive.fontSize(14),
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                      const SizedBox(height: 10,),
+                    ],
                   ),
-                  const SizedBox(height: 10,),
-                ],
+                ),
               ),
-            ),
-          ),
-          const Spacer(),
-          Container(
-            width: responsive.deviceWidth,
-            height: responsive.percentHeight(15),
-            decoration: ShapeDecoration(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: Column(
-              children: [
-                SizedBox(height: responsive.percentHeight(1),),
-                ElevatedButton(
-                  onPressed: () async {
-                    bool isPremium = await Provider.of<UserStatus>(context, listen: false).getUserIsPremium();
-                    if (isPremium) {
-                      return;
-                    }
-                    await _purchaseSupscription(userStatus);
-                    // if (success) {
-                    //   userStatus.setIsPremium(true);
-                    // }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(responsive.percentWidth(70), 35),
-                    backgroundColor: const Color(0xFFD9D9D9),
-                    surfaceTintColor: Colors.white,
-                    shadowColor: const Color(0x19000000),
-                    side: const BorderSide(
-                      width: 1,
-                      color: Colors.black
-                    )
+              const Spacer(),
+              Container(
+                width: responsive.deviceWidth,
+                height: responsive.percentHeight(15),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: _premiumSubscription == null ?
-                    const SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: CircularProgressIndicator(),
-                    ) :
-                    Text(
-                      '프리미엄 플랜 시작하기 (\$0.99/월)',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: responsive.fontSize(14),
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: responsive.percentHeight(1),),
+                    ElevatedButton(
+                      onPressed: () async {
+                        bool isPremium = await Provider.of<UserStatus>(context, listen: false).getUserIsPremium();
+                        if (isPremium) {
+                          return;
+                        }
+                        await _purchaseSupscription(userStatus);
+                        // if (success) {
+                        //   userStatus.setIsPremium(true);
+                        // }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size(responsive.percentWidth(70), 35),
+                          backgroundColor: const Color(0xFFD9D9D9),
+                          surfaceTintColor: Colors.white,
+                          shadowColor: const Color(0x19000000),
+                          side: const BorderSide(
+                              width: 1,
+                              color: Colors.black
+                          )
+                      ),
+                      child: _premiumSubscription == null ?
+                      const SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: CircularProgressIndicator(),
+                      ) :
+                      Text(
+                        '프리미엄 플랜 시작하기 (\$0.99/월)',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: responsive.fontSize(14),
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
+                    SizedBox(height: responsive.percentHeight(1),),
+                  ],
                 ),
-                SizedBox(height: responsive.percentHeight(1),),
-              ],
+              )
+            ],
+          ),
+          _isLoading ? Container(
+            width: responsive.deviceWidth,
+            height: responsive.deviceHeight,
+            decoration: const BoxDecoration(
+              color: Color(0x90000000)
             ),
-          )
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ) : const SizedBox()
         ],
-      ),
+      )
     );
   }
 

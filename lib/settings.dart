@@ -37,7 +37,6 @@ class _SettingState extends State<Settings> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
