@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
-import 'package:mocksum_flutter/util/history_provider.dart';
+import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:provider/provider.dart';
 

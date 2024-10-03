@@ -5,7 +5,7 @@ import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
-import 'package:mocksum_flutter/util/status_provider.dart';
+import 'package:mocksum_flutter/service/status_provider.dart';
 
 ///측정로직 클래스
 class AirpodsCalMovingAvgZupt extends Filter{

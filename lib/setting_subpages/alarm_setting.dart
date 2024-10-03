@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
-import 'package:mocksum_flutter/util/status_provider.dart';
+import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:provider/provider.dart';
 
 class AlarmSetting extends StatefulWidget {
@@ -14,7 +14,7 @@ class AlarmSetting extends StatefulWidget {
 class _AlarmSettingState extends State<AlarmSetting> {
 
   double _sensitivity = 1;
-  int _alarmGap = 15;
+  int _alarmGap = 5;
   bool _bgSoundActive = false;
 
   @override
@@ -147,7 +147,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                     child: Column(
                       children: [
                         ListTile(
-                          title: Text('탐지 즉시',
+                          title: Text('5초',
                             style: TextStyle(
                               color: const Color(0xFF434343),
                               fontSize: responsive.fontSize(14),
@@ -156,7 +156,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                             ),
                           ),
                           leading: Radio(
-                            value: 0,
+                            value: 5,
                             groupValue: _alarmGap,
                             onChanged: (int? value) {
                               setState(() {

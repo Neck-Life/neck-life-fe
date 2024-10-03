@@ -1,6 +1,6 @@
 import 'package:flutter_airpods/models/device_motion_data.dart';
 
-import '../../status_provider.dart';
+import '../../../service/status_provider.dart';
 
 class RotationImplement{
   double _rotateDeg = 0;
