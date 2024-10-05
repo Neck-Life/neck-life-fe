@@ -266,7 +266,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     if(velocity < 0){
       velocity = velocity * 3;
     }else{
-      velocity = velocity * 1.2;
+      // velocity = velocity * 1.2;
     }
 
 
