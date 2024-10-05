@@ -62,6 +62,13 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
           }
 
           _isTurtle = _isNowTurtle();
+          if (context.read<DetectStatus>().isNowTurtle != _isTurtle) {
+            if (_isTurtle) {
+              context.read<DetectStatus>().toTurtle();
+            } else {
+              context.read<DetectStatus>().toNotTurtle();
+            }
+          }
         });
         _controller.value = 0;
         _controller.forward();
@@ -115,7 +122,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
     Responsive res = Responsive(context);
     _updateDetectAvailable();
 
-    _rotateDeg = 0;
+    // _rotateDeg = 0;
 
     return AnimatedBuilder(
         animation: _controller,

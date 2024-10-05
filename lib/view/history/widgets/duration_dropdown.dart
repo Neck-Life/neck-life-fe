@@ -33,7 +33,7 @@ class DurationDropdown extends StatelessWidget {
               width: res.percentWidth(15),
               child: Row(
                 children: [
-                  TextDefault(content: '이번주', fontSize: 16, isBold: chosenValue == 'WEEK' ? true : false, fontColor: chosenValue == 'WEEK' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
+                  TextDefault(content: '이번주', fontSize: chosenValue == 'WEEK' ? 22 : 16, isBold: chosenValue == 'WEEK' ? true : false, fontColor: chosenValue == 'WEEK' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
                   // SizedBox(width: 5,),
                   // chosenValue == 'WEEK' ? const AssetIcon('check', size: 5, color: Color(0xFF236EF3),) : const SizedBox()
                 ],
@@ -46,7 +46,7 @@ class DurationDropdown extends StatelessWidget {
               width: res.percentWidth(20),
               child: Row(
                 children: [
-                  TextDefault(content: '1개월', fontSize: 16, isBold: chosenValue == 'MONTH1' ? true : false, fontColor: chosenValue == 'MONTH1' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
+                  TextDefault(content: '1개월', fontSize: chosenValue == 'MONTH1' ? 22 : 16, isBold: chosenValue == 'MONTH1' ? true : false, fontColor: chosenValue == 'MONTH1' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
                   // chosenValue == 'MONTH1' ? const AssetIcon('check', size: 3, color: Color(0xFF236EF3),) : const SizedBox()
                 ],
               ),
@@ -58,7 +58,7 @@ class DurationDropdown extends StatelessWidget {
               width: res.percentWidth(20),
               child: Row(
                 children: [
-                  TextDefault(content: '3개월', fontSize: 16, isBold: chosenValue == 'MONTH3' ? true : false, fontColor: chosenValue == 'MONTH3' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
+                  TextDefault(content: '3개월', fontSize: chosenValue == 'MONTH3' ? 22 : 16, isBold: chosenValue == 'MONTH3' ? true : false, fontColor: chosenValue == 'MONTH3' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
                   // chosenValue == 'MONTH3' ? const AssetIcon('check', size: 3, color: Color(0xFF236EF3),) : const SizedBox()
                 ],
               ),
@@ -70,7 +70,7 @@ class DurationDropdown extends StatelessWidget {
               width: res.percentWidth(20),
               child: Row(
                 children: [
-                  TextDefault(content: '6개월', fontSize: 16, isBold: chosenValue == 'MONTH6' ? true : false, fontColor: chosenValue == 'MONTH6' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
+                  TextDefault(content: '6개월', fontSize: chosenValue == 'MONTH6' ? 22 : 16, isBold: chosenValue == 'MONTH6' ? true : false, fontColor: chosenValue == 'MONTH6' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
                   // chosenValue == 'MONTH6' ? const AssetIcon('check', size: 3, color: Color(0xFF236EF3),) : const SizedBox()
                 ],
               ),

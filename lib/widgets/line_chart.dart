@@ -60,10 +60,19 @@ class _ScoreChartState extends State<ScoreChart> {
     //   '2024-09-06': 95,
     //   '2024-09-07': 70,
     // };
-    if (showingTooltipOnSpots.isNotEmpty && showingTooltipOnSpots[0] > daySubtracted) {
-      showingTooltipOnSpots.removeAt(0);
-    }
-    showingTooltipOnSpots.add(_scoreValues.length-1);
+    // if (showingTooltipOnSpots.isNotEmpty && showingTooltipOnSpots[0] > daySubtracted) {
+    //   showingTooltipOnSpots.removeAt(0);
+    // }
+    showingTooltipOnSpots = [_scoreValues.length-1];
+    // showingTooltipOnSpots.add(_scoreValues.length-1);
+  }
+
+  double getLineWidth() {
+    if (widget.duration == 'WEEK') return 5;
+    if (widget.duration == 'MONTH1') return 3.5;
+    if (widget.duration == 'MONTH3') return 2.5;
+    if (widget.duration == 'MONTH6') return 2;
+    return 5;
   }
 
   @override
@@ -220,7 +229,7 @@ class _ScoreChartState extends State<ScoreChart> {
           }),
           isCurved: false,
           color: const Color(0xFF3077F4),
-          barWidth: 5,
+          barWidth: getLineWidth(),
           isStrokeCapRound: true,
           dotData: const FlDotData(
             show: false,
@@ -233,18 +242,6 @@ class _ScoreChartState extends State<ScoreChart> {
       lineTouchData: LineTouchData(
         enabled: true,
         handleBuiltInTouches: false,
-        touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-          if (response == null || response.lineBarSpots == null) {
-            return;
-          }
-          if (event is FlTapUpEvent) {
-            final spotIndex = response.lineBarSpots!.first.spotIndex;
-            setState(() {
-              showingTooltipOnSpots.clear();
-              showingTooltipOnSpots.add(spotIndex);
-            });
-          }
-        },
         getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
           return spotIndexes.map((index) {
             return TouchedSpotIndicatorData(
@@ -267,7 +264,7 @@ class _ScoreChartState extends State<ScoreChart> {
         },
         touchTooltipData: LineTouchTooltipData(
           getTooltipItems: (value) {
-            return value.map((e) => LineTooltipItem("${e.y}점", const TextStyle( // _scoreValues.keys.toList()[e.x.toInt()]}\n
+            return value.map((e) => LineTooltipItem("${e.y.toInt()}점", const TextStyle( // _scoreValues.keys.toList()[e.x.toInt()]}\n
               color: Color(0xFF236EF3),
               fontFamily: 'Inter',
               fontWeight: FontWeight.w600,

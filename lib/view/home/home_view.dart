@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
@@ -45,7 +46,7 @@ class _HomeState extends State<Home> {
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   late BannerAd _ad;
-  bool _isAdLoaded = false;
+  bool _isAdLoaded = true;
   // bool _isPremium = false;
   bool _isLabMode = false;
 
@@ -345,7 +346,7 @@ class _HomeState extends State<Home> {
                           height: res.percentWidth(97),
                           margin: const EdgeInsets.only(top: 20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD8E2F9),
+                            color: !detectStatus.isNowTurtle ? const Color(0xFFD8E2F9) : const Color(0xFFF25959),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: Column(
@@ -353,8 +354,8 @@ class _HomeState extends State<Home> {
                               Container(
                                 width: res.percentWidth(85),
                                 padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
-                                child: const TextDefault(
-                                  content: '자세 탐지를\n시작할까요?',
+                                child: TextDefault(
+                                  content: detectStatus.nowDetecting ? '자세 탐지를\n하고 있어요' : '자세 탐지를\n시작할까요?',
                                   fontSize: 27,
                                   isBold: true,
                                   height: 1.2,
@@ -369,7 +370,7 @@ class _HomeState extends State<Home> {
                                   if (!detectStatus.detectAvailable) {
                                     showSnackbar('에어팟을 연결해주세요.');
                                   } else if (!detectStatus.nowDetecting) {
-                                    if (globalTimer.useSec >= 3600) {
+                                    if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
                                       showSnackbar('오늘의 사용 제한 시간이 끝났습니다.');
                                     } else {
                                       _audioHandler?.play();
@@ -384,7 +385,7 @@ class _HomeState extends State<Home> {
                                 },
                                 isDisabled: !detectStatus.detectAvailable,
                                 isRunning: detectStatus.nowDetecting,
-                                useTime: TimeConvert.sec2TimeFormat(globalTimer.useSec)
+                                useTime: '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}'
                               ),
                             ],
                           )

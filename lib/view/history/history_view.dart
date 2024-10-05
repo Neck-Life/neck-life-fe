@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,7 @@ class _HistoryState extends State<History> {
   bool _isInternetConnected = true;
 
   late ScrollController _scrollViewController;
+  late ScrollController _durationListController;
   bool _showScorePart = true;
   bool isScrollingDown = false;
 
@@ -56,12 +58,13 @@ class _HistoryState extends State<History> {
 
   int _anchorIdx = 0;
   String _scoreDurationValue = 'WEEK';
+  int durationListScrollOffsetCoef = 0;
 
   Map<String, dynamic> _historyData = {'daily' : [], 'poseTimerMap': {}};
   Map<String, dynamic> _todayHistory = {'poseCountMap': {}, 'daily' : []};
   Map<String, int> _data2idx = {};
 
-  // final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:31': 'END', '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'};
+  final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:31': 'END', '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:47': 'NORMAL', '2024-09-26T19:07:11': 'END'};
 
 //  '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'
   @override
@@ -86,6 +89,8 @@ class _HistoryState extends State<History> {
       }
     });
 
+    _durationListController = ScrollController();
+
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
@@ -105,13 +110,14 @@ class _HistoryState extends State<History> {
       }
     });
 
-    Future.delayed(Duration.zero, () {
-      timestamp2Duration(context.read<HistoryStatus>().todayHistory['history']);
-    });
+    // Future.delayed(Duration.zero, () {
+    //   timestamp2Duration(context.read<HistoryStatus>().todayHistory['history']);
+    // });
   }
 
   Future<void> getHistoryData(int year, int month) async {
     const storage = FlutterSecureStorage();
+    print('gethis');
     try {
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {
@@ -119,10 +125,10 @@ class _HistoryState extends State<History> {
       }
 
       Response res = await HistoryStatus.dio.get(
-          '${HistoryStatus.serverAddress}/history/monthly?year=${year}&month=${month}');
+          '${HistoryStatus.serverAddress}/history/monthly?year=$year&month=$month');
       DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
-          // print('ok');
+          print('ok');
         final historyData = res.data['data'];
 
 
@@ -146,7 +152,9 @@ class _HistoryState extends State<History> {
             _todayHistory = {'poseCountMap': {}, 'daily' : []};
           }
         });
-        timestamp2Duration(_todayHistory['history']);
+
+        print('d1 $dummy');
+        timestamp2DurationList(dummy);//_todayHistory['history']);
         storage.write(
             key: 'posehistoryLocal', value: json.encode(_historyData));
 
@@ -170,11 +178,11 @@ class _HistoryState extends State<History> {
     }
   }
 
-  void timestamp2Duration(Map<String, dynamic>? historyMap) {
+  void timestamp2DurationList(Map<String, dynamic>? historyMap) {
+    print('dummy2 $historyMap');
     if (historyMap == null) return;
 
     List<PoseDuration> poseDurationList = [];
-    print('calc');
 
     String prevPose = '';
     DateTime? prevTime;
@@ -192,29 +200,29 @@ class _HistoryState extends State<History> {
         duration = time
             .difference(prevTime!)
             .inSeconds;
-        xOffset += duration / wholeDuration;
+        xOffset += duration;
 
         if (prevPose == 'START') {
           poseDurationList.add(PoseDuration(xOffset: xOffset,
-            widthRate: duration / wholeDuration,
+            width: duration,
             durationType: DurationType.normal,
-            startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}'
+            startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}'
           ));
 
           normalDurationSum += duration;
           normalDurationCount += 1;
         } else if (prevPose == 'END') {
           poseDurationList.add(PoseDuration(xOffset: xOffset,
-            widthRate: duration / wholeDuration,
+            width: duration,
             durationType: DurationType.none,
-            startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}'
+            startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}'
           ));
         } else if (prevPose == 'NORMAL') {
           if (value != 'NORMAL') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
-              widthRate: duration / wholeDuration,
+              width: duration,
               durationType: DurationType.normal,
-              startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}'
+              startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}'
             ));
             normalDurationSum += duration;
             normalDurationCount += 1;
@@ -222,9 +230,9 @@ class _HistoryState extends State<History> {
         } else if (prevPose == 'FORWARD') {
           if (value != 'FORWARD') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
-              widthRate: duration / wholeDuration,
+              width: duration,
               durationType: DurationType.abnormal,
-              startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}',
+              startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}',
               durationSec: duration
             ));
             if (_chosonDurationIdx == -1) {
@@ -248,12 +256,44 @@ class _HistoryState extends State<History> {
       _normalDurationCount = normalDurationCount;
       _normalDurationSum = normalDurationSum;
     });
+    print('pdl $_poseDurationList');
   }
 
   void chooseDuration(int idx) {
     setState(() {
       _chosonDurationIdx = idx;
     });
+  }
+
+  String nowGraphDuration() {
+    DateTime end = DateTime.now();
+    DateTime start = DateTime.now();
+    switch (_scoreDurationValue) {
+      case 'WEEK':
+        start = start.subtract(const Duration(days: 6));
+        break;
+      case 'MONTH1':
+        start = start.subtract(const Duration(days: 29));
+        break;
+      case 'MONTH3':
+        start = start.subtract(const Duration(days: 89));
+        break;
+      case 'MONTH6':
+        start = start.subtract(const Duration(days: 179));
+        break;
+    }
+
+    return '${start.month}.${start.day} ~ ${end.month}.${end.day}';
+  }
+
+  bool isDurationListScrollEnd() {
+    Responsive res = Responsive(context);
+
+    if (_durationListController.hasClients) {
+      return durationListScrollOffsetCoef * res.percentWidth(76) >=
+          _durationListController.position.maxScrollExtent;
+    }
+    return false;
   }
 
   @override
@@ -302,7 +342,7 @@ class _HistoryState extends State<History> {
                                   fontColor: Colors.black,
                                 ),
                                 TextDefault(
-                                  content: '${_todayHistory['point'] ?? 0}점이예요',
+                                  content: _todayHistory['point'] == null ? '아직 없어요' : '${_todayHistory['point']}점이예요',
                                   fontSize: 30,
                                   isBold: true,
                                   fontColor: const Color(0xFF236EF3),
@@ -447,39 +487,112 @@ class _HistoryState extends State<History> {
                           SizedBox(height: res.percentHeight(2),),
                           WhiteContainer(
                             width: res.percentWidth(85),
-                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(4), vertical: res.percentHeight(2)),
+                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2), vertical: res.percentHeight(2)),
                             margin: EdgeInsets.only(right: res.percentWidth(7.5)),
                             radius: 20,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextDefault(
-                                  content: '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요',
-                                  fontSize: 16,
-                                  isBold: true
+                                Padding(
+                                  padding: EdgeInsets.only(left: res.percentWidth(2)),
+                                  child: TextDefault(
+                                      content: '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요',
+                                      fontSize: 16,
+                                      isBold: true
+                                  ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                PoseTimeMap(poseDurationList: _poseDurationList, notifyTap: chooseDuration),
+                                Stack(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2)),
+                                      child: SingleChildScrollView(
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        controller: _durationListController,
+                                        scrollDirection: Axis.horizontal,
+                                        child: PoseTimeMap(poseDurationList: _poseDurationList, notifyTap: chooseDuration),
+                                      ),
+                                    ),
+                                    durationListScrollOffsetCoef > 0 ? Positioned(
+                                      // left: -res.percentWidth(2.5),
+                                      top: res.percentHeight(2.75),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            if (durationListScrollOffsetCoef > 0) {
+                                              durationListScrollOffsetCoef -= 1;
+                                            }
+                                            _durationListController.animateTo(durationListScrollOffsetCoef*res.percentWidth(76),
+                                                duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: res.percentWidth(5),
+                                          height: res.percentWidth(5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(res.percentWidth(5)),
+                                              boxShadow: const [BoxShadow(
+                                                color: Color(0x19000000),
+                                                blurRadius: 4,
+                                                offset: Offset(2, 2),
+                                                spreadRadius: 3,
+                                              )]
+                                          ),
+                                          child: const AssetIcon('arrowBack', size: 4, color: Color(0xFF64646F),),
+                                        ),
+                                      ),
+                                    ) : const SizedBox(),
+                                    !isDurationListScrollEnd() ? Positioned(
+                                      left: res.percentWidth(75),
+                                      top: res.percentHeight(2.75),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            durationListScrollOffsetCoef += 1;
+                                            _durationListController.animateTo(min(durationListScrollOffsetCoef*res.percentWidth(76), _durationListController.position.maxScrollExtent),
+                                                duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: res.percentWidth(5),
+                                          height: res.percentWidth(5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(res.percentWidth(5)),
+                                              boxShadow: const [BoxShadow(
+                                                color: Color(0x19000000),
+                                                blurRadius: 4,
+                                                offset: Offset(2, 2),
+                                                spreadRadius: 3,
+                                              )]
+                                          ),
+                                          child: const AssetIcon('arrowNext', size: 4, color: Color(0xFF64646F),),
+                                        ),
+                                      ),
+                                    ) : const SizedBox()
+                                  ],
+                                ),
 
                                 _chosonDurationIdx != -1 ? Stack(
                                   children: [
-                                    Positioned(
-                                      left: res.percentWidth(74)*_poseDurationList[_chosonDurationIdx].xOffset - res.percentWidth(74)*_poseDurationList[_chosonDurationIdx].widthRate/2 - res.percentWidth(2),
-                                      child: CustomPaint(
-                                        painter: TrianglePainter(
-                                          strokeColor: const Color(0x4DD8E2F9),
-                                          strokeWidth: 2,
-                                          paintingStyle: PaintingStyle.fill,
-                                        ),
-                                        child: SizedBox(
-                                          height: res.percentWidth(3.5),
-                                          width: res.percentWidth(5),
-                                        ),
-                                      ),
-                                    ),
+                                    // Positioned(
+                                    //   // left: res.percentWidth(74)*_poseDurationList[_chosonDurationIdx].xOffset - res.percentWidth(74)*_poseDurationList[_chosonDurationIdx].width/2 - res.percentWidth(2),
+                                    //   child: CustomPaint(
+                                    //     painter: TrianglePainter(
+                                    //       strokeColor: const Color(0x4DD8E2F9),
+                                    //       strokeWidth: 2,
+                                    //       paintingStyle: PaintingStyle.fill,
+                                    //     ),
+                                    //     child: SizedBox(
+                                    //       height: res.percentWidth(3.5),
+                                    //       width: res.percentWidth(5),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     Container(
                                       width: res.percentWidth(77),
-                                      margin: EdgeInsets.only(top: res.percentWidth(3.5)),
+                                      margin: EdgeInsets.only(top: res.percentWidth(3.5), left: res.percentWidth(2)),
                                       decoration: BoxDecoration(
                                         color: const Color(0x4DD8E2F9),
                                         borderRadius: BorderRadius.circular(10),
@@ -538,13 +651,26 @@ class _HistoryState extends State<History> {
                                   },
                                   chosenValue: _scoreDurationValue,
                                 ),
-                                SizedBox(height: res.percentHeight(2),),
+                                SizedBox(height: res.percentHeight(1),),
                                 WhiteContainer(
                                   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2)),
                                   margin: EdgeInsets.only(right: res.percentWidth(7.5)),
                                   radius: 20,
-                                  child: ScoreChart(scoreValues: historyStatus.scoreSeries['historyPointMap'], duration: _scoreDurationValue),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const TextDefault(content: '조금씩 좋아지고 있어요', fontSize: 16, isBold: true),
+                                          TextDefault(content: nowGraphDuration(), fontSize: 14, isBold: true, fontColor: const Color(0xFF8991A0),),
+                                        ],
+                                      ),
+                                      ScoreChart(scoreValues: historyStatus.scoreSeries['historyPointMap'], duration: _scoreDurationValue)
+                                    ],
+                                  ),
                                 ),
+                                const SizedBox(height: 30,)
                               ],
                             ),
                           ),

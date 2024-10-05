@@ -43,7 +43,7 @@ class PoseTimeMap extends StatelessWidget {
               notifyTap(idx);
             }
           },
-          child: PoseTimeTile(widthRate: poseDurationList_[idx].widthRate,
+          child: PoseTimeTile(widthRate: (poseDurationList_[idx].width < 3 ? 3 : (poseDurationList_[idx].width > 60 ? 60 : poseDurationList_[idx].width)) /100,
               durationType: poseDurationList_[idx].durationType),
         );
       }) + <Widget>[

@@ -7,9 +7,9 @@ class AmplitudeEventManager {
     final Amplitude analytics = Amplitude.getInstance();
 
     // Initialize SDK
-    String amplitude_key = dotenv.get('AMPLITUDE_KEY');
+    String amplitudeKey = dotenv.get('AMPLITUDE_KEY');
     // print('amp $amplitude_key');
-    analytics.init(amplitude_key);
+    analytics.init(amplitudeKey);
     if (userId != null) {
       analytics.setUserId(userId);
     }

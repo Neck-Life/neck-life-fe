@@ -26,7 +26,7 @@ class CustomPopUp extends StatelessWidget {
       ),
       content: Container(
         margin: EdgeInsets.only(top: res.percentHeight(0.5)),
-        child: TextDefault(content: text, fontSize: 16, isBold: true),
+        child: TextDefault(content: text, fontSize: 16, isBold: false),
       ),
       actions: [
         Center(

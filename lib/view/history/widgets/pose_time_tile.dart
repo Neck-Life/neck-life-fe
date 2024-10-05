@@ -14,7 +14,7 @@ enum DurationType {
       case DurationType.abnormal:
         return const Color(0xFFDCC6D9);
       case DurationType.none:
-        return Colors.white;
+        return const Color(0xFFF4F4F7);
     }
   }
 

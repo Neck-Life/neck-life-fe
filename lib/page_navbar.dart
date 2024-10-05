@@ -2,6 +2,7 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
+import 'package:mocksum_flutter/theme/popup.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
 // import 'package:mocksum_flutter/settings.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
@@ -9,9 +10,11 @@ import 'package:mocksum_flutter/view/tutorial/tutorial_view.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/view/home/home_view.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/setting/setting_view.dart';
+import 'package:app_settings/app_settings.dart';
 // import 'history.dart';
 
 class PageNavBar extends StatefulWidget {
@@ -59,6 +62,7 @@ class _PageNavBarState extends State<PageNavBar> {
   }
 
   Future<void> _initATTPlugin() async {
+    print('init ATT');
     await Future.delayed(const Duration(seconds: 1));
     final TrackingStatus status =
     await AppTrackingTransparency.trackingAuthorizationStatus;
@@ -70,22 +74,26 @@ class _PageNavBarState extends State<PageNavBar> {
       // Request system's tracking authorization dialog
       final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization();
     }
+
+    final sensorPermission = await Permission.sensors.status;
+    if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
+      await showSensorPermissionDialog(context);
+      AppSettings.openAppSettings();
+    }
   }
+
+
+  Future<void> showSensorPermissionDialog(BuildContext context) async =>
+      await showDialog<void>(
+        context: context,
+        builder: (context) => const CustomPopUp(text: '본 앱은 에어팟의 센서를 사용하기 때문에 \n\'동작 및 피트니스\' 설정을 허용해야 사용할 수 있어요 '),
+      );
+
 
   Future<void> showCustomTrackingDialog(BuildContext context) async =>
     await showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        content: const Text(
-          '본 앱은 보다 편리하고 개인화된 서비스를 위해 이메일 주소, 자세 측정 기록 등의 데이터를 사용할 수 있습니다.'
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('계속'),
-          ),
-        ],
-      ),
+      builder: (context) => const CustomPopUp(text: '본 앱은 보다 개인화된 광고 경험을 위해 앱 활동 내역을 추적할 수 있습니다.'),
     );
 
 

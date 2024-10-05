@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
@@ -8,12 +10,11 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:mocksum_flutter/view/history/widgets/pose_count_frame.dart';
-import 'package:mocksum_flutter/view/home/home_view.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/date_tile.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/pose_list_item.dart';
-import 'package:provider/provider.dart';
 
 import '../../theme/component/button.dart';
+import '../../theme/popup.dart';
 
 
 class TodayHistory extends StatefulWidget {
@@ -33,6 +34,7 @@ class TodayHistory extends StatefulWidget {
 class _TodayHistoryState extends State<TodayHistory> {
 
   DateTime now = DateTime.now();
+  late int _year;
   late int _month;
   late int _date;
   int _chosenDate = 0;
@@ -41,28 +43,28 @@ class _TodayHistoryState extends State<TodayHistory> {
   int _fullTimeSec = 0;
   int _normalTimeSec = 0;
   Map<String, dynamic> _filteredPoseMap = {};
-  Map<dynamic, dynamic> _historyDateKeyMap = {};
+  Map<dynamic, dynamic> _historyDateKeyMap = {}; // {month : {date:{}, date:{}}}
 
   @override
   void initState() {
     setState(() {
+      _year = now.year;
       _month = now.month;
       _date = now.day;
       _chosenDate = now.day-1;
     });
     _amplitudeEventManager.viewEvent('todayhistory');
 
-    // _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
     // Map<String, dynamic> historyData = Provider.of<HistoryStatus>(context, listen: false).getPastHistoryWithDateV2(_chosenDate+1);
     // print('widget $historyData');
-    String todayStr = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}';
     Map histodyDateKeyMap = {};
-
+    Map monthDataMap = {};
     widget.fullHistoryData['daily'].forEach((item) {
-      histodyDateKeyMap[item['date']] = item;
+      monthDataMap[item['date']] = item;
     });
-    final historyData = histodyDateKeyMap.containsKey(_chosenDate+1) ? histodyDateKeyMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+    final historyData = monthDataMap.containsKey(_chosenDate+1) ? monthDataMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     // print('th $historyData');
+    histodyDateKeyMap[_month] = monthDataMap;
     setState(() {
       _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
       _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
@@ -70,7 +72,82 @@ class _TodayHistoryState extends State<TodayHistory> {
     });
     _filterPoseMap(historyData['history']);
 
+    Future.delayed(Duration.zero, () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+      }
+    });
     super.initState();
+  }
+
+  Future<void> getPrevMonthData() async {
+    const storage = FlutterSecureStorage();
+    int newYear = _month > 1 ? _year : _year-1;
+    int newMonth = _month > 1 ? _month-1 : 12;
+    try {
+      String? accessToken = await storage.read(key: 'accessToken');
+      if (accessToken != null && accessToken != '') {
+        HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
+      }
+
+      Response res = await HistoryStatus.dio.get(
+          '${HistoryStatus.serverAddress}/history/monthly?year=$newYear&month=$newMonth');
+
+      if (res.data['code'] == 'success') {
+        // print('ok');
+        print(res.data);
+        final fullHistoryData = res.data['data'];
+        Map monthDataMap = {};
+        fullHistoryData['daily'].forEach((item) {
+          monthDataMap[item['date']] = item;
+        });
+        final historyData = monthDataMap.containsKey(_chosenDate+1) ? monthDataMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+        // print('th $historyData');
+        setState(() {
+          _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+          _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
+          _historyDateKeyMap[newMonth] = monthDataMap;
+          _date = DateTime(_year, _month, 1).subtract(const Duration(days: 1)).day;
+          _month = newMonth;
+          _year = newYear;
+          _chosenDate = _date-1;
+        });
+        _filterPoseMap(historyData['history']);
+        _scrollController.animateTo(MediaQuery.of(context).size.width*0.16*(_date+2),
+            duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+      } else {
+        throw Exception();
+      }
+    } on Exception catch (e) {
+      print(e);
+      _openErrorPopUp();
+    }
+  }
+
+  void getNextMonthData() async {
+    int newYear = _month > 11 ? _year+1 : _year;
+    int newMonth = _month > 11 ? 1 : _month+1;
+    // if (newMonth > DateTime.now().month) return;
+
+    print('newMonth $newMonth');
+    print(_historyDateKeyMap);
+    final historyData = _historyDateKeyMap[newMonth].containsKey(_chosenDate+1) ? _historyDateKeyMap[newMonth][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+    try {
+        setState(() {
+          _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+          _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
+          _date = newMonth == DateTime.now().month ? DateTime.now().day : DateTime(newMonth > 11 ? _year+1 : _year, newMonth > 11 ? 1 : newMonth+1, 1).subtract(const Duration(days: 1)).day;
+          _month = newMonth;
+          _year = newYear;
+          _chosenDate = 0;
+        });
+        _filterPoseMap(historyData['history']);
+
+    } on Exception catch (e) {
+      print(e);
+      _openErrorPopUp();
+    }
   }
 
   void _filterPoseMap(Map<String, dynamic>? historyMap) {
@@ -93,7 +170,7 @@ class _TodayHistoryState extends State<TodayHistory> {
   }
 
   void changeChosenDate(int chosenDate) {
-    final historyData = _historyDateKeyMap.containsKey(chosenDate+1) ? _historyDateKeyMap[chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+    final historyData = _historyDateKeyMap[_month].containsKey(chosenDate+1) ? _historyDateKeyMap[_month][chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     setState(() {
       _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
       _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
@@ -102,13 +179,16 @@ class _TodayHistoryState extends State<TodayHistory> {
     _filterPoseMap(historyData['history']);
   }
 
+  void _openErrorPopUp() {
+    showDialog(context: context, builder: (ctx) {
+      return const CustomPopUp(text: '오류가 발생했습니다.\n다시 시도해주세요.');
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
-    // HistoryStatus historyStatus = context.watch();
-    // String todayStr = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${(DateTime.now().day).toString().padLeft(2, '0')}';
-    // final historyData = widget.fullHistoryData.containsKey(todayStr) ? widget.fullHistoryData[todayStr] : {'posTimerMap': {}, 'daily': []};
-    // _filterPoseMap(historyData['history']);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -158,7 +238,32 @@ class _TodayHistoryState extends State<TodayHistory> {
                     controller: _scrollController,
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                        children: List.generate(_date, (idx) {
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () async {
+                              await getPrevMonthData();
+                            },
+                            child: Container(
+                              width: res.percentWidth(12.5),
+                              height: res.percentWidth(15),
+                              margin: EdgeInsets.only(left: res.percentWidth(2)),
+                              alignment: Alignment.center,
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AssetIcon('arrowBack', size: 5, color: Color(0xFF8991A0),),
+                                  SizedBox(height: 5,),
+                                  TextDefault(
+                                      content: '이전',
+                                      fontSize: 14,
+                                      isBold: true,
+                                      fontColor: Color(0xFF8991A0)
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ] + List.generate(_date, (idx) {
                           return GestureDetector(
                             onTap: () {
                               changeChosenDate(idx);
@@ -169,7 +274,32 @@ class _TodayHistoryState extends State<TodayHistory> {
                               hasChosen: _chosenDate == idx,
                             ),
                           );
-                        })
+                        }) + <Widget>[
+                          _month < DateTime.now().month ? GestureDetector(
+                            onTap: () {
+                              getNextMonthData();
+                            },
+                            child: Container(
+                              width: res.percentWidth(12.5),
+                              height: res.percentWidth(15),
+                              margin: EdgeInsets.only(left: res.percentWidth(2)),
+                              alignment: Alignment.center,
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AssetIcon('arrowNext', size: 5, color: Color(0xFF8991A0),),
+                                  SizedBox(height: 5,),
+                                  TextDefault(
+                                      content: '다음',
+                                      fontSize: 14,
+                                      isBold: true,
+                                      fontColor: Color(0xFF8991A0)
+                                  )
+                                ],
+                              ),
+                            ),
+                          ) : const SizedBox()
+                        ]
                     ),
                   ),
                 ),
@@ -260,7 +390,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                       ),
                       SizedBox(height: res.percentHeight(2),),
                       TextDefault(
-                        content: '${_chosenDate+1 == DateTime.now().day ? '오늘' : '이 날의'} 기록이 없어요',
+                        content: '${_month == DateTime.now().month && _chosenDate+1 == DateTime.now().day ? '오늘' : '이 날의'} 기록이 없어요',
                         fontSize: 18,
                         isBold: true,
                         fontColor: const Color(0xFF323238),
