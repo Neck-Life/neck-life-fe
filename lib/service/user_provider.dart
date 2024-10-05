@@ -198,6 +198,16 @@ class UserStatus with ChangeNotifier {
       print('토큰 재발급 완료: $_accessTokenTemp');
     } else {
       print('토큰 재발급 실패');
+      _accessTokenTemp = '';
+      _refreshTokenTemp = '';
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: 'accessToken');
+      await storage.delete(key: 'refreshToken');
+      await storage.delete(key: 'email');
+
+      _isLogged = false;
+      notifyListeners();
+
     }
   }
 

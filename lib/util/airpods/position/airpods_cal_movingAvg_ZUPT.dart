@@ -47,15 +47,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
     }
 
     double currentAccelY = data.userAcceleration.y.toDouble();
-    double currentAccelZ = data.userAcceleration.z.toDouble();
     pastY.add(currentAccelY);
-    // pastZ.add(currentAccelZ);
     int len = 6;
     if(pastY.length > len) pastY.removeAt(0);
-    // if(pastZ.length > len) pastZ.removeAt(0);
 
     double cal_acc_y = 0.0;
-    double cal_acc_z = 0.0;
     List<double> sortedY = List.from(pastY);
     // List<double> sortedZ = List.from(pastZ);
     sortedY.sort();
@@ -73,24 +69,116 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = cal_acc_y; //y축만 고려하기
     double offset = 0.007;
-    if(cal_acc.abs() < offset) cal_acc = 0;
 
-    if(cal_acc.abs() < 0.05) cal_acc *=1.5 ;
+    if(cal_acc<0){
+      cal_acc*=1.4;
+    }
 
-    if(cal_acc < 0) cal_acc *=1.2 ;
+
+    if(cal_acc>0 && cal_acc < offset*1.5) {
+      cal_acc = 0;
+    }else if (cal_acc<0 &&cal_acc> -offset){
+      cal_acc=0;
+
+    }
+
 
 
 
     double velocity = velocities.last + cal_acc * deltaTime;
-    double position = positions.last + velocity * deltaTime;
+
+
+
+    double deltaAccel = 0.0;
+    int windowSIZE = 8;
+    int zeroCount= 0;
+    if(accelometers.length < windowSIZE){
+
+
+    }else {
+      for (int i = accelometers.length - windowSIZE+1; i < accelometers.length; i++) {
+
+        if (accelometers[i] == 0) {
+          zeroCount++;
+        }
+      }
+
+
+      // print(deviatio n);
+      //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
+
+      if (zeroCount > 1 ) {
+        velocity = 0;
+      }
+    }
+
+
+
+    double temp;
+
+
+    if(velocity.abs() < 0.0002){
+      velocity = velocity *15;
+      // print("1");
+    }else if(velocity.abs() < 0.0008){
+      velocity = velocity *13;
+      // print("2");
+    }else if(velocity.abs() < 0.0012){
+      velocity = velocity *12;
+      // print("3");
+    }else if(velocity.abs() < 0.002){
+      velocity = velocity *6;
+      // print("4");
+    }
+    else if(velocity.abs() < 0.006){
+      velocity = velocity *2;
+      // print("5");
+    }
+
+
+    if(velocity < 0){
+      velocity = velocity * 3;
+    }else{
+      // velocity = velocity * 1.2;
+    }
+
+
+
+
+    // if(velocity>0.015){
+    //   velocity = 0.015;
+    // }else if(velocity<-0.015){
+    //   velocity = -0.018;
+    // }
+
+
+
+
+
+
+
+
+    temp = velocity * deltaTime *1.2;
+
+
+    // double temp = velocity * deltaTime;
+
+    double position = positions.last + temp;
 
     if(velocities.last * velocity < 0) stopFlag = true;
 
     //         임시 움직임 없애기 시작
 
+    List<double> sublist = [];
+    if (accelometers.length > 10) {
+      sublist = accelometers.sublist(accelometers.length - 3, accelometers.length);
+    }
+
+
+
 
     // 회전 하고 정지 , 처음 아님
-    if (isRotated  && stopFlag && position != last_zero_position) {
+    if (isRotated  && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0&& position != last_zero_position) {
 
       // 현재 속도와 위치를 체크포인트 값으로 복구
       velocity = last_zero_velocity;
@@ -101,7 +189,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     }
 
     // 가속도가 0이고 속도도 0일 때 체크포인트 설정
-    else if (!isRotated && stopFlag && velocity == 0) {
+    else if (!isRotated && sublist.isNotEmpty && sublist.reduce((a, b) => a + b) == 0 && velocity == 0) {
       // print(2);
       if (position != last_zero_position && last_zero_position != 0) {
         last_zero_velocity = velocity;
@@ -118,16 +206,16 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //         임시 움직임 없애기 끝
 
     //ZUPT : 영속도 업데이트
-    else [velocity, position] = applyZUPT(velocity, position);
+     [velocity, position] = applyZUPT(velocity, position);
 
 
-    if(!stopFlag) stablePosition = position;
-    if(stablePosition > threshold) stablePosition = threshold;
-    else if(stablePosition < -threshold/3) stablePosition = -threshold/3;
-    stablePositions.add(stablePosition);
+    if(position > threshold) position = threshold;
+    else if(position < 0) position = 0.0;
+    stablePosition = position;
 
     // print("position : ${stablePosition}");
     // print("veloticy : ${velocity}");
+
 
 
 
@@ -164,7 +252,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     // print(deviatio n);
     //편차 임계치 설정 추가 로직 필요 : 시간에 따라 가속도raw 측정값 자체의 오차가 커지는 현상 발견
-    if(deviation.abs() > 0.035){
+    if(deviation.abs() > 0.015){
       if(zeroCount>1){
         velocity = 0;
         position = positions.last;
@@ -178,7 +266,6 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //속도가 비정상으로 뒤집힌 구간만큼 롤백
 
 
-    position = compensatePosition(velocity, position);
     velocity = 0;
     stopFlag = false;
     stablePosition = position;
