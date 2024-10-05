@@ -30,6 +30,12 @@ class MyAudioHandler extends BaseAudioHandler {
   static const applicationLifecycleChannel = BasicMessageChannel<String>('applicationLifeCycle', StringCodec());
   static const kApplicationWillTerminate = 'applicationWillTerminate';
 
+  String beforeState = "NORMAL";
+  String nowState = "NORMAL";
+  Timer? _timer;
+  bool canLog = false;
+  int LoggingTime = 2;
+
   void _setAudioFile() async {
     await _bgAudioPlayer.setAsset('assets/noti.mp3');
     await _bgAudioPlayer.setLoopMode(LoopMode.one);
@@ -68,27 +74,56 @@ class MyAudioHandler extends BaseAudioHandler {
         _nowPosition = 0;
       }
 
+
+
+      // 로깅 최소시간
+      if (beforeState != nowState) {
+        // 상태가 변경되었을 때
+        print('상태 변경: $beforeState -> $nowState');
+        _timer?.cancel(); // 기존 타이머 취소
+        beforeState = nowState;
+
+        // 새로운 타이머 시작
+        _timer = Timer(Duration(seconds: LoggingTime), () {
+          // 상태가 3초 동안 지속되었을 때 로깅 수행
+          canLog = true;
+        });
+      } else {
+        // 상태가 변경되지 않았을 때
+        // 타이머가 없으면 시작
+        if (_timer == null || !_timer!.isActive) {
+          _timer = Timer(Duration(seconds: LoggingTime), () {
+            canLog = true;
+          });
+        }
+      }
+
+
+
       DetectStatus.nowPitch = _nowPitch;
+
 
       DetectStatus.nowPosition = _nowPosition;
       DetectStatus.tickCount = (DetectStatus.tickCount+1) % 300;
       if (_checkIsNowTurtle() && _turtleNeckStartedTimeStamp == 0 && DetectStatus.sNowDetecting) {
         _turtleNeckStartedTimeStamp = DateTime.now().millisecondsSinceEpoch;
-        if (_minInterval <= 0) {
+        if (_minInterval <= 0 && canLog) {
           // _poseLog['history']
-          _poseLog['history'][DateTime.now().toIso8601String().split('.')[0]
+          _poseLog['history'][DateTime.now().add(Duration(seconds: -LoggingTime)).toIso8601String().split('.')[0]
               .substring(0, 19)] = 'FORWARD';
           print('FORWARD');
+          canLog = false;
         }
       }
 
       if (!_checkIsNowTurtle()) {
         _turtleNeckStartedTimeStamp = 0;
-        if (_isNowTurtle) {
+        if (_isNowTurtle  && canLog) {
           print('NORMAL');
-          _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'NORMAL';
+          _poseLog['history'][DateTime.now().add(Duration(seconds: -LoggingTime)).toIso8601String().split('.')[0].substring(0, 19)] = 'NORMAL';
           _isNowTurtle = false;
           emitCustomEvent('end');
+          canLog = false;
         }
       }
 
@@ -117,7 +152,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsNowTurtle() {
-    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition > 0.2) {
+    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition > 0.15) {
       return true;
     } else {
       return false;

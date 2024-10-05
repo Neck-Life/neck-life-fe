@@ -209,13 +209,13 @@ class AirpodsCalMovingAvgZupt extends Filter{
      [velocity, position] = applyZUPT(velocity, position);
 
 
-    if(!stopFlag) stablePosition = position;
-    if(stablePosition > threshold) stablePosition = threshold;
-    else if(stablePosition < -threshold/3) stablePosition = -threshold/3;
-    stablePositions.add(stablePosition);
+    if(position > threshold) position = threshold;
+    else if(position < 0) position = 0.0;
+    stablePosition = position;
 
     // print("position : ${stablePosition}");
     // print("veloticy : ${velocity}");
+
 
 
 
