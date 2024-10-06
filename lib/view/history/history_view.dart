@@ -64,7 +64,7 @@ class _HistoryState extends State<History> {
   Map<String, dynamic> _todayHistory = {'poseCountMap': {}, 'daily' : []};
   Map<String, int> _data2idx = {};
 
-  final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:31': 'END', '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:47': 'NORMAL', '2024-09-26T19:07:11': 'END'};
+  final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:47': 'END'};
 
 //  '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'
   @override
@@ -154,7 +154,7 @@ class _HistoryState extends State<History> {
         });
 
         print('d1 $dummy');
-        timestamp2DurationList(dummy);//_todayHistory['history']);
+        timestamp2DurationList(_todayHistory['history'] ?? dummy);
         storage.write(
             key: 'posehistoryLocal', value: json.encode(_historyData));
 
@@ -496,12 +496,26 @@ class _HistoryState extends State<History> {
                                 Padding(
                                   padding: EdgeInsets.only(left: res.percentWidth(2)),
                                   child: TextDefault(
-                                      content: '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요',
+                                      content: _todayHistory['history'] != null ?
+                                        '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
+                                        : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
                                       fontSize: 16,
                                       isBold: true
                                   ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
+                                _todayHistory['history'] == null ? Container(
+                                  margin: EdgeInsets.only(bottom: res.percentHeight(1), left: res.percentWidth(2)),
+                                  padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2), vertical: res.percentHeight(0.5)),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      width: 1,
+                                      color: const Color(0xFF8991A0)
+                                    )
+                                  ),
+                                  child: const TextDefault(content: '예시', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                                ) : const SizedBox(),
                                 Stack(
                                   children: [
                                     Padding(
@@ -662,7 +676,7 @@ class _HistoryState extends State<History> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          const TextDefault(content: '조금씩 좋아지고 있어요', fontSize: 16, isBold: true),
+                                          const TextDefault(content: '자세 변화를\n점수로 확인해보세요', fontSize: 16, isBold: true),
                                           TextDefault(content: nowGraphDuration(), fontSize: 14, isBold: true, fontColor: const Color(0xFF8991A0),),
                                         ],
                                       ),

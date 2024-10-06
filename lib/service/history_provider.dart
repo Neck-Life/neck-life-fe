@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddress = 'http://13.125.107.140:8080/api/v1';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddress = 'http://43.200.200.34/api/v1';
 
   Map<String, dynamic> _historyData = {'daily' : []};
   Map<String, dynamic> _pastHistoryData = {'daily' : [], 'poseTimerMap': {}};
@@ -73,7 +73,7 @@ class HistoryStatus with ChangeNotifier {
     // DateTime now = DateTime.now();
     // // if (_historyData == null) {
     // await updateHistoryData(now.year.toString(), now.month.toString());
-    await getScoreSeriesV2('WEEK');
+    await getScoreSeriesV2('MONTH6');
     // }
     // int cnt = 0;
     // // print(_historyData);
@@ -246,6 +246,7 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getScoreSeriesV2(String duration) async {
+    print('getsore');
     const storage = FlutterSecureStorage();
     try {
       String? accessToken = await storage.read(key: 'accessToken');
@@ -258,6 +259,7 @@ class HistoryStatus with ChangeNotifier {
 
       if (res.data['code'] == 'success') {
         _scoreSeries = Map.from(res.data['data']);
+        print(_scoreSeries);
         // _scoreSeries['success'] = true;
         // print('scores $_scoreSeries');
         notifyListeners();
@@ -269,22 +271,25 @@ class HistoryStatus with ChangeNotifier {
 
         return _scoreSeries;
       } else {
+        print('fuck1');
         _scoreSeries = {'historyPointMap': {}};
         throw Exception();
       }
 
     } on DioException catch(e) {
+      print('fuck2');
+      print(e);
       String? scoreSeriesStr = await storage.read(key: 'scoreserieslocal');
       print('check $scoreSeriesStr');
       if (scoreSeriesStr == null) {
-        _scoreSeries =  {'success': false};
+        _scoreSeries = {'historyPointMap': {}};
       } else {
         _scoreSeries = json.decode(scoreSeriesStr);
       }
 
       return _scoreSeries;
     } on Exception catch (e) {
-      // print(e);
+      print(e);
       return {'success': false};
     }
   }

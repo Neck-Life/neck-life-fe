@@ -24,7 +24,7 @@ class _LoadingState extends State<Loading> {
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
       // await Provider.of<HistoryStatus>(context, listen: false).updateHistoryData(DateTime.now().year.toString(), DateTime.now().month.toString().padLeft(2, '0'));
-      await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('WEEK');
+      await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');
       Navigator.push(
           context, MaterialPageRoute(builder: (
           context) => PageNavBar(pageIdx: 1, key: UniqueKey())));

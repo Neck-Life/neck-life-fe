@@ -270,7 +270,7 @@ class _ScoreChartState extends State<ScoreChart> {
               fontWeight: FontWeight.w600,
             ),)).toList();
           },
-          getTooltipColor: (group) => Colors.transparent,
+          getTooltipColor: (group) => Colors.white,
 
         ),
       )

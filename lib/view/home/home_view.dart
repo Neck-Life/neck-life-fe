@@ -46,9 +46,9 @@ class _HomeState extends State<Home> {
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   late BannerAd _ad;
-  bool _isAdLoaded = true;
+  bool _isAdLoaded = false;
   // bool _isPremium = false;
-  bool _isLabMode = false;
+  bool _isLabMode = true;
 
 
   @override

@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddress = 'http://13.125.107.140:8080/api/v1';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddress = 'http://43.200.200.34/api/v1';
 
   bool _isLogged = false;
   bool _isPremium = false;
@@ -91,32 +91,6 @@ class UserStatus with ChangeNotifier {
     }
     return payloadMap;
   }
-
-  // Future<bool> verifyToken() async {
-  //   const storage = FlutterSecureStorage();
-  //
-  //   String? accessToken = await storage.read(key: 'accessToken');
-  //   String? refreshToken = await storage.read(key: 'refreshToken');
-  //
-  //   _accessTokenTemp = accessToken ?? '';
-  //   _refreshTokenTemp = refreshToken ?? '';
-  //
-  //   print('token: $_accessTokenTemp');
-  //   if (_accessTokenTemp != '') {
-  //     try {
-  //       var payload = _parseJwtPayLoad(_accessTokenTemp)['data'];
-  //       print(payload);
-  //       _isLogged = true;
-  //       return true;
-  //     } catch (e) {
-  //       print(e);
-  //       _isLogged = false;
-  //       return false;
-  //     }
-  //   }
-  //   _isLogged = false;
-  //   return false;
-  // }
 
   // AccessToken과 RefreshToken을 확인하여 처리하는 함수
   Future<bool> checkAndUpdateToken() async {
@@ -254,10 +228,10 @@ class UserStatus with ChangeNotifier {
     _refreshTokenTemp = '';
 
     const storage = FlutterSecureStorage();
-    await storage.deleteAll();
-    // await storage.delete(key: 'accessToken');
-    // await storage.delete(key: 'refreshToken');
-    // await storage.delete(key: 'memberId');
+    // await storage.deleteAll();
+    await storage.delete(key: 'accessToken');
+    await storage.delete(key: 'refreshToken');
+    await storage.delete(key: 'memberId');
   }
 
   Future<void> _initSubscriptionState() async {

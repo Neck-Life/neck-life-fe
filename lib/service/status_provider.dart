@@ -9,9 +9,9 @@ class DetectStatus with ChangeNotifier {
   static bool sDetectAvailable = false;
   static bool sIsNowTurtle = false;
   static int sSensitivity = 1;
-  static int sAlarmGap = 15;
+  static int sAlarmGap = 5;
 
-  static bool isLabMode = false;
+  static bool isLabMode = true;
 
   static double initialPitch = 0;
   static double nowPosition = 0;
@@ -26,7 +26,7 @@ class DetectStatus with ChangeNotifier {
   bool _detectAvailable = false;
   bool _isNowTurtle = false;
   int _sensitivity = 1;
-  int _alarmGap = 15;
+  int _alarmGap = 5;
   bool _bgSoungActive = false;
 
   bool get nowDetecting => _nowDetecting;

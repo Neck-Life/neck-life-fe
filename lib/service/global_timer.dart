@@ -19,6 +19,7 @@ class GlobalTimer with ChangeNotifier {
   }
 
   void init() async {
+    print('timer init');
     const storage = FlutterSecureStorage();
     String? lastDate = await storage.read(key: 'lastDate');
     String? useSecStr = await storage.read(key: 'useSec');
