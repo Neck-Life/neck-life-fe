@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
@@ -181,7 +182,7 @@ class _TodayHistoryState extends State<TodayHistory> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return const CustomPopUp(text: '오류가 발생했습니다.\n다시 시도해주세요.');
+      return CustomPopUp(text: 'today_history_view.error'.tr());
     });
   }
 
@@ -196,8 +197,8 @@ class _TodayHistoryState extends State<TodayHistory> {
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
           backgroundColor: const Color(0xFFF4F4F7),
-          title: const TextDefault(
-            content: '자세 탐지',
+          title:TextDefault(
+            content: 'today_history_view.posture_detection'.tr(),
             fontSize: 16,
             isBold: false,
             fontColor: Color(0xFF64646F),
@@ -226,7 +227,8 @@ class _TodayHistoryState extends State<TodayHistory> {
                 Container(
                   margin: EdgeInsets.only(left: res.percentWidth(7.5)),
                   child: TextDefault(
-                      content: '$_month월 ${_chosenDate+1}일',
+                      content: 'today_history_view.month_day'.tr(args: ['$_month', '${_chosenDate+1}']),
+                      //'$_month월 ${_chosenDate+1}일',
                       fontSize: 20,
                       isBold: true
                   ),
@@ -248,16 +250,16 @@ class _TodayHistoryState extends State<TodayHistory> {
                               height: res.percentWidth(15),
                               margin: EdgeInsets.only(left: res.percentWidth(2)),
                               alignment: Alignment.center,
-                              child: const Column(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AssetIcon('arrowBack', size: 5, color: Color(0xFF8991A0),),
-                                  SizedBox(height: 5,),
+                                  const AssetIcon('arrowBack', size: 5, color: Color(0xFF8991A0),),
+                                  const SizedBox(height: 5,),
                                   TextDefault(
-                                      content: '이전',
+                                      content: 'today_history_view.before'.tr(),
                                       fontSize: 14,
                                       isBold: true,
-                                      fontColor: Color(0xFF8991A0)
+                                      fontColor: const Color(0xFF8991A0)
                                   )
                                 ],
                               ),
@@ -284,16 +286,16 @@ class _TodayHistoryState extends State<TodayHistory> {
                               height: res.percentWidth(15),
                               margin: EdgeInsets.only(left: res.percentWidth(2)),
                               alignment: Alignment.center,
-                              child: const Column(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AssetIcon('arrowNext', size: 5, color: Color(0xFF8991A0),),
-                                  SizedBox(height: 5,),
+                                  const AssetIcon('arrowNext', size: 5, color: Color(0xFF8991A0),),
+                                  const SizedBox(height: 5,),
                                   TextDefault(
-                                      content: '다음',
+                                      content: 'today_history_view.next'.tr(),
                                       fontSize: 14,
                                       isBold: true,
-                                      fontColor: Color(0xFF8991A0)
+                                      fontColor: const Color(0xFF8991A0)
                                   )
                                 ],
                               ),
@@ -335,8 +337,8 @@ class _TodayHistoryState extends State<TodayHistory> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextDefault(
-                  content: '바른 자세 유지',
+                TextDefault(
+                  content: 'today_history_view.good_posture'.tr(),
                   fontSize: 28,
                   isBold: true,
                 ),
@@ -349,7 +351,8 @@ class _TodayHistoryState extends State<TodayHistory> {
                       fontColor: const Color(0xFF115FE9),
                     ),
                     TextDefault(
-                      content: '/총 ${TimeConvert.sec2Min(_fullTimeSec)}',
+                      content: 'today_history_view.total_time'.tr(args: [TimeConvert.sec2Min(_fullTimeSec)]),
+                      //'/총 ${TimeConvert.sec2Min(_fullTimeSec)}',
                       fontSize: 18,
                       isBold: false,
                       fontColor: const Color(0xFF115FE9),
@@ -390,7 +393,8 @@ class _TodayHistoryState extends State<TodayHistory> {
                       ),
                       SizedBox(height: res.percentHeight(2),),
                       TextDefault(
-                        content: '${_month == DateTime.now().month && _chosenDate+1 == DateTime.now().day ? '오늘' : '이 날의'} 기록이 없어요',
+                        content: '${_month == DateTime.now().month && _chosenDate+1 == DateTime.now().day ?
+                        'today_history_view.today'.tr() : 'today_history_view.this_day'.tr()} ${'today_history_view.no_history'.tr()}',
                         fontSize: 18,
                         isBold: true,
                         fontColor: const Color(0xFF323238),
@@ -402,7 +406,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                               context, MaterialPageRoute(builder: (
                               context) => const PageNavBar()));
                         },
-                        text: '자세 탐지하기',
+                        text: 'today_history_view.do_posture_detection'.tr(),
                         backgroundColor: const Color(0xFF8991A0),
                         color: Colors.white,
                         width: res.percentWidth(45),

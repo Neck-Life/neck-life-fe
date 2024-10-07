@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/util/open_url_helper.dart';
@@ -15,7 +16,6 @@ import 'package:mocksum_flutter/view/setting/widgets/two_btn_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
-// import '../../login.dart';
 import '../../util/responsive.dart';
 
 
@@ -33,7 +33,8 @@ class _SettingState extends State<Settings> {
   final OpenUrlHelper openUrlHelper = OpenUrlHelper();
 
   int _deleteAccountReasonIdx = 0;
-  List<String>_deleteReasonList = ['자세 측정이 부정확한 거 같아요', '잘 사용하지 않아요', '지원되는 이어폰이 없어요', '배터리 소모량이 부담 돼요', '기타'];
+  List<String>_deleteReasonList = ['setting_view.delete_reason1'.tr(), 'setting_view.delete_reason2'.tr(), 'setting_view.delete_reason3'.tr(),
+    'setting_view.delete_reason4'.tr(), 'setting_view.delete_reason5'.tr()];
   final _deleteReasonEditController = TextEditingController();
 
 
@@ -51,10 +52,10 @@ class _SettingState extends State<Settings> {
           return TwoBtnSheet(
             onError: _openErrorPopUp,
             onSuccess: () {},
-            title: '넥라이프를 정말 탈퇴할까요?',
-            content: '탈퇴 시 사용자의 계정 정보, 자세 탐지 기록 데이터 등의 모든 데이터가 삭제되며, 복구가 불가능합니다.',
-            btnStr: '취소할게요',
-            secondBtnStr: '탏퇴하기',
+            title: 'setting_view.really_quit'.tr(),
+            content: 'setting_view.quit_ask'.tr(),
+            btnStr: 'setting_view.quit_cancel'.tr(),
+            secondBtnStr: 'setting_view.quit_quit'.tr(),
             onPress: () async {
               await askDeleteAccountReason(context);
             },
@@ -70,9 +71,9 @@ class _SettingState extends State<Settings> {
         return TwoBtnSheet(
           onError: _openErrorPopUp,
           onSuccess: () {},
-          title: '넥라이프에서 로그아웃할까요?',
-          btnStr: '계속 사용하기',
-          secondBtnStr: '로그아웃하기',
+          title: 'setting_view.really_logout'.tr(),
+          btnStr: 'setting_view.logout_cancel'.tr(),
+          secondBtnStr: 'setting_view.logout_logout'.tr(),
           onPress: () async {
             UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
             userStatus2.cleanAll();
@@ -98,14 +99,14 @@ class _SettingState extends State<Settings> {
                   child: Column(
                     children: [
                       SizedBox(height: responsive.percentHeight(5),),
-                      const TextDefault(
-                          content: "계정을 삭제하려는 이유를 말씀해주세요. 제품 개선에 중요한 자료로 사용하겠습니다.",
+                      TextDefault(
+                          content: 'setting_view.delete_reason_ask'.tr(),
                           fontSize: 18,
                           isBold: true
                       ),
                       ListTile(
-                        title: const TextDefault(
-                          content: "자세 측정이 부정확한 거 같아요",
+                        title: TextDefault(
+                          content: "setting_view.delete_reason1".tr(),
                           fontSize: 15,
                           isBold: false,
                         ),
@@ -120,8 +121,8 @@ class _SettingState extends State<Settings> {
                         ),
                       ),
                       ListTile(
-                        title: const TextDefault(
-                          content: "잘 사용하지 않아요",
+                        title: TextDefault(
+                          content: "setting_view.delete_reason2".tr(),
                           fontSize: 15,
                           isBold: false,
                         ),
@@ -136,8 +137,8 @@ class _SettingState extends State<Settings> {
                         ),
                       ),
                       ListTile(
-                        title: const TextDefault(
-                          content: "지원되는 이어폰이 없어요",
+                        title: TextDefault(
+                          content: "setting_view.delete_reason3".tr(),
                           fontSize: 15,
                           isBold: false,
                         ),
@@ -153,8 +154,8 @@ class _SettingState extends State<Settings> {
                         ),
                       ),
                       ListTile(
-                        title: const TextDefault(
-                          content: "배터리 사용량이 부담 돼요",
+                        title: TextDefault(
+                          content: "setting_view.delete_reason4".tr(),
                           fontSize: 15,
                           isBold: false,
                         ),
@@ -170,8 +171,8 @@ class _SettingState extends State<Settings> {
                         ),
                       ),
                       ListTile(
-                        title: const TextDefault(
-                          content: "기타",
+                        title:TextDefault(
+                          content: "setting_view.delete_reason5".tr(),
                           fontSize: 15,
                           isBold: false,
                         ),
@@ -191,8 +192,8 @@ class _SettingState extends State<Settings> {
                         child: TextField(
                           maxLines: 3,
                           keyboardType: TextInputType.multiline,
-                          decoration: const InputDecoration(
-                              hintText: '이유를 입력해주세요',
+                          decoration: InputDecoration(
+                              hintText: 'setting_view.delete_reason6'.tr(),
                               border: OutlineInputBorder()
                           ),
                           controller: _deleteReasonEditController,
@@ -220,7 +221,7 @@ class _SettingState extends State<Settings> {
                                   context: context,
                                   builder: (contextIn) {
                                     return AlertDialog(
-                                      content: Text('오류가 발생했습니다.\n다시 시도해주세요.',
+                                      content: Text('setting_view.error'.tr(),
                                         style: TextStyle(
                                           color: const Color(0xFF434343),
                                           fontSize: MediaQuery.of(context).size.width*0.05,
@@ -243,7 +244,7 @@ class _SettingState extends State<Settings> {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child: const Text('닫기')
+                                            child: Text('setting_view.close'.tr())
                                         )
                                       ],
                                     );
@@ -256,7 +257,7 @@ class _SettingState extends State<Settings> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                           ),
-                          child: const TextDefault(content: '제출', fontSize: 15, isBold: true)
+                          child: TextDefault(content: 'setting_view.submit'.tr(), fontSize: 15, isBold: true)
                       )
                     ],
                   ),
@@ -271,7 +272,7 @@ class _SettingState extends State<Settings> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return const CustomPopUp(text: '오류가 발생했습니다.\n다시 시도해주세요.');
+      return  CustomPopUp(text: 'setting_view.error'.tr());
     });
   }
 
@@ -288,7 +289,7 @@ class _SettingState extends State<Settings> {
           onError: _openErrorPopUp,
           onSuccess: () {
             showDialog(context: context, builder: (ctx) {
-              return const CustomPopUp(text: '감사합니다. 앱 발전을 위한 귀중한 자료로 사용하겠습니다.');
+              return CustomPopUp(text: 'setting_view.feedback_thanx'.tr());
             });
           },
           pagePop: () {
@@ -313,13 +314,13 @@ class _SettingState extends State<Settings> {
             children: [
               Container(
                 margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(3), bottom: res.percentHeight(3)),
-                child: const TextDefault(
-                    content: '설정',
+                child: TextDefault(
+                    content: 'setting_view.setting'.tr(),
                     fontSize: 24,
                     isBold: true
                 ),
               ),
-              MenuItem(iconStr: 'Bookmark', text: '내 구독', isPremium: userStatus.isPremium, onTap: () {
+              MenuItem(iconStr: 'Bookmark', text: 'setting_view.my_subscriptions'.tr(), isPremium: userStatus.isPremium, onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (
                     context) => const MySubscription()));
@@ -334,19 +335,19 @@ class _SettingState extends State<Settings> {
               ),
               Container(
                 padding: EdgeInsets.only(left: res.percentWidth(6), right: res.percentWidth(6), top: res.percentHeight(3)),
-                child: const TextDefault(content: '서비스', fontSize: 14, isBold: true),
+                child: TextDefault(content: 'setting_view.service'.tr(), fontSize: 14, isBold: true),
               ),
-              MenuItem(iconStr: 'Notification', text: '거북목 알림 설정', onTap: () {
+              MenuItem(iconStr: 'Notification', text: 'setting_view.forward_notification_setting'.tr(), onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (
                     context) => const AlarmSetting()));
               }),
-              MenuItem(iconStr: 'Document', text: '튜토리얼 보기', onTap: () {
+              MenuItem(iconStr: 'Document', text:'setting_view.tutorial'.tr(), onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (
                     context) => const Tutorials()));
               }),
-              MenuItem(iconStr: 'Chat', text: '문의/피드백 보내기', onTap: () {
+              MenuItem(iconStr: 'Chat', text:'setting_view.feedback'.tr(), onTap: () {
                 _showFeedbackSubmitPopUp();
               }),
               Container(
@@ -359,12 +360,12 @@ class _SettingState extends State<Settings> {
               ),
               Container(
                 padding: EdgeInsets.only(left: res.percentWidth(6), right: res.percentWidth(6), top: res.percentHeight(3)),
-                child: const TextDefault(content: '약관 및 정책', fontSize: 14, isBold: true),
+                child: TextDefault(content: 'setting_view.terms_of_service'.tr(), fontSize: 14, isBold: true),
               ),
-              MenuItem(iconStr: 'justify', text: '이용 약관', onTap: () async {
+              MenuItem(iconStr: 'justify', text: 'setting_view.terms_of_service'.tr(), onTap: () async {
                 await openUrlHelper.openTermOfService();
               }),
-              MenuItem(iconStr: 'justify', text: '개인정보 처리방침', onTap: () async {
+              MenuItem(iconStr: 'justify', text: 'setting_view.privacy_policy'.tr(), onTap: () async {
                 await openUrlHelper.openPrivacyPolicy();
               }),
               Container(
@@ -381,7 +382,7 @@ class _SettingState extends State<Settings> {
                   onPressed: () {
                     _showLogoutAlert();
                   },
-                  text: '넥라이프 로그아웃',
+                  text: 'setting_view.logout'.tr(),
                   isBorder: true,
                   padding: 15,
                   backgroundColor: Colors.white,
@@ -394,14 +395,14 @@ class _SettingState extends State<Settings> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const TextDefault(content: '넥라이프를 탈퇴하려면 ', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                  TextDefault(content: 'setting_view.if_quit'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                   GestureDetector(
                     onTap: () {
                       _showDeleteAccountAlert();
                     },
-                    child: const TextDefault(content: '여기를', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
+                    child:  TextDefault(content: 'setting_view.here'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
                   ),
-                  const TextDefault(content: ' 눌러주세요', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                   TextDefault(content: ' setting_view.click'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                 ],
               )
             ],

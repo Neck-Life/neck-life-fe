@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -67,15 +68,15 @@ class _StartButtonState extends State<StartButton> {
               isBold: true,
               fontColor: const Color(0xFF236EF3),
             ),
-            const TextDefault(
-              content: '그만할게요',
+            TextDefault(
+              content: 'home_widgets.start_button.stop'.tr(),
               fontSize: 16,
               isBold: false,
               fontColor: Colors.black,
             )
           ],
-        ) : const TextDefault(
-          content: '시작할까요?',
+        ) : TextDefault(
+          content: 'home_widgets.start_button.start'.tr(),
           fontSize: 16,
           isBold: true,
           fontColor: Colors.white,

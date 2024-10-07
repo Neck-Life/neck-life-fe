@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -38,7 +39,7 @@ class TimeDelayTile extends StatelessWidget {
               child: AssetIcon('check', size: 1, color: chosenVal == alarmDelay ? Colors.white : const Color(0xFF101E32),),
             ),
             SizedBox(width: res.percentWidth(3),),
-            TextDefault(content: '$alarmDelay초', fontSize: 16, isBold: false,),
+            TextDefault(content: 'setting_subpages.alarm_setting.alarm_setting_widgets.time_delay_tile.seconds'.tr(args:[alarmDelay.toString()]), fontSize: 16, isBold: false,),
           ],
         ),
     )

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
@@ -99,7 +100,7 @@ class _PaywallState extends State<Paywall> {
         context: context,
         builder: (contextIn) {
           return AlertDialog(
-            content: Text('오류가 발생했습니다.\n다시 시도해주세요.',
+            content: Text('setting_subpages.paywall.paywall_view.error'.tr(),
               style: TextStyle(
                 color: const Color(0xFF434343),
                 fontSize: MediaQuery.of(context).size.width*0.05,
@@ -161,19 +162,19 @@ class _PaywallState extends State<Paywall> {
                     SizedBox(width: res.percentWidth(5),),
                     Image.asset('assets/cliped_logo.png', width: res.percentWidth(15)),
                     SizedBox(width: res.percentWidth(3),),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             TextDefault(
-                              content: 'NeckLife Premium',
+                              content: 'setting_subpages.paywall.paywall_view.neckLife_premium'.tr(),
                               fontSize: 24,
                               isBold: true,
                               fontColor: Color(0xFF236EF3),
                             ),
                             TextDefault(
-                              content: '과',
+                              content: 'setting_subpages.paywall.paywall_view.and'.tr(),
                               fontSize: 24,
                               isBold: true,
                               fontColor: Colors.black,
@@ -181,7 +182,7 @@ class _PaywallState extends State<Paywall> {
                           ],
                         ),
                         TextDefault(
-                          content: '함께 더욱 풍부한 기능을\n체험해보세요!',
+                          content: 'setting_subpages.paywall.paywall_view.more_contents'.tr(),
                           fontSize: 24,
                           isBold: true,
                           fontColor: Colors.black,
@@ -191,9 +192,9 @@ class _PaywallState extends State<Paywall> {
                   ],
                 ),
                 SizedBox(height: res.percentHeight(5),),
-                const ExplainItem(icon: 'dt', title: '제한 없는 거북목 탐지', content: '에어팟을 이용한 실시간 모니터링\n시간 제한 없음'),
-                const ExplainItem(icon: 'ad', title: '광고 제거', content: '앱 내의 광고 배너 제거'),
-                const ExplainItem(icon: 'other', title: '더 많은 추가 기능', content: '앞으로 탑재될 여러 부가 기능 우선 제공'),
+                ExplainItem(icon: 'dt', title: 'setting_subpages.paywall.paywall_view.dt_title'.tr(), content: 'setting_subpages.paywall.paywall_view.dt_content'.tr()),
+                ExplainItem(icon: 'ad', title: 'setting_subpages.paywall.paywall_view.ad_title'.tr(), content: 'setting_subpages.paywall.paywall_view.ad_content'.tr()),
+                ExplainItem(icon: 'other', title: 'setting_subpages.paywall.paywall_view.other_title'.tr(), content: 'setting_subpages.paywall.paywall_view.other_content'.tr()),
                 const Spacer(),
                 Button(
                   onPressed: () async {
@@ -203,7 +204,7 @@ class _PaywallState extends State<Paywall> {
                     }
                     await _purchaseSupscription(userStatus);
                   },
-                  text: '월 \$0.99 프리미엄 플랜 시작하기',
+                  text: 'setting_subpages.paywall.paywall_view.subscription_price'.tr(),
                   backgroundColor: const Color(0xFF236EF3),
                   color: Colors.white,
                   width: res.percentWidth(90),
@@ -214,14 +215,14 @@ class _PaywallState extends State<Paywall> {
                   onTap: () async {
                     await openUrlHelper.openPrivacyPolicy();
                   },
-                  child: const TextDefault(content: '개인정보 처리방침', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                  child: TextDefault(content: 'setting_subpages.paywall.paywall_view.privacy_policy'.tr(), fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
                 ),
                 // Text('    '),
                 GestureDetector(
                   onTap: () async {
                     await openUrlHelper.openTermOfService();
                   },
-                  child: const TextDefault(content: '이용 약관', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                  child: TextDefault(content:'setting_subpages.paywall.paywall_view.terms_of_service'.tr(), fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -231,7 +232,7 @@ class _PaywallState extends State<Paywall> {
                     margin: EdgeInsets.only(top: res.percentHeight(2), bottom: res.percentHeight(5)),
                     width: res.deviceWidth,
                     alignment: Alignment.center,
-                    child: const TextDefault(content: '무료 플랜으로 계속하기', fontSize: 16, isBold: true, fontColor: Color(0xFF64646F),),
+                    child: TextDefault(content: 'setting_subpages.paywall.paywall_view.continue_free_plan'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFF64646F),),
                   ),
                 )
               ],

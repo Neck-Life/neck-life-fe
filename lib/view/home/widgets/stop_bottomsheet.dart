@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
@@ -40,14 +41,15 @@ class StopDetectionSheet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TextDefault(
-                        content: '자세 탐지를 그만할까요?',
+                    TextDefault(
+                        content: 'home_widgets.stop_bottomsheet.stop_detection'.tr(),
                         fontSize: 24,
                         isBold: true
                     ),
                     SizedBox(height: res.percentHeight(1),),
                     TextDefault(
-                      content: '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec)}',
+                      //content: '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec)}',
+                      content: 'home_widgets.stop_bottomsheet.detection_time'.tr(args: [TimeConvert.sec2Min(globalTimer.useSec)]),
                       fontSize: 16,
                       isBold: false,
                       fontColor: const Color(0xFF236EF3),
@@ -90,7 +92,7 @@ class StopDetectionSheet extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  text: '이어서 하기',
+                  text: 'home_widgets.stop_bottomsheet.continue'.tr(),
                   backgroundColor: const Color(0xFF8991A0),
                   color: Colors.white,
                   width: res.percentWidth(38),
@@ -101,7 +103,7 @@ class StopDetectionSheet extends StatelessWidget {
                     onStop();
                     Navigator.pop(context);
                   },
-                  text: '그만하기',
+                  text: 'home_widgets.stop_bottomsheet.stop'.tr(),
                   backgroundColor: const Color(0xFF236EF3),
                   color: Colors.white,
                   width: res.percentWidth(38),

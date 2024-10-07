@@ -1,0 +1,301 @@
+{
+  "att_msg": "This app may use data such as your email address and posture measurement history to provide more convenient and personalized services.",
+  "att_continue": "Continue",
+  "main_page": {
+    "conn_status": "AirPods Connection Status",
+    "connected_msg": "AirPods are connected",
+    "not_connected_msg": "Please connect your AirPods",
+    "mini_connected_msg": "AirPods are connected",
+    "mini_not_connected_msg": "Please connect your AirPods",
+    "snackbar_msg": "Please connect your AirPods",
+    "start_btn_msg": "Start Posture Detection",
+    "stop_btn_msg": "Stop Posture Detection"
+  },
+  "start_position": {
+    "explain_msg": "Please maintain a correct posture for 5 seconds!",
+    "measuring_msg": "Measuring...",
+    "btn_msg": "Measure Reference Posture"
+  },
+  "setting": {
+    "quit_question": "Are you sure you want to delete your account?",
+    "error_msg": "An error occurred. Please try again.",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "logout_question": "Are you sure you want to log out?",
+    "setting_txt": "Settings",
+    "noti_setting": "Turtle Neck Alert Settings",
+    "tutorial": "View Tutorial",
+    "feedback": "Send Feedback/Inquiry",
+    "term_of_service": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "logout": "Logout",
+    "quit": "Delete Account"
+  },
+  "login": {
+    "error_msg": "An error occurred. Please try again.",
+    "close": "Close",
+    "explain_txt": "Maintain correct posture with just your AirPods and NeckLife.",
+    "social_login_txt": "Start quickly with social login",
+    "apple_login": "Login with Apple",
+    "tos_msg": "By logging in, you agree to the Terms of Service and Privacy Policy.",
+    "term_of_service": "Terms of Service",
+    "privacy": "Privacy Policy"
+  },
+  "tutorials": {
+    "prev_btn": "Previous",
+    "next_btn": "Next",
+    "end_msg": "Finish Tutorial",
+    "page1_txt": "Maintain proper posture with just your AirPods",
+    "page1_explain_txt1": "Please connect your AirPods",
+    "page1_explain_txt2": "The screen will change like this once connected",
+    "page1_explain_txt3": "Note: Only the specified models are supported",
+    "page2_explain_txt1": "Show us your correct posture that will be used as a reference",
+    "page2_explain_txt2": "Neck-Life detects posture changes based on the first correct posture you provided.",
+    "page2_explain_txt3": "Press the 'Start Posture Detection' button.",
+    "page2_explain_txt4": "Then press 'Measure Reference Posture' and maintain a correct posture for 5 seconds.",
+    "page3_explain_txt1": "Focus on your work while maintaining good posture",
+    "page3_explain_txt2": "Once the reference posture is measured, you will return to the main page and posture detection will start.",
+    "page3_explain_txt3": "Now, you can focus on your work!",
+    "page3_explain_txt4": "If your posture deteriorates unconsciously, you will be notified."
+  },
+  "history": {
+    "error_msg": "No data found for this date.",
+    "score": "My Posture Score",
+    "today_record": "Today's Record >",
+    "today_txt": "Record today's posture!",
+    "count_txt": "{} occurrences of turtle neck",
+    "graph_txt": "Check the changes in your score",
+    "pose_txt": "Record your posture!",
+    "goal_txt": "Set Goal >",
+    "goal_erorr_msg": "Unable to load goal information.",
+    "post_time_txt": "Time maintaining good posture",
+    "no_record_msg": "No records found.",
+    "text_neck_txt": "Turtle Neck Detected"
+  },
+  "goal": {
+    "goal_txt": "Set goals and stay motivated!",
+    "streak_txt": "{} days of consecutive goal achievement!",
+    "setting_txt": "Set Goal",
+    "time_setting": "Measure for more than 2 hours a day",
+    "score_setting": "Get a posture score of 80 or higher today"
+  },
+  "history_view": {
+    "today_posture_point": "Today's posture score is ",
+    "today_posture_point2": "{} points",
+    "today": "Today",
+    "timeLime": "Timeline",
+    "posture_detection": "Posture Detection",
+    "average_posture_lose_time": "Your posture deteriorates every {} on average",
+    "forward_neck_detection": "Forward Neck Detection"
+  },
+  "history_widgets": {
+    "duration_dropdown": {
+      "week": "This week",
+      "month1": "This month",
+      "month3": "3 months",
+      "month6": "6 months"
+    },
+    "pose_count_frame": {
+      "slouch": "Slouched",
+      "turtle": "Turtle Neck",
+      "back": "Leaning Back",
+      "count": "Times"
+    },
+    "score_explain": {
+      "how_to_score": "How is the posture score calculated?",
+      "how_to_score_explain": "The posture score is calculated based on changes in your posture, comparing it to your reference posture. The fewer the changes, the higher your score.",
+      "understand": "I understand"
+    }
+  },
+  "home_view": {
+    "toay_free_time_end": "Today's free usage time has ended.",
+    "toay_free_time_end_premium": "Try the premium plan for unlimited access!",
+    "airpods_disconnect_detection_end": "Detection has stopped because your AirPods were disconnected.",
+    "review": "Please leave a review! Your feedback helps developers improve the app.",
+    "review_later": "Not now",
+    "review_ok": "Sure",
+    "airpods_connected": "AirPods connected",
+    "airpods_disconnected": "Please connect your AirPods",
+    "sensor_operation": "Sensor operating",
+    "sensor_no_device": "No device connected",
+    "detection_start_ask": "Shall we start posture detection?",
+    "airpods_connect_ask": "Please connect your AirPods",
+    "end_today_free_time": "Today's usage time limit has been reached.",
+    "turtle_neck_forward_backward_detection": "Turtle Neck and Backward Lean Detection"
+  },
+  "home_widgets": {
+    "bottomsheet": {
+      "airpods_connect_reconnect_ask": "AirPods disconnected. Please reconnect.",
+      "airpods_connect_no_device": "No connected device"
+    },
+    "start_button": {
+      "stop": "Stop",
+      "start": "Start?"
+    },
+    "stop_bottomsheet": {
+      "stop_detection": "Stop posture detection?",
+      "detection_time": "Detection time: {}",
+      "continue": "Continue",
+      "stop": "Stop"
+    }
+  },
+  "login_view": {
+    "login_error": "An error occurred. Please try again.",
+    "neck_life": "NeckLife",
+    "neck_life_with": "with",
+    "neck_life_with_airpods": "Maintain correct posture with just your AirPods",
+    "login_with_social2": "Start quickly with social login",
+    "apple_login": "Login with Apple",
+    "by_signing_up": "By signing up",
+    "terms_of_service": "Terms of Service",
+    "and": "and",
+    "privacy_policy": "Privacy Policy",
+    "are_agreed": "are agreed upon."
+  },
+  "setting_view": {
+    "delete_reason1": "Posture detection seems inaccurate",
+    "delete_reason2": "I don't use it often",
+    "delete_reason3": "My earbuds are not supported",
+    "delete_reason4": "Battery consumption is a concern",
+    "delete_reason5": "Other",
+    "delete_reason6": "Please enter the reason",
+    "really_quit": "Are you sure you want to delete your NeckLife account?",
+    "quit_ask": "Deleting your account will erase all your data, including account information and posture detection records, and cannot be recovered.",
+    "quit_cancel": "Cancel",
+    "quit_quit": "Delete",
+    "really_logout": "Are you sure you want to log out from NeckLife?",
+    "logout_cancel": "Continue",
+    "logout_logout": "Logout",
+    "delete_reason_ask": "Please tell us why you are deleting your account. This data will be used for product improvement.",
+    "error": "An error occurred. Please try again.",
+    "close": "Close",
+    "yes": "Submit",
+    "feedback_thanx": "Thank you! Your feedback will help improve the app.",
+    "setting": "Settings",
+    "my_subscriptions": "My Subscription",
+    "service": "Service",
+    "forward_notification_setting": "Turtle Neck Alert Settings",
+    "tutorial": "View Tutorial",
+    "feedback": "Send Feedback",
+    "terms_of_service_and_policy": "Terms & Policies",
+    "terms_of_service": "Terms of Service",
+    "privacy_policy": "Privacy Policy",
+    "logout": "Logout from NeckLife",
+    "if_quit": "To delete your NeckLife account ",
+    "here": "click here"
+  },
+  "setting_widgets": {
+    "feedback_popup": {
+      "feedback_and_inquiry": "Send feedback or inquiry",
+      "send_feedback": "Send Feedback",
+      "cancel_feedback": "Cancel"
+    },
+    "menu_item": {
+      "my_subscription": "My Subscription",
+      "premium_plan": "Premium Plan",
+      "subscription": "Subscribe"
+    },
+    "two_btn_sheet": {
+      "cancel": "Cancel",
+      "ok": "OK"
+    }
+  },
+  "setting_subpages": {
+    "alarm_setting": {
+      "alarm_setting_view": {
+        "alarm_setting": "Turtle Neck Alert Settings",
+        "alarm_sensitive": "Turtle Neck Detection Sensitivity",
+        "alarm_sensitive_explain": "Higher sensitivity means more strict detection, but may trigger alerts for minor movements.",
+        "alarm_sensitive_low": "Low",
+        "alarm_sensitive_middle": "Medium",
+        "alarm_sensitive_high": "High",
+        "alarm_time": "Alert Time Threshold",
+        "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
+        "sound_alarm_turn_on": "Enable sound alert"
+      },
+      "alarm_setting_widgets": {
+        "time_delay_tile": {
+          "seconds": "{} seconds"
+        }
+      }
+    },
+    "my_subscription": {
+      "my_subscription_view": {
+        "error": "An error occurred. Please try again.",
+        "close": "Close",
+        "year_month_date": "{}-{}-{}",
+        "my_subscription": "My Subscription",
+        "premium_plan": "Premium Plan",
+        "subscription": "Free Plan",
+        "subscription_ongoing": "Ongoing Subscription",
+        "next_payment": "Next Payment Date",
+        "subscription_suggestion": "Upgrade to experience more features!",
+        "subscription_cancel_if": "To cancel your premium plan subscription ",
+        "here": "click here",
+        "reference": " for more details.",
+        "subscription_price": "Start the Premium Plan for $0.99/month",
+        "subscription_detail": "Learn more about the Premium Plan"
+      }
+    },
+    "paywall": {
+      "paywall_view": {
+        "error": "An error occurred. Please try again.",
+        "more_contents": "Experience even more features!",
+        "dt_title": "Unlimited Turtle Neck Detection",
+        "dt_content": "Real-time monitoring using AirPods with no time limit",
+        "ad_title": "Remove Ads",
+        "ad_content": "Remove ads from the app",
+        "other_title": "More Additional Features",
+        "other_content": "Priority access to upcoming features",
+        "subscription_price": "Start the Premium Plan for $0.99/month",
+        "terms_of_service": "Terms of Service",
+        "privacy_policy": "Privacy Policy",
+        "continue_free_plan": "Continue with Free Plan"
+      }
+    }
+  },
+  "start_position_view": {
+    "explain_txt": "Please maintain a correct posture for 5 seconds!",
+    "measuring_txt": "Measuring...",
+    "btn_txt": "Measure Reference Posture"
+  },
+  "today_history_view": {
+    "posture_detection": "Posture Detection",
+    "month_day": "{}-{}",
+    "good_posture": "Good Posture Maintained",
+    "total_time": "/Total {}",
+    "today": "Today",
+    "this_day": "On this day",
+    "no_history": "No records found",
+    "do_posture_detection": "Start Posture Detection"
+  },
+  "today_history_widgets": {
+    "date_tile": {
+      "month": "{} month"
+    },
+    "pose_list_item": {
+      "posture_detection": "Posture Detection"
+    }
+  },
+  "tutorial": {
+    "tutorial_view": {
+      "step1_airpods": "First, please connect your AirPods",
+      "step1_airpods_models": "Only the following models are supported",
+      "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods (3rd, 4th Gen)",
+      "step2_posture": "Maintain a correct posture for 5 seconds",
+      "step2_explain": "This step measures your reference posture for accurate posture detection.",
+      "step3_concentrate": "Focus on your work with proper posture",
+      "step3_explain": "We will notify you if your posture deteriorates unconsciously.",
+      "skip_tutorial": "Skip Tutorial",
+      "start_necklife": "Start NeckLife",
+      "tutorial_next": "Next"
+    }
+  },
+  "loading": {
+    "history_loading": "Organizing posture records.",
+    "internet1": "Internet connection is required",
+    "internet2": "Please run the app with an internet connection",
+    "internet3": "and we will organize your records."
+  }
+}

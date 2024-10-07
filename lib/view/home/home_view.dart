@@ -105,8 +105,8 @@ class _HomeState extends State<Home> {
     FlutterLocalNotificationsPlugin();
 
     await localNotification.show(0,
-        '오늘의 무료 사용시간 종료',
-        '시간제한 없이 쓰고 싶다면 프리미엄 플랜을 사용해보세요!',
+        'home_view.today_free_time_end'.tr(),
+        'home_view.today_free_time_end_premium'.tr(),
         _details
     );
   }
@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
         return const AirpodsConnectlessSheet();
       }
     ).whenComplete(() {
-      showSnackbar('에어팟 연결이 끊겨서 탐지가 중단됐어요.');
+      showSnackbar('home_view.airpods_disconnect_detection_end'.tr());
     });
   }
 
@@ -232,7 +232,7 @@ class _HomeState extends State<Home> {
               ),
               content: Container(
                 margin: EdgeInsets.only(top: res.percentHeight(0.5)),
-                child: const TextDefault(content: '앱 리뷰를 남겨주세요!\n여러분의 리뷰는 개발자에게 큰 힘이 됩니다.', fontSize: 18, isBold: true),
+                child: TextDefault(content: 'home_view.review'.tr(), fontSize: 18, isBold: true),
               ),
               actions: [
                 SizedBox(
@@ -249,7 +249,7 @@ class _HomeState extends State<Home> {
                           color: Colors.white,
                           width: res.percentWidth(33),
                           padding: res.percentWidth(4),
-                          text: '괜찮아요'
+                          text: 'home_view.review_later'.tr()
                       ),
                       Button(
                           onPressed: () async {
@@ -260,7 +260,7 @@ class _HomeState extends State<Home> {
                           color: Colors.white,
                           width: res.percentWidth(33),
                           padding: res.percentWidth(4),
-                          text: '좋아요'
+                          text: 'home_view.review_ok'.tr()
                       ),
                     ],
                   ),
@@ -328,7 +328,7 @@ class _HomeState extends State<Home> {
                                 left: res.percentWidth(23),
                                 top: res.percentWidth(8),
                                 child: TextDefault(
-                                  content: detectStatus.detectAvailable ? '에어팟을 연결했어요' : '에어팟을 연결해주세요',
+                                  content: detectStatus.detectAvailable ? 'home_view.airpods_connected'.tr() : 'home_view.airpods_disconnected'.tr(),
                                   fontSize: 18,
                                   isBold: true,
                                 ),
@@ -337,7 +337,7 @@ class _HomeState extends State<Home> {
                                 left: res.percentWidth(23),
                                 top: res.percentWidth(8)+25,
                                 child: TextDefault(
-                                  content: detectStatus.detectAvailable ? '센서 작동 중' : '연결 기기 없음',
+                                  content: detectStatus.detectAvailable ? 'home_view.sensor_operation'.tr() : 'home_view.sensor_no_device'.tr(),
                                   fontSize: 14,
                                   isBold: false,
                                   fontColor: const Color(0xFF236EF3),
@@ -361,7 +361,7 @@ class _HomeState extends State<Home> {
                                 width: res.percentWidth(85),
                                 padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
                                 child: TextDefault(
-                                  content: detectStatus.nowDetecting ? '자세 탐지를\n하고 있어요' : '자세 탐지를\n시작할까요?',
+                                  content: detectStatus.nowDetecting ? 'home_view.detection_doing'.tr() : 'home_view.detection_start_ask'.tr(),
                                   fontSize: 27,
                                   isBold: true,
                                   height: 1.2,
@@ -374,10 +374,10 @@ class _HomeState extends State<Home> {
                                 onPressed: () async {
                                   print('asdf');
                                   if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
-                                    showSnackbar('에어팟을 연결해주세요.');
+                                    showSnackbar('home_view.airpods_connect_ask'.tr());
                                   } else if (!detectStatus.nowDetecting) {
                                     if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
-                                      showSnackbar('오늘의 사용 제한 시간이 끝났습니다.');
+                                      showSnackbar('home_view.end_today_free_time'.tr());
                                     } else {
                                       _audioHandler?.play();
                                       Navigator.push(context, MaterialPageRoute(
@@ -403,14 +403,14 @@ class _HomeState extends State<Home> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Row(
+                            Row(
                               children: [
                                 Row(
                                   children: [
                                     AssetIcon('maximize', size: 6,),
                                     SizedBox(width: 5,),
                                     TextDefault(
-                                      content: '거북목, 뒤로 빠짐 이동 감지',
+                                      content: 'home_view.turtle_neck_forward_backward_detection'.tr(),
                                       fontSize: 16,
                                       isBold: false,
                                     )

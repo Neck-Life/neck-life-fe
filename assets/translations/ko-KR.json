@@ -72,6 +72,7 @@
     "post_time_txt": "바른 자세를 유지한 시간",
     "no_record_msg": "기록이 없습니다.",
     "text_neck_txt": "거묵복 자세 감지"
+
   },
   "goal": {
     "goal_txt": "목표를 설정하고 동기를 유지해보세요!",
@@ -79,5 +80,277 @@
     "setting_txt": "목표 설정",
     "time_setting": "하루에 2시간 이상 측정",
     "score_setting": "오늘의 자세 점수 80점 이상"
+  },
+
+  "history_view" : {
+    "today_posture_point" : "오늘의 자세 점수는 ",
+    "today_posture_point2" : "아직 없어요",
+    "today_posture_point3" : "{}점 이예요",
+    "today" : "오늘",
+    "timeLine" : "타임라인",
+    "posture_detection" : "자세 탐지",
+    "average_posture_lose_time": "평균 {}마다 자세가 무너져요",
+    "forward_neck_detection": "거북목 자세 탐지",
+    "tbd_content1": "더 다양한 나쁜 자세",
+    "tbd_content2": "탐지를 준비하고 있어요!",
+    "today_history_scoring_default":"자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요",
+    "example" : "예시",
+    "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요"
+
+  },
+
+  "history_widgets" : {
+    "duration_dropdown" : {
+      "week" : "이번주",
+      "month1" : "1개월",
+      "month3" : "3개월",
+      "month6" : "6개월"
+    },
+    "pose_count_frame": {
+      "slouch" : "굽은 자세",
+      "turtle" : "거북목",
+      "back" : "뒤로 빠짐",
+      "count" : "회"
+    },
+    "score_explain" : {
+      "how_to_score" : "자세 점수는 어떻게 계산되나요?",
+      "how_to_score_explain" : "자세 점수는 사용자의 자세 변화를 감지하여 계산됩니다. 자세 변화는 사용자의 기준 자세와 비교하여 측정됩니다. 자세 변화가 적을수록 높은 점수를 받습니다.",
+      "understand" : "이해했어요"
+
+    }
+  },
+
+  "home_view" :{
+    "today_free_time_end" : "오늘의 무료 사용시간 종료",
+    "today_free_time_end_premium" : "시간제한 없이 쓰고 싶다면 프리미엄 플랜을 사용해보세요!",
+    "airpods_disconnect_detection_end" : "에어팟 연결이 끊겨서 탐지가 중단됐어요.",
+    "review": "앱 리뷰를 남겨주세요!\\n여러분의 리뷰는 개발자에게 큰 힘이 됩니다.",
+    "review_later" : "괜찮아요",
+    "review_ok" : "좋아요",
+    "airpods_connected": "에어팟을 연결했어요",
+    "airpods_disconnected": "에어팟을 연결해주세요",
+    "sensor_operation": "센서 작동 중",
+    "sensor_no_device": "연결 기기 없음",
+    "detection_doing" : "자세 탐지를\\n 하고 있어요",
+    "detection_start_ask" : "자세 탐지를\\n시작할까요?",
+    "airpods_connect_ask" : "에어팟을 연결해주세요",
+    "end_today_free_time" : "오늘의 사용 제한 시간이 끝났습니다.",
+    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지"
+  },
+
+  "home_widgets" : {
+    "bottomsheet": {
+      "airpods_connect_reconnect_ask": "에어팟 연결이 끊겼어요.\\n다시 연결해주세요.",
+      "airpods_connect_no_device": "연결 기기 없음"
+    },
+    "start_button": {
+      "stop": "그만둘게요",
+      "start": "시작할까요?"
+    },
+    "stop_bottomsheet": {
+      "stop_detection": "자세 탐지를 그만할까요?",
+      "detection_time": "탐지 시간: {}",
+      "continue": "이어서 하기",
+      "stop": "그만하기"
+    }
+  },
+
+  "login_view" : {
+    "login_error": "오류가 발생했습니다.\n다시 시도해주세요.",
+    "neck_life": "넥라이프",
+    "neck_life_with": "와 함께",
+    "neck_life_with_airpods": "에어팟만으로 바른 자세를\\n유지해보세요",
+    "login_with_social": "소셜 로그인으로 빠르게 시작해보세요",
+    "apple_login": "Apple 로그인",
+    "by_signing_up": "회원 가입 시",
+    "terms_of_service": "서비스 이용 약관",
+    "and": "과",
+    "privacy_policy": "개인정보 처리방침",
+    "are_agreed": "에 동의한 것으로 간주됩니다."
+  },
+
+  "setting_view" : {
+    "delete_reason1": "자세 측정이 부정확한 거 같아요",
+    "delete_reason2": "잘 사용하지 않아요",
+    "delete_reason3": "지원되는 이어폰이 없어요",
+    "delete_reason4": "배터리 소모량이 부담 돼요",
+    "delete_reason5": "기타",
+    "delete_reason6": "이유를 입력해주세요",
+
+    "really_quit": "넥라이프를 정말 탈퇴할까요?",
+    "quit_ask": "탈퇴 시 사용자의 계정 정보, 자세 탐지 기록 데이터 등의 모든 데이터가 삭제되며, 복구가 불가능합니다.",
+    "quit_cancel": "취소할게요",
+    "quit_quit": "탈퇴하기",
+
+    "really_logout": "넥라이프에서 로그아웃할까요?",
+    "logout_cancel": "계속 사용하기",
+    "logout_logout": "로그아웃하기",
+    "delete_reason_ask": "계정을 삭제하려는 이유를 말씀해주세요. 제품 개선에 중요한 자료로 사용하겠습니다.",
+
+    "error" : "오류가 발생했습니다.\\n다시 시도해주세요.",
+    "close" : "닫기",
+    "submit" : "제출",
+    "feedback_thanx": "감사합니다. 앱 발전을 위한 귀중한 자료로 사용하겠습니다.",
+    "setting" : "설정",
+    "my_subscriptions" : "내 구독",
+    "service": "서비스",
+    "forward_notification_setting" : "거북목 알림 설정",
+    "tutorial" : "튜토리얼 보기",
+    "feedback" : "문의/피드백 보내기",
+    "terms_of_service_and_policy" : "약관 및 정책",
+    "terms_of_service" : "이용 약관",
+    "privacy_policy" : "개인정보 처리방침",
+    "logout" : "넥라이프 로그아웃",
+    "if_quit": "넥라이프를 탈퇴하려면 ",
+    "here": "여기를",
+    "click": "클릭하세요"
+  },
+  "setting_widgets": {
+    "feedback_popup": {
+      "feedback_and_inquiry": "문의 또는 피드백을 전달해주세요",
+      "cancel_feedback":"그만할래요",
+      "send_feedback": "피드백 보내기"
+    },
+    "menu_item" : {
+      "my_subscription" : "내 구독",
+      "premium_plan" : "프리미엄 플랜",
+      "subscription" : "구독하기"
+    },
+    "two_btn_sheet": {
+
+      "cancel": "그만할래요",
+      "ok": "확인"
+    }
+  },
+  "setting_subpages": {
+    "alarm_setting": {
+      "alarm_setting_view": {
+        "alarm_setting": "거북목 알림 설정",
+        "alarm_sensitive":"거북목 탐지 민감도 설정",
+        "alarm_sensitive_explain":"높을수록 잘못된 자세를 엄격하게 탐지해요.\\n그 대신 작은 움직임에도 탐지 알림이 울릴 수 있어요.",
+        "alarm_sensitive_low":"낮음",
+        "alarm_sensitive_middle":"보통",
+        "alarm_sensitive_high":"높음",
+        "alarm_time":"알림 시간 기준 설정",
+        "alarm_time_explain":"잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.",
+        "sound_alarm_turn_on":"소리알림 켜기"
+      },
+      "alarm_setting_widgets": {
+        "time_delay_tile": {
+          "seconds": "{}초"
+
+        }
+      }
+
+
+
+    },
+    "my_subscription": {
+      "my_subscription_view": {
+        "error" : "오류가 발생했습니다.\\n다시 시도해주세요.",
+        "close" : "닫기",
+        "year_month_date": "{}년 {}월 {}일",
+        "my_subscription": "내 구독",
+        "premium_plan": "프리미엄 플랜",
+        "free_plan": "무료 플랜",
+        "subscription_ongoing": "구독 중",
+        "next_payment": "다음 결제일",
+        "subscription_suggestion": "플랜을 업그레이드하면\n더 풍부한 기능을 체험할 수 있어요!",
+        "subscription_cancel_if": "프리미엄 플랜 구독을 취소하려면 ",
+        "here": "여기를",
+        "reference": " 참고해주세요",
+        "subscription_price": "월 \\$0.99 프리미엄 플랜 시작하기",
+        "privacy_policy" : "개인정보 처리방침",
+        "terms_of_service" : "이용 약관",
+        "subscription_detail": "프리미엄 플랜 자세히보기"
+      }
+    },
+
+    "paywall" : {
+      "paywall_view": {
+        "error": "오류가 발생했습니다.\\n다시 시도해주세요.",
+        "neckLife_premium": "NeckLife Premium",
+        "and": "과",
+        "more_contents" :"함께 더욱 풍부한 기능을\n체험해보세요!",
+        "dt_title": "제한 없는 거북목 탐지",
+        "dt_content": "에어팟을 이용한 실시간 모니터링\n시간 제한 없음",
+        "ad_title": "광고 제거",
+        "ad_content": "앱 내 광고 제거",
+        "other_title": "더 많은 추가 기능",
+        "other_content": "앞으로 탑재될 여러 부가 기능 우선 제공",
+        "subscription_price": "월 \\$0.99 프리미엄 플랜 시작하기",
+        "privacy_policy" : "개인정보 처리방침",
+        "terms_of_service" : "이용 약관",
+        "continue_free_plan": "무료 플랜으로 계속하기"
+      }
+
+    }
+
+
+
+  },
+
+  "start_position_view": {
+    "explain_txt": "바른 자세를 5초 동안\\n 유지해주세요!",
+    "measuring_txt": "기준 자세 측정 중",
+    "btn_txt": "기준 자세 측정"
+  },
+
+  "today_history_view": {
+    "error" :"오류가 발생했습니다.\\n다시 시도해주세요.",
+    "posture_detection": "자세 탐지",
+    "month_day": "{}월 {}일",
+    "before" : "이전",
+    "next" : "다음",
+    "good_posture": "바른 자세 유지",
+    "total_time": "/총 {}",
+    "today": "오늘",
+    "this_day": "이 날의",
+    "no_history" : "기록이 없어요",
+    "do_posture_detection" : "자세 탐지 하기"
+
+  },
+
+  "today_history_widgets": {
+    "date_tile": {
+      "month" : "{}월"
+    },
+    "pose_list_item": {
+      "posture_detection":  "자세 탐지"
+    }
+
+  },
+  "tutorial": {
+    "tutorial_view": {
+      "step1_airpods": "먼저 에어팟을\\n연결해주세요",
+      "step1_airpods_models" : "아래 명시된 기종들만 사용 가능해요",
+      "step1_airpods_models_name" : "AirPods Pro, AirPods Max, AirPods(3,4세대)",
+      "step2_posture": "5초 동안 바른 자세를\\n유지해주세요",
+      "step2_explain": "기준 자세를 측정하기 위한 단계로\\n정확한 자세를 판단할 수 있어요.",
+      "step3_concentrate": "바른 자세와 함께 일에\\n집중해보세요",
+      "step3_explain": "무의식적으로 자세가 무너지는 것을\\n탐지하면, 알림을 보내 알려드릴게요.",
+      "skip_tutorial" : "튜토리얼 건너뛰기",
+      "start_necklife": "넥라이프 시작하기",
+      "tutorial_next": "다음"
+
+    }
+
+  },
+  "loading" : {
+    "history_loading" : "자세 기록을 정리하는 중이에요.",
+    "internet1" : "인터넷 연결이 필요해요",
+    "internet2" : "인터넷 연결이 가능한 곳에서 앱을",
+    "internet3" : "실행해주시면 다시 정리해드릴게요."
+
   }
+
+
+
+
+
 }
+
+
+
+
+

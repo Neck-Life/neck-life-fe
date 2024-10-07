@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return const CustomPopUp(text: '오류가 발생했습니다.\n다시 시도해주세요.');
+      return CustomPopUp(text: 'login_view.login_error'.tr());
     });
   }
 
@@ -84,30 +85,30 @@ class _LoginPageState extends State<LoginPage> {
                       child: Image.asset('assets/cliped_logo.png', width: res.percentWidth(15), fit: BoxFit.cover),
                     ),
                     SizedBox(height: res.percentHeight(2),),
-                    const Row(
+                    Row(
                       children: [
                         TextDefault(
-                          content: '넥라이프',
+                          content: 'login_view.neck_life'.tr(),
                           fontSize: 28,
                           isBold: true,
                           fontColor: Color(0xFF236EF3),
                         ),
                         TextDefault(
-                          content: '와 함께',
+                          content: 'login_view.neck_life_with'.tr(),
                           fontSize: 28,
                           isBold: true,
                           fontColor: Color(0xFF323238),
                         )
                       ],
                     ),
-                    const TextDefault(
-                      content: '에어팟만으로 바른 자세를\n유지해보세요',
+                    TextDefault(
+                      content: 'login_view.neck_life_with_airpods'.tr(),
                       fontSize: 28,
                       isBold: true,
                       fontColor: Color(0xFF323238),
                     ),
                     SizedBox(height: res.percentHeight(40),),
-                    const TextDefault(content: '소셜 로그인으로 빠르게 시작해보세요', fontSize: 16, isBold: true, fontColor: Color(0xFF323238)),
+                    TextDefault(content: 'login_view.login_with_social'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFF323238)),
                     SizedBox(height: res.percentHeight(3),),
                   ],
                 ),
@@ -150,14 +151,14 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const TextDefault(content: '회원 가입 시  ', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                  TextDefault(content: 'login_view.by_signing_up'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                   GestureDetector(
                     onTap: () async {
                       await _launchUrl(_ToSUrl);
                     },
-                    child: const TextDefault(content: '서비스 이용 약관', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
+                    child: TextDefault(content: 'login_view.terms_of_service'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
                   ),
-                  const TextDefault(content: '과', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                  TextDefault(content: 'login_view.and'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                 ],
               ),
               Row(
@@ -167,9 +168,9 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () async {
                       await _launchUrl(_PPUrl);
                     },
-                    child: const TextDefault(content: '개인정보 처리방침', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
+                    child: TextDefault(content: 'login_view.privacy_policy'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
                   ),
-                  const TextDefault(content: '에 동의한 것으로 간주됩니다.', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                  TextDefault(content: 'login_view.are_agreed'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                 ],
               )
             ],

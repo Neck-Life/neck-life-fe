@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -27,8 +28,8 @@ class ScoreExplain extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextDefault(
-                    content: '자세 점수는 어떻게 계산되나요?',
+                TextDefault(
+                    content: 'history_widgets.score_explain.how_to_score'.tr(),
                     fontSize: 20,
                     isBold: true,
                     fontColor: Color(0xFF323238)
@@ -37,8 +38,8 @@ class ScoreExplain extends StatelessWidget {
                 Container(
                   height: res.percentHeight(11),
                   padding: EdgeInsets.only(right: res.percentWidth(4)),
-                  child: const TextDefault(
-                      content: '자세 점수는 기본 70점에서 출발하여 바른 자세를 오랜 시간 유지할수록 점점 증가하고, 안 좋은 자세를 탐지할 때마다 감점됩니다. 점수의 최고점은 100점, 최하점은 0점입니다.',
+                  child: TextDefault(
+                      content: 'history_widgets.score_explain.how_to_score_explain'.tr(),
                       fontSize: 15,
                       isBold: false,
                       fontColor: Color(0xFF64646F),
@@ -62,12 +63,12 @@ class ScoreExplain extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: EdgeInsets.symmetric(vertical: res.percentWidth(5),),
-                child: const Row(
+                child:  Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextDefault(
-                      content: '이해했어요',
+                      content: 'history_widgets.score_explain.understand'.tr(),
                       fontSize: 16,
                       isBold: true,
                       fontColor: Colors.white,

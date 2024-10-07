@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
@@ -91,7 +92,7 @@ class TwoBtnSheet extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextDefault(
-                          content: btnStr ?? '그만할래요',
+                          content: btnStr ?? 'setting_widgets.two_btn_sheet.cancel'.tr(),
                           fontSize: 16,
                           isBold: true,
                           fontColor: Colors.white,
@@ -104,7 +105,7 @@ class TwoBtnSheet extends StatelessWidget {
                   onPressed: () {
                     onPress();
                   },
-                  text: secondBtnStr ?? '확인',
+                  text: secondBtnStr ??  'setting_widgets.two_btn_sheet.ok'.tr(),
                   backgroundColor: const Color(0xFF236EF3),
                   color: Colors.white,
                   width: res.percentWidth(38.5),

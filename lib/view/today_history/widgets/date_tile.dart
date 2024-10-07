@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
@@ -34,7 +35,8 @@ class DateTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextDefault(
-            content: '$month월',
+            content: 'today_history_widgets.date_tile.month'.tr(args: ['$month']),
+            //'$month월',
             fontSize: 14,
             isBold: false,
             fontColor: hasChosen == true ? const Color(0xFFFFFFFF) : const Color(0xFF636377)

@@ -18,7 +18,7 @@ void main() async {
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await dotenv.load(fileName: ".env");
 
-  // await EasyLocalization.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -26,13 +26,13 @@ void main() async {
   await initializeAudioSession();
   await initGoogleMobileAds();
 
-  // runApp(EasyLocalization(
-  //   supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],
-  //   path: 'assets/translations',
-  //   fallbackLocale: const Locale('en', 'US'),
-  //   child: const MyApp()
-  // ));
-  runApp(const MyApp());
+  runApp(EasyLocalization(
+    supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],
+    path: 'assets/translations',
+    fallbackLocale: const Locale('en', 'US'),
+    child: const MyApp()
+  ));
+  // runApp(const MyApp());
 }
 
 
@@ -56,9 +56,9 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // localizationsDelegates: context.localizationDelegates,
-        // supportedLocales: context.supportedLocales,
-        // locale: context.locale,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         title: 'NeckLife',
         theme: ThemeData(
           useMaterial3: true,
