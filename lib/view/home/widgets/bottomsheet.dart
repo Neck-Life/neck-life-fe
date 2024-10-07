@@ -14,7 +14,7 @@ class AirpodsConnectlessSheet extends StatelessWidget {
 
     return Container(
       width: res.percentWidth(90),
-      height: res.percentHeight(35),
+      height: 330,
       margin: EdgeInsets.only(bottom: res.percentHeight(5)),
       decoration: BoxDecoration(
         color: const Color(0xFFF4F4F7),

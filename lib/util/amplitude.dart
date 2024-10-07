@@ -20,12 +20,12 @@ class AmplitudeEventManager {
 
   Future<void> viewEvent(String viewName) async {
     await Amplitude.getInstance().logEvent('viewed_$viewName');
-    print('viewed_$viewName');
+    // print('viewed_$viewName');
   }
 
   Future<void> actionEvent(String viewName, String actionName) async {
     await Amplitude.getInstance().logEvent('action_${viewName}_$actionName');
-    print('action_${viewName}_$actionName');
+    // print('action_${viewName}_$actionName');
 
   }
 }

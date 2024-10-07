@@ -35,7 +35,7 @@ class TwoBtnSheet extends StatelessWidget {
 
     return Container(
       width: res.percentWidth(90),
-      height: content != null ? res.percentHeight(30) : res.percentHeight(21),
+      height: content != null ? 300 : 210,
       margin: EdgeInsets.only(bottom: res.percentHeight(5)),
       decoration: BoxDecoration(
         color: const Color(0xFFF4F4F7),

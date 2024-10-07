@@ -38,7 +38,7 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
     return SingleChildScrollView(
       child: Container(
         width: res.deviceWidth,
-        height: res.percentHeight(40),
+        height: 370,
         // margin: EdgeInsets.only(bottom: res.percentHeight(5)),
         // padding: MediaQuery.of(context).viewInsets,
         decoration: BoxDecoration(

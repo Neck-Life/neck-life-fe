@@ -127,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                         credential.authorizationCode, 'apple');
                     print('test $success');
                     if (success) {
+
                       Navigator.push(
                           context, MaterialPageRoute(builder: (
                           context) => const PageNavBar()));

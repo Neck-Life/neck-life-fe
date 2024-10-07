@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class _HistoryState extends State<History> {
   @override
   void initState() {
     super.initState();
-    print('his view init');
+    // print('his view init');
     getHistoryData(DateTime.now().year, DateTime.now().month);
 
     _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
@@ -117,7 +118,7 @@ class _HistoryState extends State<History> {
 
   Future<void> getHistoryData(int year, int month) async {
     const storage = FlutterSecureStorage();
-    print('gethis');
+    // print('gethis');
     try {
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {
@@ -128,7 +129,7 @@ class _HistoryState extends State<History> {
           '${HistoryStatus.serverAddress}/history/monthly?year=$year&month=$month');
       DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
-          print('ok');
+          // print('ok');
         final historyData = res.data['data'];
 
 
@@ -153,7 +154,6 @@ class _HistoryState extends State<History> {
           }
         });
 
-        print('d1 $dummy');
         timestamp2DurationList(_todayHistory['history'] ?? dummy);
         storage.write(
             key: 'posehistoryLocal', value: json.encode(_historyData));
@@ -171,15 +171,16 @@ class _HistoryState extends State<History> {
         });
       }
     } on Exception catch (e) {
-      print(e);
+      // print(e);
       setState(() {
         _historyData = {'poseCountMap': {}, 'daily' : []};
       });
     }
   }
 
+
   void timestamp2DurationList(Map<String, dynamic>? historyMap) {
-    print('dummy2 $historyMap');
+    // print('dummy2 $historyMap');
     if (historyMap == null) return;
 
     List<PoseDuration> poseDurationList = [];
@@ -256,7 +257,7 @@ class _HistoryState extends State<History> {
       _normalDurationCount = normalDurationCount;
       _normalDurationSum = normalDurationSum;
     });
-    print('pdl $_poseDurationList');
+    // print('pdl $_poseDurationList');
   }
 
   void chooseDuration(int idx) {
@@ -473,12 +474,41 @@ class _HistoryState extends State<History> {
                                   ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Stack(
                                   children: [
-                                    PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
-                                    PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['tilt'] ?? 0,),
-                                    PoseCountFrame(poseType: PoseType.back, count: _todayHistory['poseCountMap']['BACKWARD'] ?? 0,)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
+                                        PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['tilt'] ?? 0,),
+                                        PoseCountFrame(poseType: PoseType.back, count: _todayHistory['poseCountMap']['BACKWARD'] ?? 0,)
+                                      ],
+                                    ),
+                                    Positioned(
+                                      left: res.percentWidth(25),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                          child: Container(
+                                            width: res.percentWidth(75),
+                                            height: res.percentHeight(30),
+                                            color: Colors.black.withOpacity(0),
+                                            alignment: Alignment.center,
+                                          ),
+                                        ),
+                                      )
+                                    ),
+                                    Positioned(
+                                      left: res.percentWidth(34),
+                                      top: res.percentHeight(6),
+                                      child: const Column(
+                                        children: [
+                                          TextDefault(content: '더 다양한 나쁜 자세', fontSize: 14, isBold: true),
+                                          TextDefault(content: '탐지를 준비하고 있어요!', fontSize: 14, isBold: true),
+                                        ],
+                                      )
+                                    ),
                                   ],
                                 )
                               ],

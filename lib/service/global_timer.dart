@@ -19,12 +19,12 @@ class GlobalTimer with ChangeNotifier {
   }
 
   void init() async {
-    print('timer init');
+    // print('timer init');
     const storage = FlutterSecureStorage();
     String? lastDate = await storage.read(key: 'lastDate');
     String? useSecStr = await storage.read(key: 'useSec');
     DateTime now = DateTime.now();
-
+    // print('useSec $useSecStr');
     if (useSecStr != null) {
       _useSec = int.parse(useSecStr);
     } else {
@@ -32,10 +32,11 @@ class GlobalTimer with ChangeNotifier {
     }
 
     if (lastDate != null) {
-      print(lastDate);
+      // print(lastDate);
       _lastDate = lastDate;
       if (lastDate != '${now.year}-${now.month}-${now.day}') {
         _useSec = 0;
+        _lastDate = '${now.year}-${now.month}-${now.day}';
         notifyListeners();
         await storage.write(key: 'lastDate', value: '${now.year}-${now.month}-${now.day}');
         await storage.write(key: 'useSec', value: '0');
@@ -52,6 +53,7 @@ class GlobalTimer with ChangeNotifier {
 
     if (_lastDate != '${now.year}-${now.month}-${now.day}') {
       _useSec = 0;
+      _lastDate = '${now.year}-${now.month}-${now.day}';
       await storage.write(key: 'lastDate', value: '${now.year}-${now.month}-${now.day}');
     } else {
       _useSec += 1;
@@ -62,7 +64,7 @@ class GlobalTimer with ChangeNotifier {
   }
 
   void startTimer() {
-    print('starttimer');
+    // print('starttimer');
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       updateNowTime();
     });

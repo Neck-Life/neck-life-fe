@@ -41,6 +41,6 @@ void main() {
   // 각 측정값에 대한 칼만 필터 적용
   for (var measurement in measurements) {
     double filteredValue = filter.update(measurement);
-    print('필터링된 가속도: $filteredValue');
+    // print('필터링된 가속도: $filteredValue');
   }
 }

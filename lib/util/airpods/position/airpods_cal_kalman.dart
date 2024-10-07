@@ -62,7 +62,7 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
       _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
         _processSensorData(data);
       }, onError: (error) {
-        print('Error: $error');
+        // print('Error: $error');
       });
     });
   }
@@ -149,18 +149,18 @@ class _AirpodsExampleAppState extends State<AirpodsExampleApp> {
     var update = movementFilter.update(estimate_pos);
 
     if(update> 0.001){
-      print("목이 앞으로 이동");
-      print(update);
+      // print("목이 앞으로 이동");
+      // print(update);
       neckPosition+=update;
       movementFilter.clear();
     }else if(update < -0.001){
-      print("목이 뒤로 이동");
-      print(update);
+      // print("목이 뒤로 이동");
+      // print(update);
       neckPosition+=update;
       movementFilter.clear();
     }
 
-    print("목 위치 : $neckPosition");
+    // print("목 위치 : $neckPosition");
 
     // Store the position for visualization
     if (velocities.length > 5) { // Keep last 100 data points

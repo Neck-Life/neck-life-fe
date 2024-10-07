@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  static const String serverAddress = 'http://43.200.200.34/api/v1';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  // static const String serverAddress = 'http://43.200.200.34/api/v1';
 
   Map<String, dynamic> _historyData = {'daily' : []};
   Map<String, dynamic> _pastHistoryData = {'daily' : [], 'poseTimerMap': {}};
@@ -59,7 +59,7 @@ class HistoryStatus with ChangeNotifier {
   }
 
   void init() async {
-    print('his init');
+    // print('his init');
     const storage = FlutterSecureStorage();
     String? accessToken = await storage.read(key: 'accessToken');
     if (accessToken != null && accessToken != '') {
@@ -115,7 +115,7 @@ class HistoryStatus with ChangeNotifier {
     if (_date2idx!.containsKey(date)) {
       _pastHistoryData['daily'][_date2idx?[date]]['success'] = true;
       // print('return');
-      print(_pastHistoryData['daily'][_date2idx?[date]]);
+      // print(_pastHistoryData['daily'][_date2idx?[date]]);
       return _pastHistoryData['daily'][_date2idx?[date]];
     } else {
       // print('asdf');
@@ -126,8 +126,8 @@ class HistoryStatus with ChangeNotifier {
   // 특정 달
   Map<String, dynamic> getPastHistoryWithDateV2(int date) {
     String dateStr = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${date.toString().padLeft(2, '0')}';
-    print('test $dateStr');
-    print('test $_date2idx');
+    // print('test $dateStr');
+    // print('test $_date2idx');
     if (_date2idx!.containsKey(dateStr)) {
       _pastHistoryData['daily'][_date2idx?[dateStr]]['success'] = true;
       // print('return');
@@ -191,8 +191,8 @@ class HistoryStatus with ChangeNotifier {
 
       Response res = await dio.get(
           '$serverAddress/history/monthly?year=${int.parse(year)}&month=${int.parse(month)}');
-      print(res.data);
-      print('get history');
+      // print(res.data);
+      // print('get history');
       DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
         // print('$year $month, ${now.year.toString()} ${now.month.toString().padLeft(2, '0')}');
@@ -246,7 +246,7 @@ class HistoryStatus with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getScoreSeriesV2(String duration) async {
-    print('getsore');
+    // print('getsore');
     const storage = FlutterSecureStorage();
     try {
       String? accessToken = await storage.read(key: 'accessToken');
@@ -259,7 +259,7 @@ class HistoryStatus with ChangeNotifier {
 
       if (res.data['code'] == 'success') {
         _scoreSeries = Map.from(res.data['data']);
-        print(_scoreSeries);
+        // print(_scoreSeries);
         // _scoreSeries['success'] = true;
         // print('scores $_scoreSeries');
         notifyListeners();
@@ -271,16 +271,16 @@ class HistoryStatus with ChangeNotifier {
 
         return _scoreSeries;
       } else {
-        print('fuck1');
+        // print('fuck1');
         _scoreSeries = {'historyPointMap': {}};
         throw Exception();
       }
 
     } on DioException catch(e) {
-      print('fuck2');
+      // print('fuck2');
       print(e);
       String? scoreSeriesStr = await storage.read(key: 'scoreserieslocal');
-      print('check $scoreSeriesStr');
+      // print('check $scoreSeriesStr');
       if (scoreSeriesStr == null) {
         _scoreSeries = {'historyPointMap': {}};
       } else {

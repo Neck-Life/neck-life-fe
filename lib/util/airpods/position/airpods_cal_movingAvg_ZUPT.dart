@@ -185,7 +185,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
       position = last_zero_position;
       isRotated = false;  // 롤백 완료 후 회전 상태 해제
       stablePosition = position;
-      print("회전제거");
+      // print("회전제거");
     }
 
     // 가속도가 0이고 속도도 0일 때 체크포인트 설정
@@ -297,7 +297,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
         idx--;
       }
       position = positions[idx];
-      print("거리보상 보상 알고리즘 발동!");
+      // print("거리보상 보상 알고리즘 발동!");
     }
 
     if(position > threshold) position = threshold;

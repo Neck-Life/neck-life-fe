@@ -48,10 +48,8 @@ class _GoalSettingState extends State<GoalSetting> {
     bool success = false;
     if (_chosenSettingMap[type]['chosen']) {
       success = await hsObj.addGoalSetting(type, value, desc);
-      print(success);
     } else {
       success = await hsObj.deleteGoalSetting(_chosenSettingMap[type]['id']);
-      print(success);
     }
 
   }
@@ -62,16 +60,13 @@ class _GoalSettingState extends State<GoalSetting> {
     _amplitudeEventManager.viewEvent('goalsetting');
     Future.delayed(Duration.zero, () async {
       List<dynamic> chosenList = Provider.of<HistoryStatus>(context, listen: false).goalsList()?['goals'];
-      print('chosen $chosenList');
 
       for (Map<String, dynamic> item in chosenList) {
-        print(item);
         setState(() {
           _chosenSettingMap[item['type']]['chosen'] = true;
           _chosenSettingMap[item['type']]['id'] = item['order'];
         });
       }
-      print(_chosenSettingMap);
 
       Map<String, dynamic> goalHistory = await Provider.of<HistoryStatus>(context, listen: false).getGoalHistory();
       DateTime now = DateTime.now();

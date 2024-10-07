@@ -294,12 +294,26 @@ class _MySubscriptionState extends State<MySubscription> {
                       padding: res.percentWidth(4),
                     ),
                     // SizedBox()
+                    SizedBox(height: res.percentHeight(1),),
+                    GestureDetector(
+                      onTap: () async {
+                        await openUrlHelper.openPrivacyPolicy();
+                      },
+                      child: const TextDefault(content: '개인정보 처리방침', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                    ),
+                    // Text('    '),
+                    GestureDetector(
+                      onTap: () async {
+                        await openUrlHelper.openTermOfService();
+                      },
+                      child: const TextDefault(content: '이용 약관', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                    ),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const Paywall()));
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: res.percentHeight(2), bottom: res.percentHeight(9)),
+                        margin: EdgeInsets.only(top: res.percentHeight(2), bottom: res.percentHeight(5)),
                         width: res.deviceWidth,
                         alignment: Alignment.center,
                         child: const TextDefault(content: '프리미엄 플랜 자세히보기', fontSize: 16, isBold: true, fontColor: Color(0xFF64646F),),

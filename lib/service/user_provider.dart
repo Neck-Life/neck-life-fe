@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
-  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  static const String serverAddress = 'http://43.200.200.34/api/v1';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  // static const String serverAddress = 'http://43.200.200.34/api/v1';
 
   bool _isLogged = false;
   bool _isPremium = false;
@@ -48,7 +48,7 @@ class UserStatus with ChangeNotifier {
 
       await _initSubscriptionState();
 
-      print('init $_accessTokenTemp $_refreshTokenTemp');
+      // print('init $_accessTokenTemp $_refreshTokenTemp');
     }
   }
 
@@ -83,9 +83,9 @@ class UserStatus with ChangeNotifier {
     }
 
     final payload = _decodeBase64(parts[1]);
-    print(payload);
+    // print(payload);
     final payloadMap = json.decode(payload);
-    print(payloadMap);
+    // print(payloadMap);
     if (payloadMap is! Map<dynamic, dynamic>) {
       throw Exception('invalid payload');
     }
@@ -105,20 +105,20 @@ class UserStatus with ChangeNotifier {
 
     if (accessToken != null && !isTokenExpired(accessToken)) {
       // accessToken이 만료되지 않았을 경우
-      print('AccessToken 유효');
-      print("accessToken: $accessToken");
-      print("refreshToken: $refreshToken");
+      // print('AccessToken 유효');
+      // print("accessToken: $accessToken");
+      // print("refreshToken: $refreshToken");
 
       _isLogged = true;
       return true;
     } else if (refreshToken != null && !isTokenExpired(refreshToken)) {
       // accessToken이 만료되었지만 refreshToken이 유효할 경우
-      print('AccessToken 만료, RefreshToken으로 재발급 시도');
+      // print('AccessToken 만료, RefreshToken으로 재발급 시도');
       await getRefreshedToken();
       return true;
     } else {
       // 둘 다 만료된 경우 로그아웃
-      print('AccessToken과 RefreshToken 모두 만료');
+      // print('AccessToken과 RefreshToken 모두 만료');
 
       _isLogged = false;
       return false;
@@ -151,13 +151,13 @@ class UserStatus with ChangeNotifier {
       return;
     }
 
-    print(_refreshTokenTemp);
+    // print(_refreshTokenTemp);
     final res = await post(
       '$serverAddress/members/token',
       {'refreshToken': _refreshTokenTemp},
     );
 
-    print(res.statusCode);
+    // print(res.statusCode);
 
 
     if (res.statusCode ~/ 100 == 2) {
@@ -169,9 +169,9 @@ class UserStatus with ChangeNotifier {
       await storage.write(key: 'accessToken', value: _accessTokenTemp);
       await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
 
-      print('토큰 재발급 완료: $_accessTokenTemp');
+      // print('토큰 재발급 완료: $_accessTokenTemp');
     } else {
-      print('토큰 재발급 실패');
+      // print('토큰 재발급 실패');
       _accessTokenTemp = '';
       _refreshTokenTemp = '';
       const storage = FlutterSecureStorage();
@@ -226,6 +226,9 @@ class UserStatus with ChangeNotifier {
   void cleanAll() async {
     _accessTokenTemp = '';
     _refreshTokenTemp = '';
+    _isLogged = false;
+    _isPremium = false;
+    _email = '';
 
     const storage = FlutterSecureStorage();
     // await storage.deleteAll();
@@ -247,7 +250,7 @@ class UserStatus with ChangeNotifier {
 
   Future<bool> getUserIsPremium() async {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    print(customerInfo);
+    // print(customerInfo);
     _isPremium = customerInfo.activeSubscriptions.isNotEmpty;
     notifyListeners();
     return _isPremium;
@@ -259,21 +262,23 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<bool> socialLogin(String idToken, String provider) async {
-    print('asdfasfsafsfs');
+    // print('asdfasfsafsfs');
     final res = await post(
         '$serverAddress/members',
         {'code': idToken, 'provider': provider}
     );
-    print(res.statusCode);
-    print(res.body);
-    print(res.statusCode);
+    // print(res.statusCode);
+    // print(res.body);
+    // print(res.statusCode);
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {
       _isLogged = true;
-      notifyListeners();
 
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];
+      _email = resData['data']['email'].toString();
+      _initSubscriptionState();
+      notifyListeners();
 
       const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: resData['data']['accessToken']);

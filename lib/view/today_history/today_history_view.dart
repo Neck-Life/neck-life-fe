@@ -96,7 +96,7 @@ class _TodayHistoryState extends State<TodayHistory> {
 
       if (res.data['code'] == 'success') {
         // print('ok');
-        print(res.data);
+        // print(res.data);
         final fullHistoryData = res.data['data'];
         Map monthDataMap = {};
         fullHistoryData['daily'].forEach((item) {
@@ -130,8 +130,8 @@ class _TodayHistoryState extends State<TodayHistory> {
     int newMonth = _month > 11 ? 1 : _month+1;
     // if (newMonth > DateTime.now().month) return;
 
-    print('newMonth $newMonth');
-    print(_historyDateKeyMap);
+    // print('newMonth $newMonth');
+    // print(_historyDateKeyMap);
     final historyData = _historyDateKeyMap[newMonth].containsKey(_chosenDate+1) ? _historyDateKeyMap[newMonth][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     try {
         setState(() {

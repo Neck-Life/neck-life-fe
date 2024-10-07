@@ -75,11 +75,10 @@ class MyAudioHandler extends BaseAudioHandler {
       }
 
 
-
       // 로깅 최소시간
       if (beforeState != nowState) {
         // 상태가 변경되었을 때
-        print('상태 변경: $beforeState -> $nowState');
+        // print('상태 변경: $beforeState -> $nowState');
         _timer?.cancel(); // 기존 타이머 취소
         beforeState = nowState;
 
@@ -111,7 +110,7 @@ class MyAudioHandler extends BaseAudioHandler {
           // _poseLog['history']
           _poseLog['history'][DateTime.now().add(Duration(seconds: -LoggingTime)).toIso8601String().split('.')[0]
               .substring(0, 19)] = 'FORWARD';
-          print('FORWARD');
+          // print('FORWARD');
           canLog = false;
         }
       }
@@ -119,7 +118,7 @@ class MyAudioHandler extends BaseAudioHandler {
       if (!_checkIsNowTurtle()) {
         _turtleNeckStartedTimeStamp = 0;
         if (_isNowTurtle  && canLog) {
-          print('NORMAL');
+          // print('NORMAL');
           _poseLog['history'][DateTime.now().add(Duration(seconds: -LoggingTime)).toIso8601String().split('.')[0].substring(0, 19)] = 'NORMAL';
           _isNowTurtle = false;
           emitCustomEvent('end');
@@ -196,11 +195,11 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> pause() {
-    print('pause');
+    // print('pause');
     _isPlaying = false;
     _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'END';
     // print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
-    print(_poseLog);
+    // print(_poseLog);
     HistoryStatus.postMeasuredPoseData(_poseLog);
     // print('poselog $_poseLog');
     _bgAudioPlayer.pause();

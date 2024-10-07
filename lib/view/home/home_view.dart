@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
 
     _ad = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/6300978111', //'ca-app-pub-4299841579411814/1760857231',
+        adUnitId: 'ca-app-pub-4299841579411814/1760857231',
         listener: BannerAdListener(
             onAdLoaded: (_) {
               setState(() {
@@ -78,7 +78,8 @@ class _HomeState extends State<Home> {
     _ad.load();
 
     GlobalTimer.timeEventStream.listen((useSec) {
-      if (useSec >= 3600) {
+      // print(useSec);
+      if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
@@ -90,6 +91,11 @@ class _HomeState extends State<Home> {
     DetectStatus.detectAvailableEventStream.listen((flag) {
       if (!flag) {
         showAirpodsBottomSheet();
+        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+      } else {
+        if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
+          Provider.of<GlobalTimer>(context, listen: false).startTimer();
+        }
       }
     });
   }
@@ -159,7 +165,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void showStopDetectionSheet() {
+  void showStopDetectionSheet() async {
     showModalBottomSheet(
       context: context,
       useSafeArea: false,
@@ -169,12 +175,12 @@ class _HomeState extends State<Home> {
           await _audioHandler?.pause();
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection');
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+          if (executeCount >= DetectStatus.reviewRequestCount) {
+            await showReviewRequestPopUp(context);
+          }
           Navigator.push(
               context, MaterialPageRoute(builder: (
               context) => const Loading()));
-          if (executeCount >= DetectStatus.reviewRequestCount) {
-            showReviewRequestPopUp(context);
-          }
         });
       }
     );
@@ -213,7 +219,7 @@ class _HomeState extends State<Home> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void showReviewRequestPopUp(BuildContext context) {
+  Future<void> showReviewRequestPopUp(BuildContext context) async {
     Responsive res = Responsive(context);
 
     if (!DetectStatus.hasWroteReview) {
@@ -367,7 +373,7 @@ class _HomeState extends State<Home> {
                               StartButton(
                                 onPressed: () async {
                                   print('asdf');
-                                  if (!detectStatus.detectAvailable) {
+                                  if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
                                     showSnackbar('에어팟을 연결해주세요.');
                                   } else if (!detectStatus.nowDetecting) {
                                     if (!userStatus.isPremium && globalTimer.useSec >= 3600) {

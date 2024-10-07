@@ -46,7 +46,7 @@ class PoseCountFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('count build');
+    // print('count build');
     Responsive res = Responsive(context);
     int? count_ = count;
     return WhiteContainer(

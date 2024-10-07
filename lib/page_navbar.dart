@@ -45,7 +45,6 @@ class _PageNavBarState extends State<PageNavBar> {
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
           .checkAndUpdateToken();
-      print(isLogged);
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
       if (_isFirstLaunch) {
@@ -62,7 +61,6 @@ class _PageNavBarState extends State<PageNavBar> {
   }
 
   Future<void> _initATTPlugin() async {
-    print('init ATT');
     await Future.delayed(const Duration(seconds: 1));
     final TrackingStatus status =
     await AppTrackingTransparency.trackingAuthorizationStatus;

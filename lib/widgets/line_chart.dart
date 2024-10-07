@@ -40,12 +40,12 @@ class _ScoreChartState extends State<ScoreChart> {
 
     _scoreValues = {};
 
-    print('score ${widget.scoreValues}');
+    // print('score ${widget.scoreValues}');
 
     for (int i = 0; i < daySubtracted+1; i++, now = now.add(const Duration(days: 1))) {
       String dateStr = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       if (widget.scoreValues.containsKey(dateStr)) {
-        print(dateStr);
+        // print(dateStr);
         _scoreValues[dateStr] = widget.scoreValues[dateStr];
       } else {
         _scoreValues[dateStr] = 0;
@@ -271,6 +271,10 @@ class _ScoreChartState extends State<ScoreChart> {
             ),)).toList();
           },
           getTooltipColor: (group) => Colors.white,
+          tooltipBorder: const BorderSide(
+            width: 1,
+            color: Color(0xFF236EF3)
+          )
 
         ),
       )
