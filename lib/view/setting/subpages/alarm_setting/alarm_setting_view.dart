@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
@@ -51,8 +52,8 @@ class _AlarmSettingState extends State<AlarmSetting> {
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
             backgroundColor: const Color(0xFFF4F4F7),
-            title: const TextDefault(
-              content: '거북목 알림 설정',
+            title:TextDefault(
+              content: 'setting_subpages.alarm_setting.alarm_setting_view.alarm_setting'.tr(),
               fontSize: 16,
               isBold: false,
               fontColor: Color(0xFF64646F),
@@ -82,10 +83,10 @@ class _AlarmSettingState extends State<AlarmSetting> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TextDefault(content: '거북목 탐지 민감도 설정', fontSize: 18, isBold: true),
+                    TextDefault(content:  'setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive'.tr(), fontSize: 18, isBold: true),
                     SizedBox(height: res.percentHeight(0.5),),
-                    const TextDefault(
-                      content: '높을수록 잘못된 자세를 엄격하게 탐지해요.\n그 대신 작은 움직임에도 탐지 알림이 울릴 수 있어요.',
+                     TextDefault(
+                      content: 'setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_explain'.tr(),
                       fontSize: 13,
                       isBold: false,
                       fontColor: Color(0xFF8991A0),
@@ -116,9 +117,9 @@ class _AlarmSettingState extends State<AlarmSetting> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextDefault(content: "낮음", fontSize: 13, isBold: false, fontColor: _sensitivity == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
-                          TextDefault(content: "보통", fontSize: 13, isBold: false, fontColor: _sensitivity == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
-                          TextDefault(content: "높음", fontSize: 13, isBold: false, fontColor: _sensitivity == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),)
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_low".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_middle".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_high".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),)
                         ],
                       ),
                     ),
@@ -133,10 +134,10 @@ class _AlarmSettingState extends State<AlarmSetting> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TextDefault(content: '알림 시간 기준 설정', fontSize: 18, isBold: true),
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_time".tr(), fontSize: 18, isBold: true),
                     SizedBox(height: res.percentHeight(0.5),),
-                    const TextDefault(
-                      content: '잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.',
+                    TextDefault(
+                      content: "setting_subpages.alarm_setting.alarm_time_explain".tr(),
                       fontSize: 13,
                       isBold: false,
                       fontColor: Color(0xFF8991A0),
@@ -159,7 +160,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const TextDefault(content: '소리알림 켜기', fontSize: 18, isBold: false),
+                    TextDefault(content: "setting_subpages.alarm_setting.sound_alarm_turn_on".tr(), fontSize: 18, isBold: false),
                     CupertinoSwitch(
                       value: _bgSoundActive,
                       activeColor: CupertinoColors.activeBlue,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
@@ -54,8 +55,8 @@ class PoseListItem extends StatelessWidget {
                   isBold: false,
                   fontColor: const Color(0xFFF25959),
                 ),
-                const TextDefault(
-                  content: ' 자세 탐지',
+                TextDefault(
+                  content: 'pose_list_item.posture_detection'.tr(),
                   fontSize: 16,
                   isBold: false,
                 )

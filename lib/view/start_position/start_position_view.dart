@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
@@ -71,15 +72,15 @@ class StartPositionState extends State<StartPosition> {
                   const PersonIcon(),
                   Container(
                       margin: const EdgeInsets.only(top: 12.5),
-                      child: const TextDefault(
-                        content: '바른 자세를 5초 동안\n유지해주세요!',
+                      child:  TextDefault(
+                        content: 'start_position_view.explain_txt'.tr(),
                         fontSize: 28,
                         isBold: true,
                       )
                   ),
                   SizedBox(height: res.percentHeight(2),),
-                  const TextDefault(
-                    content: '기준 자세 측정 중',
+                  TextDefault(
+                    content: 'start_position_view.measuring_txt'.tr(),
                     fontSize: 16,
                     isBold: false,
                     fontColor: Color(0xFF115FE9),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
@@ -52,7 +53,7 @@ class _LoadingState extends State<Loading> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TextDefault(content: '자세 기록을 정리하는 중이에요.', fontSize: 20, isBold: true),
+             TextDefault(content: 'loading.history_loading'.tr(), fontSize: 20, isBold: true),
             SizedBox(height: res.percentHeight(3),),
             SizedBox(
               width: res.percentWidth(27),
@@ -73,11 +74,11 @@ class _LoadingState extends State<Loading> {
             ),
             SizedBox(height: res.percentHeight(3),),
             !_internetConnectness ? (
-            const Column(
+             Column(
               children: [
-                TextDefault(content: '인터넷 연결이 필요해요.', fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
-                TextDefault(content: '인터넷 연결이 가능한 곳에서 앱을', fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
-                TextDefault(content: '실행해주시면 다시 정리해드릴게요.', fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet1'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet2'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet3'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
               ],
             )
             ) :  const SizedBox()

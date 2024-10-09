@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
@@ -13,11 +14,11 @@ enum PoseType {
   String get poseString {
     switch (this) {
       case PoseType.slouch:
-        return '고개 숙임';
+        return 'history_widgets.pose_count_frame.slouch'.tr();
       case PoseType.turtle:
-        return '거북목';
+        return 'history_widgets.pose_count_frame.turtle'.tr();
       case PoseType.back:
-        return '뒤로 빠짐';
+        return 'history_widgets.pose_count_frame.back'.tr();;
     }
   }
 
@@ -71,8 +72,8 @@ class PoseCountFrame extends StatelessWidget {
                 isBold: true,
                 fontColor: const Color(0xFFF25959),
               ),
-              const TextDefault(
-                content: '회',
+              TextDefault(
+                content: 'history_widgets.pose_count_frame.count'.tr(),
                 fontSize: 16,
                 isBold: false,
                 fontColor: Color(0xFFF25959),

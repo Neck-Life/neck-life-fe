@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -336,14 +337,15 @@ class _HistoryState extends State<History> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const TextDefault(
-                                  content: '오늘 자세점수는 ',
+                                TextDefault(
+                                  content: 'history_view.today_posture_point'.tr(),
                                   fontSize: 30,
                                   isBold: true,
                                   fontColor: Colors.black,
                                 ),
                                 TextDefault(
-                                  content: _todayHistory['point'] == null ? '아직 없어요' : '${_todayHistory['point']}점이예요',
+                                  content: _todayHistory['point'] == null ? 'history_view.today_posture_point2'.tr()
+                                      : 'history_view.today_posture_point3'.tr(args:[_todayHistory['point']]),
                                   fontSize: 30,
                                   isBold: true,
                                   fontColor: const Color(0xFF236EF3),
@@ -397,7 +399,7 @@ class _HistoryState extends State<History> {
                             border: Border(bottom: BorderSide(color: Color(0xFF101010), width: 3))
                           ) : null,
                           child: TextDefault(
-                              content: '오늘',
+                              content: 'history_view.today'.tr(),
                               fontSize: 16,
                               isBold: _anchorIdx == 0
                           ),
@@ -421,7 +423,7 @@ class _HistoryState extends State<History> {
                               border: Border(bottom: BorderSide(color: Color(0xFF101010), width: 3))
                           ) : null,
                           child: TextDefault(
-                              content: '타임라인',
+                              content: 'history_view.timeLine'.tr(),
                               fontSize: 16,
                               isBold: _anchorIdx == 1
                           ),
@@ -441,8 +443,8 @@ class _HistoryState extends State<History> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: res.percentHeight(3.5),),
-                          const TextDefault(
-                            content: '오늘',
+                          TextDefault(
+                            content: 'history_view.today'.tr(),
                             fontSize: 22,
                             isBold: true,
                             fontColor: Color(0xFF323238),
@@ -464,8 +466,9 @@ class _HistoryState extends State<History> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const TextDefault(
-                                          content: '자세 탐지',
+                                      TextDefault(
+                                        // 자세 탐지
+                                          content: 'history_view.posture_detection'.tr(),
                                           fontSize: 16,
                                           isBold: true
                                       ),
@@ -502,10 +505,10 @@ class _HistoryState extends State<History> {
                                     Positioned(
                                       left: res.percentWidth(34),
                                       top: res.percentHeight(6),
-                                      child: const Column(
+                                      child: Column(
                                         children: [
-                                          TextDefault(content: '더 다양한 나쁜 자세', fontSize: 14, isBold: true),
-                                          TextDefault(content: '탐지를 준비하고 있어요!', fontSize: 14, isBold: true),
+                                          TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
+                                          TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
                                         ],
                                       )
                                     ),
@@ -527,8 +530,10 @@ class _HistoryState extends State<History> {
                                   padding: EdgeInsets.only(left: res.percentWidth(2)),
                                   child: TextDefault(
                                       content: _todayHistory['history'] != null ?
-                                        '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
-                                        : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
+                                          'average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)])
+                                        // '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
+                                        // : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
+                                      : 'history_view.today_history_scoring_default'.tr(),
                                       fontSize: 16,
                                       isBold: true
                                   ),
@@ -544,7 +549,7 @@ class _HistoryState extends State<History> {
                                       color: const Color(0xFF8991A0)
                                     )
                                   ),
-                                  child: const TextDefault(content: '예시', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                                  child: TextDefault(content: 'history_view.example'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                                 ) : const SizedBox(),
                                 Stack(
                                   children: [
@@ -645,8 +650,9 @@ class _HistoryState extends State<History> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const TextDefault(
-                                              content: '거북목 자세 탐지',
+                                          TextDefault(
+                                            // 거북목 자세 탐지
+                                              content: 'history_view.forward_neck_detection'.tr(),
                                               fontSize: 16,
                                               isBold: false
                                           ),
@@ -706,7 +712,7 @@ class _HistoryState extends State<History> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          const TextDefault(content: '자세 변화를\n점수로 확인해보세요', fontSize: 16, isBold: true),
+                                          TextDefault(content: 'history_view.posture_score_difference'.tr(), fontSize: 16, isBold: true),
                                           TextDefault(content: nowGraphDuration(), fontSize: 14, isBold: true, fontColor: const Color(0xFF8991A0),),
                                         ],
                                       ),

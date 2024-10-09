@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
@@ -27,14 +28,14 @@ class AirpodsConnectlessSheet extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextDefault(
-                  content: '에어팟 연결이 끊겼어요.\n다시 연결해주세요.',
+                TextDefault(
+                  content: 'home_widgets.bottomsheet.airpods_connect_reconnect_ask'.tr(),
                   fontSize: 24,
                   isBold: true
                 ),
                 SizedBox(height: res.percentHeight(1),),
-                const TextDefault(
-                  content: '연결 기기 없음',
+                TextDefault(
+                  content: 'home_widgets.bottomsheet.airpods_connect_no_device'.tr(),
                   fontSize: 16,
                   isBold: false,
                   fontColor: Color(0xFF236EF3),

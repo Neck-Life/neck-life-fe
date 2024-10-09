@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -46,7 +47,7 @@ class MenuItem extends StatelessWidget {
             ),
             Row(
               children: [
-                text == '내 구독' ? GestureDetector(
+                text == 'setting_widgets.menu_item.my_subscription' ? GestureDetector(
                   onTap: () {
                     if (isPremium == false) {
                       Navigator.push(
@@ -56,7 +57,8 @@ class MenuItem extends StatelessWidget {
 
                     }
                   },
-                  child: TextDefault(content: isPremium == true ? '프리미엄 플랜' : '구독하기', fontSize: 15, isBold: false, fontColor: Color(0xFF236EF3),),
+                  child: TextDefault(content: isPremium == true ? 'setting_widgets.menu_item.premium_plan'.tr() :
+                  'setting_widgets.menu_item.subscription'.tr(), fontSize: 15, isBold: false, fontColor: Color(0xFF236EF3),),
                 ) : const SizedBox(),
                 SizedBox(width: res.percentWidth(2),),
                 const AssetIcon('arrowNext', color: Color(0xFF9696A2), size: 5,)

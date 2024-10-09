@@ -110,7 +110,7 @@ class _MySubscriptionState extends State<MySubscription> {
         context: context,
         builder: (contextIn) {
           return AlertDialog(
-            content: Text('오류가 발생했습니다.\n다시 시도해주세요.',
+            content: Text('setting_subpages.my_subscription.my_subscription_view.error'.tr(),
               style: TextStyle(
                 color: const Color(0xFF434343),
                 fontSize: MediaQuery.of(context).size.width*0.05,
@@ -133,7 +133,7 @@ class _MySubscriptionState extends State<MySubscription> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('닫기')
+                  child: Text('setting_subpages.my_subscription.my_subscription_view.close'.tr())
               )
             ],
           );
@@ -145,7 +145,9 @@ class _MySubscriptionState extends State<MySubscription> {
     DateTime utcTime = DateFormat('yyyy-MM-ddTHH:mm:ssZ').parse(timeStr, true);
     DateTime localTime = utcTime.toLocal();
 
-    return '${localTime.year}년 ${localTime.month}월 ${localTime.day}일';
+    // return '${localTime.year}년 ${localTime.month}월 ${localTime.day}일';
+    return 'setting_subpages.my_subscription.my_subscription_view.year_month_date'
+        .tr(args: [localTime.year.toString(), localTime.month.toString(), localTime.day.toString()]);
   }
 
 
@@ -161,8 +163,8 @@ class _MySubscriptionState extends State<MySubscription> {
             preferredSize: const Size.fromHeight(60),
             child: AppBar(
                 backgroundColor: const Color(0xFFF4F4F7),
-                title: const TextDefault(
-                  content: '내 구독',
+                title: TextDefault(
+                  content: 'setting_subpages.my_subscription.my_subscription_view.my_subscription'.tr(),
                   fontSize: 16,
                   isBold: false,
                   fontColor: Color(0xFF64646F),
@@ -190,13 +192,15 @@ class _MySubscriptionState extends State<MySubscription> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextDefault(
-                        content: _customerInfo != null && _customerInfo!.activeSubscriptions.isNotEmpty ? '프리미엄 플랜': '무료 플랜',
+                        content: _customerInfo != null && _customerInfo!.activeSubscriptions.isNotEmpty ?
+                        'setting_subpages.my_subscription.my_subscription_view.premium_plan'.tr():
+                        'setting_subpages.my_subscription.my_subscription_view.free_plan'.tr(),
                         fontSize: 28,
                         isBold: true,
                         fontColor: const Color(0xFF236EF3),
                       ),
-                      const TextDefault(
-                        content: '구독 중',
+                      TextDefault(
+                        content: 'setting_subpages.my_subscription.my_subscription_view.subscription_ongoing'.tr(),
                         fontSize: 28,
                         isBold: true,
                         fontColor: const Color(0xFF101010),
@@ -214,8 +218,8 @@ class _MySubscriptionState extends State<MySubscription> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const TextDefault(
-                      content: '다음 결제일',
+                    TextDefault(
+                      content: 'setting_subpages.my_subscription.my_subscription_view.next_payment'.tr(),
                       fontSize: 14,
                       isBold: false,
                       fontColor: Color(0xFF8991A0),
@@ -228,8 +232,8 @@ class _MySubscriptionState extends State<MySubscription> {
                       fontColor: const Color(0xFF323238),
                     ),
                   ],
-                ) : const TextDefault(
-                  content: '플랜을 업그레이드하면\n더 풍부한 기능을 체험할 수 있어요!',
+                ) : TextDefault(
+                  content: 'setting_subpages.my_subscription.my_subscription_view.subscription_suggestion'.tr(),
                   fontSize: 18,
                   isBold: true,
                   fontColor: const Color(0xFF323238),
@@ -241,8 +245,8 @@ class _MySubscriptionState extends State<MySubscription> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const TextDefault(
-                      content: '프리미엄 플랜 구독을 취소하려면 ',
+                    TextDefault(
+                      content: 'setting_subpages.my_subscription.my_subscription_view.subscription_cancel_if'.tr(),
                       fontSize: 14,
                       isBold: false,
                       fontColor: Color(0xFF8991A0),
@@ -251,16 +255,16 @@ class _MySubscriptionState extends State<MySubscription> {
                       onTap: () async {
                         await openUrlHelper.openUrl('https://support.apple.com/ko-kr/118223');
                       },
-                      child: const TextDefault(
-                        content: '여기를',
+                      child:  TextDefault(
+                        content: 'setting_subpages.my_subscription.my_subscription_view.here'.tr(),
                         fontSize: 14,
                         isBold: false,
                         fontColor: Color(0xFF8991A0),
                         underline: true,
                       ),
                     ),
-                    const TextDefault(
-                      content: ' 참고해주세요',
+                     TextDefault(
+                      content: 'setting_subpages.my_subscription.my_subscription_view.reference'.tr(),
                       fontSize: 14,
                       isBold: false,
                       fontColor: Color(0xFF8991A0),
@@ -287,7 +291,7 @@ class _MySubscriptionState extends State<MySubscription> {
                         }
                         await _purchaseSupscription(userStatus);
                       },
-                      text: '월 \$0.99 프리미엄 플랜 시작하기',
+                      text: 'setting_subpages.my_subscription.my_subscription_view.subscription_price'.tr(),
                       backgroundColor: const Color(0xFF236EF3),
                       color: Colors.white,
                       width: res.percentWidth(90),
@@ -299,14 +303,14 @@ class _MySubscriptionState extends State<MySubscription> {
                       onTap: () async {
                         await openUrlHelper.openPrivacyPolicy();
                       },
-                      child: const TextDefault(content: '개인정보 처리방침', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                      child:  TextDefault(content: 'setting_subpages.my_subscription.my_subscription_view.privacy_policy'.tr(), fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
                     ),
                     // Text('    '),
                     GestureDetector(
                       onTap: () async {
                         await openUrlHelper.openTermOfService();
                       },
-                      child: const TextDefault(content: '이용 약관', fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
+                      child: TextDefault(content: 'setting_subpages.my_subscription.my_subscription_view.terms_of_service'.tr(), fontSize: 12, isBold: false, fontColor: Color(0xFF64646F),),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -316,7 +320,7 @@ class _MySubscriptionState extends State<MySubscription> {
                         margin: EdgeInsets.only(top: res.percentHeight(2), bottom: res.percentHeight(5)),
                         width: res.deviceWidth,
                         alignment: Alignment.center,
-                        child: const TextDefault(content: '프리미엄 플랜 자세히보기', fontSize: 16, isBold: true, fontColor: Color(0xFF64646F),),
+                        child:  TextDefault(content: 'setting_subpages.my_subscription.my_subscription_view.subscription_detail'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFF64646F),),
                       ),
                     )
                   ],

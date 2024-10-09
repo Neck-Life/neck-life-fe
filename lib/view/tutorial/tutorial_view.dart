@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
@@ -73,27 +74,27 @@ class _TutorialState extends State<Tutorials> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const TextDefault(
-                                content: '먼저 에어팟을\n연결해주세요',
+                              TextDefault(
+                                content: 'tutorial.tutorial_view.step1_airpods'.tr(),
                                 fontSize: 28,
                                 isBold: true,
                                 fontColor: Color(0xFF323238),
                               ),
                               SizedBox(height: res.percentHeight(2),),
-                              const Row(
+                              Row(
                                 children: [
                                   AssetIcon('infoCircle', size: 4.5, color: Color(0xFF236EF3),),
                                   SizedBox(width: 5,),
                                   TextDefault(
-                                    content: '아래 명시된 기종들만 사용 가능해요',
+                                    content:  'tutorial.tutorial_view.step1_airpods_models'.tr(),
                                     fontSize: 15,
                                     isBold: false,
                                     fontColor: Color(0xFF236EF3),
                                   ),
                                 ],
                               ),
-                              const TextDefault(
-                                content: 'AirPods Pro, AirPods Max, AirPods(3세대)',
+                               TextDefault(
+                                content: 'tutorial.tutorial_view.step1_airpods_models_name'.tr(),
                                 fontSize: 15,
                                 isBold: false,
                                 fontColor: Color(0xFF64646F),
@@ -126,15 +127,15 @@ class _TutorialState extends State<Tutorials> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const TextDefault(
-                                  content: '5초 동안 바른 자세를\n유지해주세요',
+                                 TextDefault(
+                                  content: 'tutorial.tutorial_view.step2_posture'.tr(),
                                   fontSize: 28,
                                   isBold: true,
                                   fontColor: Color(0xFF323238),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                const TextDefault(
-                                  content: '기준 자세를 측정하기 위한 단계로\n정확한 자세를 판단할 수 있어요.',
+                                 TextDefault(
+                                  content: 'tutorial.tutorial_view.step2_explain'.tr(),
                                   fontSize: 15,
                                   isBold: false,
                                   fontColor: Color(0xFF64646F),
@@ -173,15 +174,15 @@ class _TutorialState extends State<Tutorials> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const TextDefault(
-                                  content: '바른 자세와 함께\n일에 집중해보세요',
+                                 TextDefault(
+                                  content:'tutorial.tutorial_view.step3_concentrate'.tr(),
                                   fontSize: 28,
                                   isBold: true,
                                   fontColor: Color(0xFF323238),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                const TextDefault(
-                                  content: '무의식적으로 자세가 무너지는 것을\n탐지하면, 알림을 보내 알려드릴게요.',
+                                 TextDefault(
+                                  content: 'tutorial.tutorial_view.step3_explain'.tr(),
                                   fontSize: 15,
                                   isBold: false,
                                   fontColor: Color(0xFF64646F),
@@ -232,7 +233,7 @@ class _TutorialState extends State<Tutorials> {
                             MaterialPageRoute(builder: (context) => const LoginPage()));
                       }
                     },
-                    text: _pageNum != 2 ? '튜토리얼 건너뛰기' : '넥라이프 시작하기',
+                    text: _pageNum != 2 ? 'tutorial.tutorial_view.skip_tutorial'.tr() : 'tutorial.tutorial_view.start_necklife'.tr(),
                     backgroundColor: _pageNum != 2 ? const Color(0xFF8991A0) : const Color(0xFF236EF3),
                     color: Colors.white,
                     width: _pageNum != 2 ? res.percentWidth(42) : res.percentWidth(88),
@@ -250,7 +251,7 @@ class _TutorialState extends State<Tutorials> {
                         });
                       }
                     },
-                    text: '다음',
+                    text: 'tutorial.tutorial_view.tutorial_next'.tr(),
                     backgroundColor: const Color(0xFF236EF3),
                     color: Colors.white,
                     width: res.percentWidth(42),

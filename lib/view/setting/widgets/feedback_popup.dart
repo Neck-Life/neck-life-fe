@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
@@ -53,8 +54,8 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TextDefault(
-                      content: '문의 또는 피드백을 전달해주세요',
+                  TextDefault(
+                      content: 'setting_widgets.feedback_popup.feedback_and_inquiry'.tr(),
                       fontSize: 20,
                       isBold: true,
                       fontColor: Color(0xFF323238)
@@ -115,12 +116,12 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: EdgeInsets.symmetric(vertical: res.percentWidth(4),),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextDefault(
-                            content: '그만할래요',
+                            content: 'setting_widgets.feedback_popup.cancel_feedback'.tr(),
                             fontSize: 16,
                             isBold: true,
                             fontColor: Colors.white,
@@ -139,7 +140,7 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
                         widget.onError();
                       }
                     },
-                    text: '피드백 보내기',
+                    text: 'setting_widgets.feedback_popup.send_feedback'.tr(),
                     backgroundColor: !_hasText ? const Color(0xFFCFCFD8): const Color(0xFF236EF3),
                     color: Colors.white,
                     width: res.percentWidth(43),
