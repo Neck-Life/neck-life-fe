@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
@@ -73,17 +74,17 @@ class StartPositionState extends State<StartPosition> {
                   Container(
                       margin: const EdgeInsets.only(top: 12.5),
                       child:  TextDefault(
-                        content: 'start_position_view.explain_txt'.tr(),
+                        content: LS.tr('start_position_view.explain_txt'),
                         fontSize: 28,
                         isBold: true,
                       )
                   ),
                   SizedBox(height: res.percentHeight(2),),
                   TextDefault(
-                    content: 'start_position_view.measuring_txt'.tr(),
+                    content: LS.tr('start_position_view.measuring_txt'),
                     fontSize: 16,
                     isBold: false,
-                    fontColor: Color(0xFF115FE9),
+                    fontColor: const Color(0xFF115FE9),
                   ),
                   const SizedBox(height: 70),
                   Container(

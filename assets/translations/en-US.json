@@ -1,10 +1,11 @@
 {
-  "att_msg": "This app may use data such as your email address and posture measurement history to provide more convenient and personalized services.",
+  "att_msg": "This app may track app activity to provide a more personalized ad experience.",
+  "permission_msg": "Since this app uses AirPods' sensors, you need to enable the 'Motion & Fitness' setting to use it.",
   "att_continue": "Continue",
   "main_page": {
     "conn_status": "AirPods Connection Status",
     "connected_msg": "AirPods are connected",
-    "not_connected_msg": "Please connect your AirPods",
+    "not_connected_msg": "Please Connect your AirPods",
     "mini_connected_msg": "AirPods are connected",
     "mini_not_connected_msg": "Please connect your AirPods",
     "snackbar_msg": "Please connect your AirPods",
@@ -24,7 +25,7 @@
     "no": "No",
     "logout_question": "Are you sure you want to log out?",
     "setting_txt": "Settings",
-    "noti_setting": "Turtle Neck Alert Settings",
+    "noti_setting": "Bad Posture Alert Settings",
     "tutorial": "View Tutorial",
     "feedback": "Send Feedback/Inquiry",
     "term_of_service": "Terms of Service",
@@ -64,14 +65,14 @@
     "score": "My Posture Score",
     "today_record": "Today's Record >",
     "today_txt": "Record today's posture!",
-    "count_txt": "{} occurrences of turtle neck",
+    "count_txt": "{} occurrences of tech neck",
     "graph_txt": "Check the changes in your score",
     "pose_txt": "Record your posture!",
     "goal_txt": "Set Goal >",
     "goal_erorr_msg": "Unable to load goal information.",
     "post_time_txt": "Time maintaining good posture",
     "no_record_msg": "No records found.",
-    "text_neck_txt": "Turtle Neck Detected"
+    "text_neck_txt": "Tech Neck Detected"
   },
   "goal": {
     "goal_txt": "Set goals and stay motivated!",
@@ -81,26 +82,33 @@
     "score_setting": "Get a posture score of 80 or higher today"
   },
   "history_view": {
-    "today_posture_point": "Today's posture score is ",
-    "today_posture_point2": "{} points",
+    "today_posture_point": "Today's score is ",
+    "today_posture_point2": "not recorded",
+    "today_posture_point3": "{} points",
     "today": "Today",
     "timeLime": "Timeline",
     "posture_detection": "Posture Detection",
-    "average_posture_lose_time": "Your posture deteriorates every {} on average",
-    "forward_neck_detection": "Forward Neck Detection"
+    "average_posture_lose_time": "Your posture collapses every {} on average",
+    "forward_neck_detection": "Tech Neck",
+    "today_history_scoring_default": "You can know your posture record \\nin 1-second intervals.",
+    "example": "example",
+    "posture_score_difference": "Check your change\\nwith posture score",
+    "timeLine": "Timeline",
+    "tbd_content1": "We are preparing to",
+    "tbd_content2": "detect more postures!"
   },
   "history_widgets": {
     "duration_dropdown": {
-      "week": "This week",
-      "month1": "This month",
+      "week": "A week",
+      "month1": "A month",
       "month3": "3 months",
       "month6": "6 months"
     },
     "pose_count_frame": {
       "slouch": "Slouched",
-      "turtle": "Turtle Neck",
-      "back": "Leaning Back",
-      "count": "Times"
+      "turtle": "Tech Neck",
+      "back": "Reclining",
+      "count": ""
     },
     "score_explain": {
       "how_to_score": "How is the posture score calculated?",
@@ -111,18 +119,19 @@
   "home_view": {
     "toay_free_time_end": "Today's free usage time has ended.",
     "toay_free_time_end_premium": "Try the premium plan for unlimited access!",
-    "airpods_disconnect_detection_end": "Detection has stopped because your AirPods were disconnected.",
+    "airpods_disconnect_detection_end": "Detection has stopped.",
     "review": "Please leave a review! Your feedback helps developers improve the app.",
     "review_later": "Not now",
     "review_ok": "Sure",
     "airpods_connected": "AirPods connected",
-    "airpods_disconnected": "Please connect your AirPods",
+    "airpods_disconnected": "Connect your AirPods",
     "sensor_operation": "Sensor operating",
     "sensor_no_device": "No device connected",
-    "detection_start_ask": "Shall we start posture detection?",
+    "detection_start_ask": "Let's start\\nPosture detection",
     "airpods_connect_ask": "Please connect your AirPods",
     "end_today_free_time": "Today's usage time limit has been reached.",
-    "turtle_neck_forward_backward_detection": "Turtle Neck and Backward Lean Detection"
+    "turtle_neck_forward_backward_detection": "Detect Head Move Back and Forth",
+    "detection_doing": "Detecting Your\\nHead Posture"
   },
   "home_widgets": {
     "bottomsheet": {
@@ -131,7 +140,7 @@
     },
     "start_button": {
       "stop": "Stop",
-      "start": "Start?"
+      "start": "Start"
     },
     "stop_bottomsheet": {
       "stop_detection": "Stop posture detection?",
@@ -143,15 +152,16 @@
   "login_view": {
     "login_error": "An error occurred. Please try again.",
     "neck_life": "NeckLife",
-    "neck_life_with": "with",
-    "neck_life_with_airpods": "Maintain correct posture with just your AirPods",
+    "neck_life_with": " helps to",
+    "neck_life_with_airpods": "Keep correct posture with just your AirPods",
     "login_with_social2": "Start quickly with social login",
     "apple_login": "Login with Apple",
-    "by_signing_up": "By signing up",
+    "by_signing_up": "By signing up ",
     "terms_of_service": "Terms of Service",
-    "and": "and",
+    "and": " and ",
     "privacy_policy": "Privacy Policy",
-    "are_agreed": "are agreed upon."
+    "are_agreed": " are agreed upon.",
+    "login_with_social": "Get started quickly with social login"
   },
   "setting_view": {
     "delete_reason1": "Posture detection seems inaccurate",
@@ -175,15 +185,17 @@
     "setting": "Settings",
     "my_subscriptions": "My Subscription",
     "service": "Service",
-    "forward_notification_setting": "Turtle Neck Alert Settings",
-    "tutorial": "View Tutorial",
+    "forward_notification_setting": "Bad Posture Alert Settings",
+    "tutorial": "Tutorial",
     "feedback": "Send Feedback",
     "terms_of_service_and_policy": "Terms & Policies",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
     "logout": "Logout from NeckLife",
     "if_quit": "To delete your NeckLife account ",
-    "here": "click here"
+    "here": "click here",
+    "click": "",
+    "submit": "Submit"
   },
   "setting_widgets": {
     "feedback_popup": {
@@ -204,13 +216,13 @@
   "setting_subpages": {
     "alarm_setting": {
       "alarm_setting_view": {
-        "alarm_setting": "Turtle Neck Alert Settings",
-        "alarm_sensitive": "Turtle Neck Detection Sensitivity",
+        "alarm_setting": "Alert Settings",
+        "alarm_sensitive": "Detection Sensitivity",
         "alarm_sensitive_explain": "Higher sensitivity means more strict detection, but may trigger alerts for minor movements.",
         "alarm_sensitive_low": "Low",
         "alarm_sensitive_middle": "Medium",
         "alarm_sensitive_high": "High",
-        "alarm_time": "Alert Time Threshold",
+        "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
         "sound_alarm_turn_on": "Enable sound alert"
       },
@@ -228,30 +240,35 @@
         "my_subscription": "My Subscription",
         "premium_plan": "Premium Plan",
         "subscription": "Free Plan",
-        "subscription_ongoing": "Ongoing Subscription",
+        "subscription_ongoing": "is Activated",
         "next_payment": "Next Payment Date",
         "subscription_suggestion": "Upgrade to experience more features!",
-        "subscription_cancel_if": "To cancel your premium plan subscription ",
+        "subscription_cancel_if": "To cancel your premium plan subscription",
         "here": "click here",
         "reference": " for more details.",
-        "subscription_price": "Start the Premium Plan for $0.99/month",
-        "subscription_detail": "Learn more about the Premium Plan"
+        "subscription_price": "Start the Premium Plan ($0.99/month)",
+        "subscription_detail": "Learn more about the Premium Plan",
+        "free_plan": "Free Plan",
+        "privacy_policy": "Privacy Policy",
+        "terms_of_service": "Terms of Service"
       }
     },
     "paywall": {
       "paywall_view": {
         "error": "An error occurred. Please try again.",
-        "more_contents": "Experience even more features!",
-        "dt_title": "Unlimited Turtle Neck Detection",
-        "dt_content": "Real-time monitoring using AirPods with no time limit",
+        "more_contents": "Experience more\\nfeatures!",
+        "dt_title": "Unlimited Detection",
+        "dt_content": "Real-time monitoring using \\nAirPods with no time limit",
         "ad_title": "Remove Ads",
         "ad_content": "Remove ads from the app",
         "other_title": "More Additional Features",
-        "other_content": "Priority access to upcoming features",
-        "subscription_price": "Start the Premium Plan for $0.99/month",
+        "other_content": "Priority access \\nto upcoming features",
+        "subscription_price": "Start the Premium Plan ($0.99/month)",
         "terms_of_service": "Terms of Service",
         "privacy_policy": "Privacy Policy",
-        "continue_free_plan": "Continue with Free Plan"
+        "continue_free_plan": "Continue with Free Plan",
+        "neckLife_premium": "NeckLife Premium",
+        "and": ""
       }
     }
   },
@@ -263,26 +280,29 @@
   "today_history_view": {
     "posture_detection": "Posture Detection",
     "month_day": "{}-{}",
-    "good_posture": "Good Posture Maintained",
+    "good_posture": "Good Posture",
     "total_time": "/Total {}",
     "today": "Today",
     "this_day": "On this day",
     "no_history": "No records found",
-    "do_posture_detection": "Start Posture Detection"
+    "do_posture_detection": "Go to Detect",
+    "before" : "prev",
+    "next": "next"
+
   },
   "today_history_widgets": {
     "date_tile": {
-      "month": "{} month"
+      "month": "{}"
     },
     "pose_list_item": {
-      "posture_detection": "Posture Detection"
+      "posture_detection": " Posture Detection"
     }
   },
   "tutorial": {
     "tutorial_view": {
-      "step1_airpods": "First, please connect your AirPods",
+      "step1_airpods": "First, please connect \\nyour AirPods",
       "step1_airpods_models": "Only the following models are supported",
-      "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods (3rd, 4th Gen)",
+      "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods(3rd, 4th Gen)",
       "step2_posture": "Maintain a correct posture for 5 seconds",
       "step2_explain": "This step measures your reference posture for accurate posture detection.",
       "step3_concentrate": "Focus on your work with proper posture",

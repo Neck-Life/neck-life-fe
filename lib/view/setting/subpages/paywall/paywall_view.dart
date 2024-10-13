@@ -16,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../page_navbar.dart';
 import '../../../../theme/asset_icon.dart';
 import '../../../../theme/component/text_default.dart';
+import '../../../../util/localization_string.dart';
 
 class Paywall extends StatefulWidget {
   const Paywall({super.key});
@@ -168,10 +169,10 @@ class _PaywallState extends State<Paywall> {
                         Row(
                           children: [
                             TextDefault(
-                              content: 'setting_subpages.paywall.paywall_view.neckLife_premium'.tr(),
+                              content: LS.tr('setting_subpages.paywall.paywall_view.neckLife_premium'),
                               fontSize: 24,
                               isBold: true,
-                              fontColor: Color(0xFF236EF3),
+                              fontColor: const Color(0xFF236EF3),
                             ),
                             TextDefault(
                               content: 'setting_subpages.paywall.paywall_view.and'.tr(),
@@ -182,7 +183,7 @@ class _PaywallState extends State<Paywall> {
                           ],
                         ),
                         TextDefault(
-                          content: 'setting_subpages.paywall.paywall_view.more_contents'.tr(),
+                          content: LS.tr('setting_subpages.paywall.paywall_view.more_contents'),
                           fontSize: 24,
                           isBold: true,
                           fontColor: Colors.black,
@@ -192,9 +193,9 @@ class _PaywallState extends State<Paywall> {
                   ],
                 ),
                 SizedBox(height: res.percentHeight(5),),
-                ExplainItem(icon: 'dt', title: 'setting_subpages.paywall.paywall_view.dt_title'.tr(), content: 'setting_subpages.paywall.paywall_view.dt_content'.tr()),
+                ExplainItem(icon: 'dt', title: 'setting_subpages.paywall.paywall_view.dt_title'.tr(), content: LS.tr('setting_subpages.paywall.paywall_view.dt_content')),
                 ExplainItem(icon: 'ad', title: 'setting_subpages.paywall.paywall_view.ad_title'.tr(), content: 'setting_subpages.paywall.paywall_view.ad_content'.tr()),
-                ExplainItem(icon: 'other', title: 'setting_subpages.paywall.paywall_view.other_title'.tr(), content: 'setting_subpages.paywall.paywall_view.other_content'.tr()),
+                ExplainItem(icon: 'other', title: 'setting_subpages.paywall.paywall_view.other_title'.tr(), content: LS.tr('setting_subpages.paywall.paywall_view.other_content')),
                 const Spacer(),
                 Button(
                   onPressed: () async {

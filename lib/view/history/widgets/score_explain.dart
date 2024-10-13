@@ -15,7 +15,7 @@ class ScoreExplain extends StatelessWidget {
 
     return Container(
       width: res.percentWidth(90),
-      height: 300,//res.percentHeight(33),
+      height: context.locale.languageCode == 'ko' ? 300 : 330,//res.percentHeight(33),
       margin: EdgeInsets.only(bottom: res.percentHeight(5)),
       decoration: BoxDecoration(
         color: const Color(0xFFF4F4F7),

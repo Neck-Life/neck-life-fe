@@ -10,6 +10,8 @@ import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:provider/provider.dart';
 
+import '../../../util/localization_string.dart';
+
 class StopDetectionSheet extends StatelessWidget {
   
   final void Function() onStop;
@@ -42,14 +44,14 @@ class StopDetectionSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextDefault(
-                        content: 'home_widgets.stop_bottomsheet.stop_detection'.tr(),
+                        content: LS.tr('home_widgets.stop_bottomsheet.stop_detection'),
                         fontSize: 24,
                         isBold: true
                     ),
                     SizedBox(height: res.percentHeight(1),),
                     TextDefault(
                       //content: '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec)}',
-                      content: 'home_widgets.stop_bottomsheet.detection_time'.tr(args: [TimeConvert.sec2Min(globalTimer.useSec)]),
+                      content: 'home_widgets.stop_bottomsheet.detection_time'.tr(args: [TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)]),
                       fontSize: 16,
                       isBold: false,
                       fontColor: const Color(0xFF236EF3),

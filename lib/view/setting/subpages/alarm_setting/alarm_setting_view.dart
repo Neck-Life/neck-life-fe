@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../theme/asset_icon.dart';
 import '../../../../theme/component/text_default.dart';
+import '../../../../util/localization_string.dart';
 
 class AlarmSetting extends StatefulWidget {
   const AlarmSetting({super.key});
@@ -56,7 +57,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
               content: 'setting_subpages.alarm_setting.alarm_setting_view.alarm_setting'.tr(),
               fontSize: 16,
               isBold: false,
-              fontColor: Color(0xFF64646F),
+              fontColor: const Color(0xFF64646F),
             ),
             centerTitle: true,
             leading: IconButton(
@@ -86,10 +87,10 @@ class _AlarmSettingState extends State<AlarmSetting> {
                     TextDefault(content:  'setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive'.tr(), fontSize: 18, isBold: true),
                     SizedBox(height: res.percentHeight(0.5),),
                      TextDefault(
-                      content: 'setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_explain'.tr(),
+                      content: LS.tr('setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_explain'),
                       fontSize: 13,
                       isBold: false,
-                      fontColor: Color(0xFF8991A0),
+                      fontColor: const Color(0xFF8991A0),
                     ),
                     SizedBox(height: res.percentHeight(2),),
                     SliderTheme(
@@ -117,9 +118,9 @@ class _AlarmSettingState extends State<AlarmSetting> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_low".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
-                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_middle".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
-                          TextDefault(content: "setting_subpages.alarm_setting.alarm_sensitive_high".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),)
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_low".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_middle".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
+                          TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_high".tr(), fontSize: 13, isBold: false, fontColor: _sensitivity == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),)
                         ],
                       ),
                     ),
@@ -134,13 +135,13 @@ class _AlarmSettingState extends State<AlarmSetting> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextDefault(content: "setting_subpages.alarm_setting.alarm_time".tr(), fontSize: 18, isBold: true),
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_time".tr(), fontSize: 18, isBold: true),
                     SizedBox(height: res.percentHeight(0.5),),
                     TextDefault(
-                      content: "setting_subpages.alarm_setting.alarm_time_explain".tr(),
+                      content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_time_explain".tr(),
                       fontSize: 13,
                       isBold: false,
-                      fontColor: Color(0xFF8991A0),
+                      fontColor: const Color(0xFF8991A0),
                     ),
                     SizedBox(height: res.percentHeight(2),),
                     TimeDelayTile(alarmDelay: 5, chosenVal: _alarmGap, onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
@@ -160,7 +161,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextDefault(content: "setting_subpages.alarm_setting.sound_alarm_turn_on".tr(), fontSize: 18, isBold: false),
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_alarm_turn_on".tr(), fontSize: 18, isBold: false),
                     CupertinoSwitch(
                       value: _bgSoundActive,
                       activeColor: CupertinoColors.activeBlue,
@@ -174,191 +175,6 @@ class _AlarmSettingState extends State<AlarmSetting> {
                   ],
                 ),
               ),
-              // Container(
-              //   width: res.percentWidth(85),
-              //   margin: EdgeInsets.only(bottom: 10, left: res.percentWidth(7.5)),
-              //   child: Text('알림 기준 시간 설정',
-              //     style: TextStyle(
-              //       color: const Color(0xFF434343),
-              //       fontSize: res.fontSize(18),
-              //       fontFamily: 'Inter',
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              // ),
-              // Column(
-              //   children: [
-              //     Container(
-              //       width: res.percentWidth(85),
-              //       margin: const EdgeInsets.only(
-              //           bottom: 10),
-              //       child: Text('잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.',
-              //         style: TextStyle(
-              //           color: const Color(0xFF434343),
-              //           fontSize: res.fontSize(14),
-              //           fontFamily: 'Inter',
-              //           fontWeight: FontWeight.w300,
-              //         ),
-              //       ),
-              //     ),
-              //     Container(
-              //         width: res.percentWidth(95),
-              //         margin: EdgeInsets.only(left: res.percentWidth(2.5)),
-              //         decoration: ShapeDecoration(
-              //           color: Colors.white,
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(20),
-              //           ),
-              //         ),
-              //         child: Column(
-              //           children: [
-              //             ListTile(
-              //               title: Text('5초',
-              //                 style: TextStyle(
-              //                   color: const Color(0xFF434343),
-              //                   fontSize: res.fontSize(14),
-              //                   fontFamily: 'Inter',
-              //                   fontWeight: FontWeight.w300,
-              //                 ),
-              //               ),
-              //               leading: Radio(
-              //                 value: 5,
-              //                 groupValue: _alarmGap,
-              //                 onChanged: (int? value) {
-              //                   setState(() {
-              //                     _alarmGap = value!;
-              //                   });
-              //                   detectStatus.setAlarmGap(_alarmGap);
-              //                 },
-              //               ),
-              //             ),
-              //             ListTile(
-              //               title: Text('15초',
-              //                 style: TextStyle(
-              //                   color: const Color(0xFF434343),
-              //                   fontSize: res.fontSize(14),
-              //                   fontFamily: 'Inter',
-              //                   fontWeight: FontWeight.w300,
-              //                 ),
-              //               ),
-              //               leading: Radio(
-              //                 value: 15,
-              //                 groupValue: _alarmGap,
-              //                 onChanged: (int? value) {
-              //                   setState(() {
-              //                     _alarmGap = value!;
-              //                   });
-              //                   detectStatus.setAlarmGap(_alarmGap);
-              //                 },
-              //               ),
-              //             ),
-              //             ListTile(
-              //               title: Text('30초',
-              //                 style: TextStyle(
-              //                   color: const Color(0xFF434343),
-              //                   fontSize: res.fontSize(14),
-              //                   fontFamily: 'Inter',
-              //                   fontWeight: FontWeight.w300,
-              //                 ),
-              //               ),
-              //               leading: Radio(
-              //                 value: 30,
-              //                 groupValue: _alarmGap,
-              //                 onChanged: (int? value) {
-              //                   setState(() {
-              //                     _alarmGap = value!;
-              //                   });
-              //                   detectStatus.setAlarmGap(_alarmGap);
-              //                 },
-              //               ),
-              //             ),
-              //             ListTile(
-              //               title: Text('1분',
-              //                 style: TextStyle(
-              //                   color: const Color(0xFF434343),
-              //                   fontSize: res.fontSize(14),
-              //                   fontFamily: 'Inter',
-              //                   fontWeight: FontWeight.w300,
-              //                 ),
-              //               ),
-              //               leading: Radio(
-              //                 value: 60,
-              //                 groupValue: _alarmGap,
-              //                 onChanged: (int? value) {
-              //                   setState(() {
-              //                     _alarmGap = value!;
-              //                   });
-              //                   detectStatus.setAlarmGap(_alarmGap);
-              //                 },
-              //               ),
-              //             ),
-              //             ListTile(
-              //               title: Text('5분',
-              //                 style: TextStyle(
-              //                   color: const Color(0xFF434343),
-              //                   fontSize: res.fontSize(14),
-              //                   fontFamily: 'Inter',
-              //                   fontWeight: FontWeight.w300,
-              //                 ),
-              //               ),
-              //               leading: Radio(
-              //                 value: 300,
-              //                 groupValue: _alarmGap,
-              //                 onChanged: (int? value) {
-              //                   setState(() {
-              //                     _alarmGap = value!;
-              //                   });
-              //                   detectStatus.setAlarmGap(_alarmGap);
-              //                 },
-              //               ),
-              //             )
-              //           ],
-              //         )
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(height: res.percentHeight(7)),
-              // Container(
-              //   width: res.percentWidth(85),
-              //   margin: EdgeInsets.only(bottom: 10, left: res.percentWidth(7.5)),
-              //   child: Text('소리 설정',
-              //     style: TextStyle(
-              //       color: const Color(0xFF434343),
-              //       fontSize: res.fontSize(18),
-              //       fontFamily: 'Inter',
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              // ),
-              // Column(
-              //   children: [
-              //     Container(
-              //       width: res.percentWidth(85),
-              //       margin: const EdgeInsets.only(
-              //           bottom: 10),
-              //       child: Text('거북목 탐지 시 알람 소리를 내줘요\n이 설정은 변경 후에 탐지를 중지 후 다시 시작해주세요.',
-              //         style: TextStyle(
-              //           color: const Color(0xFF434343),
-              //           fontSize: res.fontSize(14),
-              //           fontFamily: 'Inter',
-              //           fontWeight: FontWeight.w300,
-              //         ),
-              //       ),
-              //     ),
-              //     Container(
-              //         width: res.percentWidth(95),
-              //         margin: EdgeInsets.only(left: res.percentWidth(2.5)),
-              //         padding: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(0.75), bottom: res.percentHeight(0.75), right: res.percentWidth(5)),
-              //         decoration: ShapeDecoration(
-              //           color: Colors.white,
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(20),
-              //           ),
-              //         ),
-              //         child:
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),

@@ -31,7 +31,7 @@ class DurationDropdown extends StatelessWidget {
           DropdownMenuItem(
             value: 'WEEK',
             child: SizedBox(
-              width: res.percentWidth(15),
+              width: res.percentWidth(context.locale.languageCode == 'ko' ? 20 : 25),
               child: Row(
                 children: [
                   TextDefault(content: 'history_widgets.duration_dropdown.week'.tr(), fontSize: chosenValue == 'WEEK' ? 22 : 16, isBold: chosenValue == 'WEEK' ? true : false, fontColor: chosenValue == 'WEEK' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
@@ -44,7 +44,7 @@ class DurationDropdown extends StatelessWidget {
           DropdownMenuItem(
             value: 'MONTH1',
             child: SizedBox(
-              width: res.percentWidth(20),
+              width: res.percentWidth(context.locale.languageCode == 'ko' ? 20 : 25),
               child: Row(
                 children: [
                   TextDefault(content: 'history_widgets.duration_dropdown.month1'.tr(), fontSize: chosenValue == 'MONTH1' ? 22 : 16, isBold: chosenValue == 'MONTH1' ? true : false, fontColor: chosenValue == 'MONTH1' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
@@ -56,7 +56,7 @@ class DurationDropdown extends StatelessWidget {
           DropdownMenuItem(
             value: 'MONTH3',
             child: SizedBox(
-              width: res.percentWidth(20),
+              width: res.percentWidth(context.locale.languageCode == 'ko' ? 20 : 30),
               child: Row(
                 children: [
                   TextDefault(content: 'history_widgets.duration_dropdown.month3'.tr(), fontSize: chosenValue == 'MONTH3' ? 22 : 16, isBold: chosenValue == 'MONTH3' ? true : false, fontColor: chosenValue == 'MONTH3' ? const Color(0xFF323238) : const Color(0xFF8991A0),),
@@ -68,7 +68,7 @@ class DurationDropdown extends StatelessWidget {
           DropdownMenuItem(
             value: 'MONTH6',
             child: SizedBox(
-              width: res.percentWidth(20),
+              width: res.percentWidth(context.locale.languageCode == 'ko' ? 20 : 30),
               child: Row(
                 children: [
                   TextDefault(content: 'history_widgets.duration_dropdown.month6'.tr(), fontSize: chosenValue == 'MONTH6' ? 22 : 16, isBold: chosenValue == 'MONTH6' ? true : false, fontColor: chosenValue == 'MONTH6' ? const Color(0xFF323238) : const Color(0xFF8991A0),),

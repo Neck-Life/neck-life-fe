@@ -12,6 +12,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../theme/component/button.dart';
 import '../../theme/component/text_default.dart';
 import '../../theme/popup.dart';
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 
 class LoginPage extends StatefulWidget {
@@ -76,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Container(
                 margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(10)),
+                padding: EdgeInsets.only(right: res.percentWidth(7.5)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,31 +93,30 @@ class _LoginPageState extends State<LoginPage> {
                           content: 'login_view.neck_life'.tr(),
                           fontSize: 28,
                           isBold: true,
-                          fontColor: Color(0xFF236EF3),
+                          fontColor: const Color(0xFF236EF3),
                         ),
                         TextDefault(
                           content: 'login_view.neck_life_with'.tr(),
                           fontSize: 28,
                           isBold: true,
-                          fontColor: Color(0xFF323238),
+                          fontColor: const Color(0xFF323238),
                         )
                       ],
                     ),
                     TextDefault(
-                      content: 'login_view.neck_life_with_airpods'.tr(),
+                      content: LS.tr('login_view.neck_life_with_airpods'),
                       fontSize: 28,
                       isBold: true,
-                      fontColor: Color(0xFF323238),
+                      fontColor: const Color(0xFF323238),
                     ),
-                    SizedBox(height: res.percentHeight(40),),
-                    TextDefault(content: 'login_view.login_with_social'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFF323238)),
+                    SizedBox(height: res.percentHeight(35),),
+                    TextDefault(content: 'login_view.login_with_social'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFF323238)),
                     SizedBox(height: res.percentHeight(3),),
                   ],
                 ),
               ),
               Button(
                 onPressed: () async {
-                  print('asdfasdfasdf');
                   try {
                     final credential = await SignInWithApple
                         .getAppleIDCredential(
@@ -141,9 +142,40 @@ class _LoginPageState extends State<LoginPage> {
                   }
                 },
                 icon: 'Apple',
-                text: 'Apple 로그인',
+                text: context.locale.languageCode == 'ko' ? 'Apple 로그인' : 'Apple Login',
                 backgroundColor: Colors.black,
                 color: Colors.white,
+                width: res.percentWidth(85),
+                padding: res.percentWidth(4),
+              ),
+              SizedBox(height: res.percentHeight(1.5),),
+              Button(
+                onPressed: () async {
+                  try {
+                    String? idToken = await _signInWithGoogle();
+
+                    if (idToken == null) {
+                      throw Exception();
+                    }
+
+                    bool success = await userStatus.socialLogin(idToken, 'google');
+                    print(success);
+                    if (success) {
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (
+                          context) => const PageNavBar()));
+                    } else {
+                      _openErrorPopUp();
+                    }
+                  } on Exception catch (e) {
+                    print(e);
+                    _openErrorPopUp();
+                  }
+                },
+                icon: 'Google',
+                text: context.locale.languageCode == 'ko' ? 'Google 로그인' : 'Google Login',
+                backgroundColor: Colors.white,
+                color: const Color(0xFF323238),
                 width: res.percentWidth(85),
                 padding: res.percentWidth(4),
               ),

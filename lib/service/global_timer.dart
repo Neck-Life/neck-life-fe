@@ -8,6 +8,7 @@ class GlobalTimer with ChangeNotifier {
   int _useSec = 0;
   Timer? _timer;
   late String _lastDate;
+  bool _isRunning = false;
 
   static final _timeEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get timeEventStream => _timeEventController.stream;
@@ -65,14 +66,18 @@ class GlobalTimer with ChangeNotifier {
 
   void startTimer() {
     // print('starttimer');
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      updateNowTime();
-    });
+    if (!_isRunning) {
+      _isRunning = true;
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        updateNowTime();
+      });
+    }
   }
 
   void stopTimer() {
     _timer?.cancel();
     _timer = null;
+    _isRunning = false;
   }
 
   Future<void> emitTimeEvent(dynamic event) async {

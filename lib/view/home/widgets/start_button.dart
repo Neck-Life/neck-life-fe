@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 
+import '../../../util/localization_string.dart';
+
 class StartButton extends StatefulWidget {
   const StartButton({
     super.key,
@@ -69,14 +71,14 @@ class _StartButtonState extends State<StartButton> {
               fontColor: const Color(0xFF236EF3),
             ),
             TextDefault(
-              content: 'home_widgets.start_button.stop'.tr(),
+              content: LS.tr('home_widgets.start_button.stop'),
               fontSize: 16,
               isBold: false,
               fontColor: Colors.black,
             )
           ],
         ) : TextDefault(
-          content: 'home_widgets.start_button.start'.tr(),
+          content: LS.tr('home_widgets.start_button.start'),
           fontSize: 16,
           isBold: true,
           fontColor: Colors.white,

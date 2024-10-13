@@ -1,5 +1,6 @@
 {
-  "att_msg": "본 앱은 보다 편리하고 개인화된 서비스를 위해 이메일 주소, 자세 측정 기록 등의 데이터를 사용할 수 있습니다.",
+  "att_msg": "본 앱은 보다 개인화된 광고 경험을 위해 앱 활동 내역을 추적할 수 있습니다.",
+  "permission_msg": "본 앱은 에어팟의 센서를 사용하기 때문에 '동작 및 피트니스' 설정을 허용해야 사용할 수 있어요",
   "att_continue": "계속",
   "main_page": {
     "conn_status": "에어팟 연결 상태",
@@ -12,13 +13,13 @@
     "stop_btn_msg": "거묵목 탐지 중지"
   },
   "start_position": {
-    "explain_msg": "바른 자세를 5초 동안 \n유지해주세요!",
-    "measuring_msg": "측정중입니다..\n",
+    "explain_msg": "바른 자세를 5초 동안\\n유지해주세요!",
+    "measuring_msg": "측정중입니다..\\n",
     "btn_msg": "기준 자세 측정"
   },
   "setting": {
     "quit_question": "정말 탈퇴하시겠습니까?",
-    "error_msg": "오류가 발생했습니다.\n다시 시도해주세요.",
+    "error_msg": "오류가 발생했습니다.\\n다시 시도해주세요.",
     "close": "닫기",
     "yes": "네",
     "no": "아니요",
@@ -35,10 +36,10 @@
   "login": {
     "error_msg": "오류가 발생했습니다.\\n다시 시도해주세요.",
     "close": "닫기",
-    "explain_txt": "넥라이프와 함께\n에어팟만으로\n바른 자세를 유지해보세요",
+    "explain_txt": "넥라이프와 함께\\n에어팟만으로\\n바른 자세를 유지해보세요",
     "social_login_txt": "소셜 로그인으로 빠르게 시작하기",
     "apple_login": "Apple 로그인",
-    "tos_msg": "로그인 시 본 서비스의 이용 약관과 개인정보 처리방침에\n동의한 것으로 간주됩니다.",
+    "tos_msg": "로그인 시 본 서비스의 이용 약관과 개인정보 처리방침에\\n동의한 것으로 간주됩니다.",
     "term_of_service": "이용 약관",
     "privacy": "개인정보 처리방침"
   },
@@ -46,18 +47,18 @@
     "prev_btn": "이전",
     "next_btn": "다음",
     "end_msg": "튜토리얼 끝내기",
-    "page1_txt": "에어팟 하나만으로\n바른 자세를 유지해보세요",
+    "page1_txt": "에어팟 하나만으로\\n바른 자세를 유지해보세요",
     "page1_explain_txt1": "에어팟을 연결해주세요",
     "page1_explain_txt2": "잘 연결된 경우 아래처럼 화면이 바뀔거예요",
     "page1_explain_txt3": "주의) 아래 명시된 모델만 사용 가능해요",
-    "page2_explain_txt1": "측정의 기준이 될 바른 자세를\n알려주세요",
-    "page2_explain_txt2": "'Neck-Life' 서비스는 처음 측정해주신 바른\n자세를 기준으로 자세의 변화를 감지하여\n사용자의 자세를 판단해요.",
+    "page2_explain_txt1": "측정의 기준이 될 바른 자세를\\n알려주세요",
+    "page2_explain_txt2": "'Neck-Life' 서비스는 처음 측정해주신 바른\\n자세를 기준으로 자세의 변화를 감지하여\\n사용자의 자세를 판단해요.",
     "page2_explain_txt3": "'거북목 탐지 시작' 버튼을 눌러주세요.",
-    "page2_explain_txt4": "등장하는 페이지에서 '기준 자세 측정' \n버튼을 누른 후, 5초 동안 바른 자세를\n유지해주세요.",
-    "page3_explain_txt1": "바른 자세와 함께 일에\n집중해보세요",
-    "page3_explain_txt2": "기준 자세 측정이 끝나면 자동으로\n메인 페이지로 돌아가고,\n자세 탐지가 시작됩니다.",
-    "page3_explain_txt3": "이제부터는 핸드폰을 내려놓고,\n일에 집중해보세요!",
-    "page3_explain_txt4": "무의식적으로 자세가 무너지는 것을\n탐지하면, 알림을 보내 알려드릴게요"
+    "page2_explain_txt4": "등장하는 페이지에서 '기준 자세 측정' \\n버튼을 누른 후, 5초 동안 바른 자세를\\n유지해주세요.",
+    "page3_explain_txt1": "바른 자세와 함께 일에\\n집중해보세요",
+    "page3_explain_txt2": "기준 자세 측정이 끝나면 자동으로\\n메인 페이지로 돌아가고,\\n자세 탐지가 시작됩니다.",
+    "page3_explain_txt3": "이제부터는 핸드폰을 내려놓고,\\n일에 집중해보세요!",
+    "page3_explain_txt4": "무의식적으로 자세가 무너지는 것을\\n탐지하면, 알림을 보내 알려드릴게요"
   },
   "history": {
     "error_msg": "해당 날짜의 데이터를 찾을 수 없습니다.",
@@ -85,7 +86,7 @@
   "history_view" : {
     "today_posture_point" : "오늘의 자세 점수는 ",
     "today_posture_point2" : "아직 없어요",
-    "today_posture_point3" : "{}점 이예요",
+    "today_posture_point3" : "{}점 이에요",
     "today" : "오늘",
     "timeLine" : "타임라인",
     "posture_detection" : "자세 탐지",
@@ -93,7 +94,7 @@
     "forward_neck_detection": "거북목 자세 탐지",
     "tbd_content1": "더 다양한 나쁜 자세",
     "tbd_content2": "탐지를 준비하고 있어요!",
-    "today_history_scoring_default":"자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요",
+    "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
     "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요"
 
@@ -131,7 +132,7 @@
     "airpods_disconnected": "에어팟을 연결해주세요",
     "sensor_operation": "센서 작동 중",
     "sensor_no_device": "연결 기기 없음",
-    "detection_doing" : "자세 탐지를\\n 하고 있어요",
+    "detection_doing" : "자세 탐지를\\n하고 있어요",
     "detection_start_ask" : "자세 탐지를\\n시작할까요?",
     "airpods_connect_ask" : "에어팟을 연결해주세요",
     "end_today_free_time" : "오늘의 사용 제한 시간이 끝났습니다.",
@@ -156,13 +157,13 @@
   },
 
   "login_view" : {
-    "login_error": "오류가 발생했습니다.\n다시 시도해주세요.",
+    "login_error": "오류가 발생했습니다.\\n다시 시도해주세요.",
     "neck_life": "넥라이프",
     "neck_life_with": "와 함께",
     "neck_life_with_airpods": "에어팟만으로 바른 자세를\\n유지해보세요",
     "login_with_social": "소셜 로그인으로 빠르게 시작해보세요",
     "apple_login": "Apple 로그인",
-    "by_signing_up": "회원 가입 시",
+    "by_signing_up": "회원 가입 시 ",
     "terms_of_service": "서비스 이용 약관",
     "and": "과",
     "privacy_policy": "개인정보 처리방침",
@@ -255,11 +256,11 @@
         "free_plan": "무료 플랜",
         "subscription_ongoing": "구독 중",
         "next_payment": "다음 결제일",
-        "subscription_suggestion": "플랜을 업그레이드하면\n더 풍부한 기능을 체험할 수 있어요!",
+        "subscription_suggestion": "플랜을 업그레이드하면\\n더 풍부한 기능을 체험할 수 있어요!",
         "subscription_cancel_if": "프리미엄 플랜 구독을 취소하려면 ",
         "here": "여기를",
         "reference": " 참고해주세요",
-        "subscription_price": "월 \\$0.99 프리미엄 플랜 시작하기",
+        "subscription_price": "월 $0.99 프리미엄 플랜 시작하기",
         "privacy_policy" : "개인정보 처리방침",
         "terms_of_service" : "이용 약관",
         "subscription_detail": "프리미엄 플랜 자세히보기"
@@ -271,14 +272,14 @@
         "error": "오류가 발생했습니다.\\n다시 시도해주세요.",
         "neckLife_premium": "NeckLife Premium",
         "and": "과",
-        "more_contents" :"함께 더욱 풍부한 기능을\n체험해보세요!",
+        "more_contents" :"함께 더욱 풍부한 기능을\\n체험해보세요!",
         "dt_title": "제한 없는 거북목 탐지",
-        "dt_content": "에어팟을 이용한 실시간 모니터링\n시간 제한 없음",
+        "dt_content": "에어팟을 이용한 실시간 모니터링\\n시간 제한 없음",
         "ad_title": "광고 제거",
         "ad_content": "앱 내 광고 제거",
         "other_title": "더 많은 추가 기능",
         "other_content": "앞으로 탑재될 여러 부가 기능 우선 제공",
-        "subscription_price": "월 \\$0.99 프리미엄 플랜 시작하기",
+        "subscription_price": "월 $0.99 프리미엄 플랜 시작하기",
         "privacy_policy" : "개인정보 처리방침",
         "terms_of_service" : "이용 약관",
         "continue_free_plan": "무료 플랜으로 계속하기"
@@ -291,7 +292,7 @@
   },
 
   "start_position_view": {
-    "explain_txt": "바른 자세를 5초 동안\\n 유지해주세요!",
+    "explain_txt": "바른 자세를 5초 동안\\n유지해주세요!",
     "measuring_txt": "기준 자세 측정 중",
     "btn_txt": "기준 자세 측정"
   },
@@ -316,7 +317,7 @@
       "month" : "{}월"
     },
     "pose_list_item": {
-      "posture_detection":  "자세 탐지"
+      "posture_detection":  " 자세 탐지"
     }
 
   },

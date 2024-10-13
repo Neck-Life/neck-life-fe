@@ -12,6 +12,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
 import '../../theme/component/button.dart';
 import '../../theme/component/person_icon.dart';
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 
 class Tutorials extends StatefulWidget {
@@ -75,7 +76,7 @@ class _TutorialState extends State<Tutorials> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextDefault(
-                                content: 'tutorial.tutorial_view.step1_airpods'.tr(),
+                                content: LS.tr('tutorial.tutorial_view.step1_airpods'),
                                 fontSize: 28,
                                 isBold: true,
                                 fontColor: Color(0xFF323238),
@@ -128,17 +129,17 @@ class _TutorialState extends State<Tutorials> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                  TextDefault(
-                                  content: 'tutorial.tutorial_view.step2_posture'.tr(),
+                                  content: LS.tr('tutorial.tutorial_view.step2_posture'),
                                   fontSize: 28,
                                   isBold: true,
-                                  fontColor: Color(0xFF323238),
+                                  fontColor: const Color(0xFF323238),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
                                  TextDefault(
-                                  content: 'tutorial.tutorial_view.step2_explain'.tr(),
+                                  content: LS.tr('tutorial.tutorial_view.step2_explain'),
                                   fontSize: 15,
                                   isBold: false,
-                                  fontColor: Color(0xFF64646F),
+                                  fontColor: const Color(0xFF64646F),
                                 ),
                                 Container(
                                     width: res.percentWidth(50),
@@ -175,17 +176,17 @@ class _TutorialState extends State<Tutorials> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                  TextDefault(
-                                  content:'tutorial.tutorial_view.step3_concentrate'.tr(),
+                                  content: LS.tr('tutorial.tutorial_view.step3_concentrate'),
                                   fontSize: 28,
                                   isBold: true,
-                                  fontColor: Color(0xFF323238),
+                                  fontColor: const Color(0xFF323238),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
                                  TextDefault(
-                                  content: 'tutorial.tutorial_view.step3_explain'.tr(),
+                                  content: LS.tr('tutorial.tutorial_view.step3_explain'),
                                   fontSize: 15,
                                   isBold: false,
-                                  fontColor: Color(0xFF64646F),
+                                  fontColor: const Color(0xFF64646F),
                                 ),
                                 Container(
                                     width: res.percentWidth(50),

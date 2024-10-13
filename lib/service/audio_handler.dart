@@ -177,8 +177,8 @@ class MyAudioHandler extends BaseAudioHandler {
     FlutterLocalNotificationsPlugin();
 
     await localNotification.show(0,
-        '거북목 자세 감지',
-        '바른 자세를 유지해봅시다!',
+        DetectStatus.lanCode == 'ko' ? '거북목 자세 감지' : 'Bad Posture Detected',
+        DetectStatus.lanCode == 'ko' ? '바른 자세를 유지해봅시다!' : 'Let\'s keep a good posture!',
         _details
     );
   }

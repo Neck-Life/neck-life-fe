@@ -21,10 +21,10 @@ class AssetIcon extends StatelessWidget {
       'assets/icons/$icon.svg',
       width: res.percentWidth(size ?? 30),
       height: res.percentWidth(size ?? 30),
-      colorFilter: ColorFilter.mode(
+      colorFilter: color != null ? ColorFilter.mode(
         color ?? Colors.black,
         BlendMode.srcIn,
-      ),
+      ) : null,
     );
   }
 }

@@ -6,6 +6,8 @@ import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 
+import '../../../util/localization_string.dart';
+
 class AirpodsConnectlessSheet extends StatelessWidget {
   const AirpodsConnectlessSheet({super.key});
 
@@ -29,16 +31,16 @@ class AirpodsConnectlessSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextDefault(
-                  content: 'home_widgets.bottomsheet.airpods_connect_reconnect_ask'.tr(),
+                  content: LS.tr('home_widgets.bottomsheet.airpods_connect_reconnect_ask'),
                   fontSize: 24,
                   isBold: true
                 ),
                 SizedBox(height: res.percentHeight(1),),
                 TextDefault(
-                  content: 'home_widgets.bottomsheet.airpods_connect_no_device'.tr(),
+                  content: LS.tr('home_widgets.bottomsheet.airpods_connect_no_device'),
                   fontSize: 16,
                   isBold: false,
-                  fontColor: Color(0xFF236EF3),
+                  fontColor: const Color(0xFF236EF3),
                 ),
                 SizedBox(height: res.percentHeight(3),),
                 Center(

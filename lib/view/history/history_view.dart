@@ -29,6 +29,7 @@ import 'dart:math' as math;
 
 import '../../model/pose_duration.dart';
 import '../../theme/triangle.dart';
+import '../../util/localization_string.dart';
 import '../home/widgets/app_bar.dart';
 
 
@@ -66,6 +67,8 @@ class _HistoryState extends State<History> {
   Map<String, dynamic> _todayHistory = {'poseCountMap': {}, 'daily' : []};
   Map<String, int> _data2idx = {};
 
+  Map<String, dynamic> _scoreSeries = {'historyPointMap': {}};
+
   final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:47': 'END'};
 
 //  '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'
@@ -74,6 +77,7 @@ class _HistoryState extends State<History> {
     super.initState();
     // print('his view init');
     getHistoryData(DateTime.now().year, DateTime.now().month);
+    getScoreSeriesV2('MONTH6');
 
     _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
       switch (status) {
@@ -179,6 +183,39 @@ class _HistoryState extends State<History> {
     }
   }
 
+  Future<void> getScoreSeriesV2(String duration) async {
+    // print('getsore');
+    const storage = FlutterSecureStorage();
+    try {
+      String? accessToken = await storage.read(key: 'accessToken');
+      if (accessToken != null && accessToken != '') {
+        HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
+      }
+
+      Response res = await HistoryStatus.dio.get(
+          '${HistoryStatus.serverAddress}/history/point?type=$duration');
+
+      if (res.data['code'] == 'success') {
+        setState(() {
+          _scoreSeries = Map.from(res.data['data']);
+        });
+        // print(_scoreSeries);
+        // _scoreSeries['success'] = true;
+        // print('scores $_scoreSeries');
+        // storage.write(key: 'scoreserieslocal', value: json.encode(_scoreSeries));
+        // if (_dateDataUpdated) {
+        //   _shouldChangeData = false;
+        // }
+
+        // return _scoreSeries;
+      } else {
+        throw Exception();
+      }
+
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
 
   void timestamp2DurationList(Map<String, dynamic>? historyMap) {
     // print('dummy2 $historyMap');
@@ -230,7 +267,7 @@ class _HistoryState extends State<History> {
             normalDurationCount += 1;
           }
         } else if (prevPose == 'FORWARD') {
-          if (value != 'FORWARD') {
+          // if (value != 'FORWARD') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
               width: duration,
               durationType: DurationType.abnormal,
@@ -242,7 +279,7 @@ class _HistoryState extends State<History> {
                 _chosonDurationIdx = idx;
               });
             }
-          }
+          // }
         }
       }
 
@@ -310,7 +347,7 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
-    HistoryStatus historyStatus = context.watch();
+    // HistoryStatus historyStatus = context.watch();
     // if (historyStatus)
     // initScoreMap(historyStatus.scoreSeries);
     return SafeArea(
@@ -345,7 +382,7 @@ class _HistoryState extends State<History> {
                                 ),
                                 TextDefault(
                                   content: _todayHistory['point'] == null ? 'history_view.today_posture_point2'.tr()
-                                      : 'history_view.today_posture_point3'.tr(args:[_todayHistory['point']]),
+                                      : 'history_view.today_posture_point3'.tr(args:[_todayHistory['point'].toString()]),
                                   fontSize: 30,
                                   isBold: true,
                                   fontColor: const Color(0xFF236EF3),
@@ -447,7 +484,7 @@ class _HistoryState extends State<History> {
                             content: 'history_view.today'.tr(),
                             fontSize: 22,
                             isBold: true,
-                            fontColor: Color(0xFF323238),
+                            fontColor: const Color(0xFF323238),
                           ),
                           SizedBox(height: res.percentHeight(2),),
                           WhiteContainer(
@@ -463,17 +500,20 @@ class _HistoryState extends State<History> {
                                         context, MaterialPageRoute(builder: (
                                         context) => TodayHistory(fullHistoryData: _historyData, date2idx: _data2idx,)));
                                   },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      TextDefault(
-                                        // 자세 탐지
-                                          content: 'history_view.posture_detection'.tr(),
-                                          fontSize: 16,
-                                          isBold: true
-                                      ),
-                                      AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF9696A2),)
-                                    ],
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextDefault(
+                                          // 자세 탐지
+                                            content: 'history_view.posture_detection'.tr(),
+                                            fontSize: 16,
+                                            isBold: true
+                                        ),
+                                        AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF9696A2),)
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
@@ -503,7 +543,7 @@ class _HistoryState extends State<History> {
                                       )
                                     ),
                                     Positioned(
-                                      left: res.percentWidth(34),
+                                      left: context.locale.languageCode == 'ko' ? res.percentWidth(34) : res.percentWidth(30),
                                       top: res.percentHeight(6),
                                       child: Column(
                                         children: [
@@ -530,10 +570,10 @@ class _HistoryState extends State<History> {
                                   padding: EdgeInsets.only(left: res.percentWidth(2)),
                                   child: TextDefault(
                                       content: _todayHistory['history'] != null ?
-                                          'average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)])
+                                          'history_view.average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0, context.locale.languageCode)])
                                         // '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
                                         // : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
-                                      : 'history_view.today_history_scoring_default'.tr(),
+                                      : LS.tr('history_view.today_history_scoring_default'),
                                       fontSize: 16,
                                       isBold: true
                                   ),
@@ -666,7 +706,7 @@ class _HistoryState extends State<History> {
                                               ),
                                               AssetIcon('bullet', size: res.percentWidth(1), color: const Color(0xFF9696A2),),
                                               TextDefault(
-                                                content: TimeConvert.sec2Min(_poseDurationList[_chosonDurationIdx].durationSec!),
+                                                content: TimeConvert.sec2Min(_poseDurationList[_chosonDurationIdx].durationSec!, context.locale.languageCode),
                                                 fontSize: 16,
                                                 isBold: false,
                                                 fontColor: const Color(0xFF236EF3),
@@ -712,11 +752,11 @@ class _HistoryState extends State<History> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          TextDefault(content: 'history_view.posture_score_difference'.tr(), fontSize: 16, isBold: true),
+                                          TextDefault(content: LS.tr('history_view.posture_score_difference'), fontSize: 16, isBold: true),
                                           TextDefault(content: nowGraphDuration(), fontSize: 14, isBold: true, fontColor: const Color(0xFF8991A0),),
                                         ],
                                       ),
-                                      ScoreChart(scoreValues: historyStatus.scoreSeries['historyPointMap'], duration: _scoreDurationValue)
+                                      ScoreChart(scoreValues: _scoreSeries['historyPointMap'], duration: _scoreDurationValue)
                                     ],
                                   ),
                                 ),

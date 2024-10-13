@@ -16,6 +16,7 @@ import 'package:mocksum_flutter/view/today_history/widgets/pose_list_item.dart';
 
 import '../../theme/component/button.dart';
 import '../../theme/popup.dart';
+import '../../util/localization_string.dart';
 
 
 class TodayHistory extends StatefulWidget {
@@ -182,7 +183,7 @@ class _TodayHistoryState extends State<TodayHistory> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return CustomPopUp(text: 'today_history_view.error'.tr());
+      return CustomPopUp(text: LS.tr('today_history_view.error'));
     });
   }
 
@@ -227,7 +228,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                 Container(
                   margin: EdgeInsets.only(left: res.percentWidth(7.5)),
                   child: TextDefault(
-                      content: 'today_history_view.month_day'.tr(args: ['$_month', '${_chosenDate+1}']),
+                      content: context.locale.languageCode == 'ko' ? '$_month월 ${_chosenDate+1}일' : TimeConvert.engDateFormat(_month, _chosenDate+1),
                       //'$_month월 ${_chosenDate+1}일',
                       fontSize: 20,
                       isBold: true
@@ -249,6 +250,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                               width: res.percentWidth(12.5),
                               height: res.percentWidth(15),
                               margin: EdgeInsets.only(left: res.percentWidth(2)),
+                              color: Colors.transparent,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -285,6 +287,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                               width: res.percentWidth(12.5),
                               height: res.percentWidth(15),
                               margin: EdgeInsets.only(left: res.percentWidth(2)),
+                              color: Colors.transparent,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -345,13 +348,13 @@ class _TodayHistoryState extends State<TodayHistory> {
                 Row(
                   children: [
                     TextDefault(
-                      content: TimeConvert.sec2Min(_normalTimeSec),
+                      content: TimeConvert.sec2Min(_normalTimeSec, context.locale.languageCode),
                       fontSize: 28,
                       isBold: true,
                       fontColor: const Color(0xFF115FE9),
                     ),
                     TextDefault(
-                      content: 'today_history_view.total_time'.tr(args: [TimeConvert.sec2Min(_fullTimeSec)]),
+                      content: 'today_history_view.total_time'.tr(args: [TimeConvert.sec2Min(_fullTimeSec, context.locale.languageCode)]),
                       //'/총 ${TimeConvert.sec2Min(_fullTimeSec)}',
                       fontSize: 18,
                       isBold: false,

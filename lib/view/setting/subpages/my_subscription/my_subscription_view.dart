@@ -15,6 +15,7 @@ import '../../../../page_navbar.dart';
 import '../../../../theme/asset_icon.dart';
 import '../../../../theme/component/button.dart';
 import '../../../../util/amplitude.dart';
+import '../../../../util/localization_string.dart';
 
 class MySubscription extends StatefulWidget {
   const MySubscription({super.key});
@@ -233,7 +234,7 @@ class _MySubscriptionState extends State<MySubscription> {
                     ),
                   ],
                 ) : TextDefault(
-                  content: 'setting_subpages.my_subscription.my_subscription_view.subscription_suggestion'.tr(),
+                  content: LS.tr('setting_subpages.my_subscription.my_subscription_view.subscription_suggestion'),
                   fontSize: 18,
                   isBold: true,
                   fontColor: const Color(0xFF323238),
@@ -242,14 +243,14 @@ class _MySubscriptionState extends State<MySubscription> {
               (_customerInfo != null && _customerInfo!.activeSubscriptions.isNotEmpty) ?
               Container(
                 margin: EdgeInsets.only(top: res.percentHeight(2)),
-                child: Row(
+                child: context.locale.languageCode == 'ko' ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextDefault(
                       content: 'setting_subpages.my_subscription.my_subscription_view.subscription_cancel_if'.tr(),
                       fontSize: 14,
                       isBold: false,
-                      fontColor: Color(0xFF8991A0),
+                      fontColor: const Color(0xFF8991A0),
                     ),
                     GestureDetector(
                       onTap: () async {
@@ -259,7 +260,7 @@ class _MySubscriptionState extends State<MySubscription> {
                         content: 'setting_subpages.my_subscription.my_subscription_view.here'.tr(),
                         fontSize: 14,
                         isBold: false,
-                        fontColor: Color(0xFF8991A0),
+                        fontColor: const Color(0xFF8991A0),
                         underline: true,
                       ),
                     ),
@@ -267,8 +268,41 @@ class _MySubscriptionState extends State<MySubscription> {
                       content: 'setting_subpages.my_subscription.my_subscription_view.reference'.tr(),
                       fontSize: 14,
                       isBold: false,
-                      fontColor: Color(0xFF8991A0),
+                      fontColor: const Color(0xFF8991A0),
                     ),
+                  ],
+                ) : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextDefault(
+                      content: 'setting_subpages.my_subscription.my_subscription_view.subscription_cancel_if'.tr(),
+                      fontSize: 14,
+                      isBold: false,
+                      fontColor: const Color(0xFF8991A0),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            await openUrlHelper.openUrl('https://support.apple.com/${context.locale.languageCode}-${context.locale.countryCode}/118223');
+                          },
+                          child:  TextDefault(
+                            content: 'setting_subpages.my_subscription.my_subscription_view.here'.tr(),
+                            fontSize: 14,
+                            isBold: false,
+                            fontColor: const Color(0xFF8991A0),
+                            underline: true,
+                          ),
+                        ),
+                        TextDefault(
+                          content: 'setting_subpages.my_subscription.my_subscription_view.reference'.tr(),
+                          fontSize: 14,
+                          isBold: false,
+                          fontColor: const Color(0xFF8991A0),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ) : const SizedBox(),

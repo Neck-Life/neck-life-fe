@@ -60,20 +60,20 @@ class HistoryStatus with ChangeNotifier {
 
   void init() async {
     // print('his init');
-    const storage = FlutterSecureStorage();
-    String? accessToken = await storage.read(key: 'accessToken');
-    if (accessToken != null && accessToken != '') {
-      dio.options.headers["authorization"] = "bearer $accessToken";
-    }
-
-    String? dataNotPosted = await storage.read(key: 'dataNotPosted');
+    // const storage = FlutterSecureStorage();
+    // String? accessToken = await storage.read(key: 'accessToken');
+    // if (accessToken != null && accessToken != '') {
+    //   dio.options.headers["authorization"] = "bearer $accessToken";
+    // }
+    //
+    // String? dataNotPosted = await storage.read(key: 'dataNotPosted');
     // print('dnp $dataNotPosted');
 
     // print(accessToken);
     // DateTime now = DateTime.now();
     // // if (_historyData == null) {
     // await updateHistoryData(now.year.toString(), now.month.toString());
-    await getScoreSeriesV2('MONTH6');
+    // await getScoreSeriesV2('MONTH6');
     // }
     // int cnt = 0;
     // // print(_historyData);

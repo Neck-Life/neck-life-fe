@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/main.dart';
 
 class ScoreChart extends StatefulWidget {
   final Map<dynamic, dynamic> scoreValues;
@@ -264,7 +266,7 @@ class _ScoreChartState extends State<ScoreChart> {
         },
         touchTooltipData: LineTouchTooltipData(
           getTooltipItems: (value) {
-            return value.map((e) => LineTooltipItem("${e.y.toInt()}점", const TextStyle( // _scoreValues.keys.toList()[e.x.toInt()]}\n
+            return value.map((e) => LineTooltipItem("${e.y.toInt()}${context.locale.languageCode == 'ko' ? '점' : ''}", const TextStyle( // _scoreValues.keys.toList()[e.x.toInt()]}\n
               color: Color(0xFF236EF3),
               fontFamily: 'Inter',
               fontWeight: FontWeight.w600,

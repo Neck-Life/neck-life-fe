@@ -120,6 +120,13 @@ class UserStatus with ChangeNotifier {
       // 둘 다 만료된 경우 로그아웃
       // print('AccessToken과 RefreshToken 모두 만료');
 
+      _accessTokenTemp = '';
+      _refreshTokenTemp = '';
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: 'accessToken');
+      await storage.delete(key: 'refreshToken');
+      await storage.delete(key: 'email');
+
       _isLogged = false;
       return false;
     }

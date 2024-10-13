@@ -56,7 +56,7 @@ class PoseListItem extends StatelessWidget {
                   fontColor: const Color(0xFFF25959),
                 ),
                 TextDefault(
-                  content: 'pose_list_item.posture_detection'.tr(),
+                  content: 'today_history_widgets.pose_list_item.posture_detection'.tr(),
                   fontSize: 16,
                   isBold: false,
                 )

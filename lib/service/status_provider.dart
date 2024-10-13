@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DetectStatus with ChangeNotifier {
 
+  static String lanCode = 'ko';
+
   static bool sNowDetecting = false;
   static bool sDetectAvailable = false;
   static bool sIsNowTurtle = false;
@@ -82,20 +84,12 @@ class DetectStatus with ChangeNotifier {
     await storage.write(key: 'nowRunning', value: '1');
   }
 
-  Future<int> endDetecting() async {
+  Future<void> endDetecting() async {
     _nowDetecting = false;
     sNowDetecting = false;
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
-    String? executeCount = await storage.read(key: 'executeCount');
-    if (executeCount != null) {
-      await storage.write(key: 'executeCount', value: (int.parse(executeCount)+1).toString());
-      return int.parse(executeCount)+1;
-    } else {
-      await storage.write(key: 'executeCount', value: '1');
-      return 1;
-    }
   }
 
   void availableDetect() {
@@ -130,6 +124,7 @@ class DetectStatus with ChangeNotifier {
   }
 
   static void setHasWroteReview(bool hasWrote) async {
+    print('haswrote $hasWrote');
     hasWroteReview = hasWrote;
     if (!hasWrote) {
       reviewRequestCount = 30;

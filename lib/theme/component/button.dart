@@ -87,7 +87,7 @@ class _ButtonState extends State<Button> {
             if (widget.icon != null)
               AssetIcon(
                 widget.icon!,
-                color: widget.color ?? Colors.black,
+                color: widget.icon == 'Google' ? null : widget.color,
                 size: 8,
               ),
 

@@ -28,6 +28,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:mocksum_flutter/util/localization_string.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 import '../../theme/component/button.dart';
 import '../start_position/start_position_view.dart';
@@ -41,6 +44,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  static const storage = FlutterSecureStorage();
   MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
@@ -61,7 +65,7 @@ class _HomeState extends State<Home> {
 
     _ad = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-4299841579411814/1760857231',
+        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/1760857231'
         listener: BannerAdListener(
             onAdLoaded: (_) {
               setState(() {
@@ -69,6 +73,7 @@ class _HomeState extends State<Home> {
               });
             },
             onAdFailedToLoad: (ad, error) {
+              print(error);
               ad.dispose();
             }
         ),
@@ -98,6 +103,27 @@ class _HomeState extends State<Home> {
         }
       }
     });
+
+    _decideShowReviewPopup();
+  }
+
+  Future<void> _decideShowReviewPopup() async {
+    // const storage = FlutterSecureStorage();
+    String? hasWroteReview = await storage.read(key: 'hasWroteReview');
+    String? executeCount = await storage.read(key: 'executeCount');
+    int exeCnt = 0;
+    if (executeCount != null) {
+      // await storage.write(key: 'executeCount', value: int.parse(executeCount).toString());
+      exeCnt = int.parse(executeCount);
+    } else {
+      await storage.write(key: 'executeCount', value: '1');
+      exeCnt = 1;
+    }
+
+    print('$exeCnt $hasWroteReview');
+    if (exeCnt >= DetectStatus.reviewRequestCount && hasWroteReview != '1') {
+      await showReviewRequestPopUp(context);
+    }
   }
 
   Future<void> _showPushAlarm() async {
@@ -105,8 +131,8 @@ class _HomeState extends State<Home> {
     FlutterLocalNotificationsPlugin();
 
     await localNotification.show(0,
-        'home_view.today_free_time_end'.tr(),
-        'home_view.today_free_time_end_premium'.tr(),
+        LS.tr('home_view.today_free_time_end'),
+        LS.tr('home_view.today_free_time_end_premium'),
         _details
     );
   }
@@ -161,7 +187,7 @@ class _HomeState extends State<Home> {
         return const AirpodsConnectlessSheet();
       }
     ).whenComplete(() {
-      showSnackbar('home_view.airpods_disconnect_detection_end'.tr());
+      showSnackbar(LS.tr('home_view.airpods_disconnect_detection_end'));
     });
   }
 
@@ -171,13 +197,13 @@ class _HomeState extends State<Home> {
       useSafeArea: false,
       builder: (context) {
         return StopDetectionSheet(onStop: () async {
-          int executeCount = await Provider.of<DetectStatus>(context, listen: false).endDetecting();
+          await Provider.of<DetectStatus>(context, listen: false).endDetecting();
           await _audioHandler?.pause();
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection');
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
-          if (executeCount >= DetectStatus.reviewRequestCount) {
-            await showReviewRequestPopUp(context);
-          }
+          // const storage = FlutterSecureStorage();
+          String? executeCount = await storage.read(key: 'executeCount');
+          await storage.write(key: 'executeCount', value: (int.parse(executeCount ?? '0')+1).toString());
           Navigator.push(
               context, MaterialPageRoute(builder: (
               context) => const Loading()));
@@ -221,7 +247,7 @@ class _HomeState extends State<Home> {
 
   Future<void> showReviewRequestPopUp(BuildContext context) async {
     Responsive res = Responsive(context);
-
+    print(DetectStatus.hasWroteReview);
     if (!DetectStatus.hasWroteReview) {
       showDialog(
           context: context,
@@ -232,7 +258,7 @@ class _HomeState extends State<Home> {
               ),
               content: Container(
                 margin: EdgeInsets.only(top: res.percentHeight(0.5)),
-                child: TextDefault(content: 'home_view.review'.tr(), fontSize: 18, isBold: true),
+                child: TextDefault(content: LS.tr('home_view.review'), fontSize: 18, isBold: true),
               ),
               actions: [
                 SizedBox(
@@ -241,26 +267,27 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Button(
-                          onPressed: () {
-                            DetectStatus.setHasWroteReview(false);
-                            Navigator.of(context).pop();
-                          },
-                          backgroundColor: const Color(0xFF8991A0),
-                          color: Colors.white,
-                          width: res.percentWidth(33),
-                          padding: res.percentWidth(4),
-                          text: 'home_view.review_later'.tr()
+                        onPressed: () {
+                          DetectStatus.setHasWroteReview(false);
+                          Navigator.of(context).pop();
+                        },
+                        backgroundColor: const Color(0xFF8991A0),
+                        color: Colors.white,
+                        width: res.percentWidth(33),
+                        padding: res.percentWidth(4),
+                        text: LS.tr('home_view.review_later')
                       ),
                       Button(
-                          onPressed: () async {
-                            DetectStatus.setHasWroteReview(true);
-                            inAppReview.openStoreListing(appStoreId: '6553973734');
-                          },
-                          backgroundColor: const Color(0xFF236EF3),
-                          color: Colors.white,
-                          width: res.percentWidth(33),
-                          padding: res.percentWidth(4),
-                          text: 'home_view.review_ok'.tr()
+                        onPressed: () async {
+                          DetectStatus.setHasWroteReview(true);
+                          inAppReview.openStoreListing(appStoreId: '6553973734');
+                          Navigator.of(context).pop();
+                        },
+                        backgroundColor: const Color(0xFF236EF3),
+                        color: Colors.white,
+                        width: res.percentWidth(33),
+                        padding: res.percentWidth(4),
+                        text: LS.tr('home_view.review_ok')
                       ),
                     ],
                   ),
@@ -328,7 +355,7 @@ class _HomeState extends State<Home> {
                                 left: res.percentWidth(23),
                                 top: res.percentWidth(8),
                                 child: TextDefault(
-                                  content: detectStatus.detectAvailable ? 'home_view.airpods_connected'.tr() : 'home_view.airpods_disconnected'.tr(),
+                                  content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
                                   fontSize: 18,
                                   isBold: true,
                                 ),
@@ -337,7 +364,7 @@ class _HomeState extends State<Home> {
                                 left: res.percentWidth(23),
                                 top: res.percentWidth(8)+25,
                                 child: TextDefault(
-                                  content: detectStatus.detectAvailable ? 'home_view.sensor_operation'.tr() : 'home_view.sensor_no_device'.tr(),
+                                  content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
                                   fontSize: 14,
                                   isBold: false,
                                   fontColor: const Color(0xFF236EF3),
@@ -361,7 +388,7 @@ class _HomeState extends State<Home> {
                                 width: res.percentWidth(85),
                                 padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
                                 child: TextDefault(
-                                  content: detectStatus.nowDetecting ? 'home_view.detection_doing'.tr() : 'home_view.detection_start_ask'.tr(),
+                                  content: detectStatus.nowDetecting ? LS.tr('home_view.detection_doing') : LS.tr('home_view.detection_start_ask'),
                                   fontSize: 27,
                                   isBold: true,
                                   height: 1.2,
@@ -374,10 +401,10 @@ class _HomeState extends State<Home> {
                                 onPressed: () async {
                                   print('asdf');
                                   if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
-                                    showSnackbar('home_view.airpods_connect_ask'.tr());
+                                    showSnackbar(LS.tr('home_view.airpods_connect_ask'));
                                   } else if (!detectStatus.nowDetecting) {
                                     if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
-                                      showSnackbar('home_view.end_today_free_time'.tr());
+                                      showSnackbar(LS.tr('home_view.end_today_free_time'));
                                     } else {
                                       _audioHandler?.play();
                                       Navigator.push(context, MaterialPageRoute(
@@ -407,11 +434,11 @@ class _HomeState extends State<Home> {
                               children: [
                                 Row(
                                   children: [
-                                    AssetIcon('maximize', size: 6,),
-                                    SizedBox(width: 5,),
+                                    const AssetIcon('maximize', size: 6,),
+                                    const SizedBox(width: 5,),
                                     TextDefault(
-                                      content: 'home_view.turtle_neck_forward_backward_detection'.tr(),
-                                      fontSize: 16,
+                                      content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
+                                      fontSize: 14,
                                       isBold: false,
                                     )
                                   ],

@@ -402,7 +402,7 @@ class _SettingState extends State<Settings> {
                     },
                     child:  TextDefault(content: 'setting_view.here'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
                   ),
-                   TextDefault(content: ' setting_view.click'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                   TextDefault(content: ' ${'setting_view.click'.tr()}', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
                 ],
               )
             ],

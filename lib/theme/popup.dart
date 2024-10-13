@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -38,7 +39,7 @@ class CustomPopUp extends StatelessWidget {
                 onClick!();
               }
             },
-            text: '확인',
+            text: context.locale.languageCode == 'ko' ? '확인' : 'Confirm',
             backgroundColor: const Color(0xFF236EF3),
             color: Colors.white,
             width: res.percentWidth(55),

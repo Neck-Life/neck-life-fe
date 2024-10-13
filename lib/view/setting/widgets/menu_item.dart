@@ -31,6 +31,7 @@ class MenuItem extends StatelessWidget {
       child: Container(
         width: res.deviceWidth,
         padding: EdgeInsets.only(left: res.percentWidth(6), right: res.percentWidth(6), top: res.percentHeight(3)),
+        color: Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -47,7 +48,7 @@ class MenuItem extends StatelessWidget {
             ),
             Row(
               children: [
-                text == 'setting_widgets.menu_item.my_subscription' ? GestureDetector(
+                text == 'setting_widgets.menu_item.my_subscription'.tr() ? GestureDetector(
                   onTap: () {
                     if (isPremium == false) {
                       Navigator.push(
@@ -58,7 +59,7 @@ class MenuItem extends StatelessWidget {
                     }
                   },
                   child: TextDefault(content: isPremium == true ? 'setting_widgets.menu_item.premium_plan'.tr() :
-                  'setting_widgets.menu_item.subscription'.tr(), fontSize: 15, isBold: false, fontColor: Color(0xFF236EF3),),
+                  'setting_widgets.menu_item.subscription'.tr(), fontSize: 15, isBold: false, fontColor: const Color(0xFF236EF3),),
                 ) : const SizedBox(),
                 SizedBox(width: res.percentWidth(2),),
                 const AssetIcon('arrowNext', color: Color(0xFF9696A2), size: 5,)

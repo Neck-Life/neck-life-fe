@@ -1,7 +1,9 @@
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
+import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/theme/popup.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
 // import 'package:mocksum_flutter/settings.dart';
@@ -56,6 +58,8 @@ class _PageNavBarState extends State<PageNavBar> {
       } else {
         await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
+
+      DetectStatus.lanCode = context.locale.languageCode;
     });
     super.initState();
   }
@@ -84,14 +88,14 @@ class _PageNavBarState extends State<PageNavBar> {
   Future<void> showSensorPermissionDialog(BuildContext context) async =>
       await showDialog<void>(
         context: context,
-        builder: (context) => const CustomPopUp(text: '본 앱은 에어팟의 센서를 사용하기 때문에 \n\'동작 및 피트니스\' 설정을 허용해야 사용할 수 있어요 '),
+        builder: (context) => CustomPopUp(text: 'permission_msg'.tr()),
       );
 
 
   Future<void> showCustomTrackingDialog(BuildContext context) async =>
     await showDialog<void>(
       context: context,
-      builder: (context) => const CustomPopUp(text: '본 앱은 보다 개인화된 광고 경험을 위해 앱 활동 내역을 추적할 수 있습니다.'),
+      builder: (context) => CustomPopUp(text: 'att_msg'.tr()),
     );
 
 
@@ -141,9 +145,9 @@ class _PageNavBarState extends State<PageNavBar> {
                       backgroundColor: const Color(0xFFF9F9F9),
                       selectedLabelStyle: const TextStyle(color: Color(0xFF101010)),
                       items: [
-                        BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: '홈'),
-                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: '기록'),
-                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: '설정')
+                        BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '홈' : 'Home'),
+                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
                       ],
                       currentIndex: _index,
                       onTap: (newIndex) async {
@@ -171,7 +175,7 @@ class _PageNavBarState extends State<PageNavBar> {
               return const LoginPage();
             }
           }
-          return const SizedBox();
+          return const Scaffold();
           // return MainPage();
         },
       )
