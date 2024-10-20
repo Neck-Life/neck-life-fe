@@ -9,10 +9,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mocksum_flutter/goal_setting.dart';
+import 'package:mocksum_flutter/page_navbar.dart';
+import 'package:mocksum_flutter/service/global_timer.dart';
+import 'package:mocksum_flutter/service/goal_provider.dart';
+import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/view/history/widgets/duration_dropdown.dart';
 import 'package:mocksum_flutter/view/history/widgets/score_explain.dart';
+import 'package:mocksum_flutter/view/history/widgets/update_explain.dart';
+import 'package:mocksum_flutter/view/home/home_view.dart';
 import 'package:mocksum_flutter/view/today_history/today_history_view.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
@@ -30,6 +37,8 @@ import 'dart:math' as math;
 import '../../model/pose_duration.dart';
 import '../../theme/triangle.dart';
 import '../../util/localization_string.dart';
+import '../goal/subpage/goal_setting.dart';
+import '../goal/subpage/widget/goal_list_item.dart';
 import '../home/widgets/app_bar.dart';
 
 
@@ -75,9 +84,15 @@ class _HistoryState extends State<History> {
   @override
   void initState() {
     super.initState();
-    // print('his view init');
-    getHistoryData(DateTime.now().year, DateTime.now().month);
+    print('his view init');
+    // if (UserStatus.sIsLogged) {
+    getHistoryData(DateTime
+        .now()
+        .year, DateTime
+        .now()
+        .month);
     getScoreSeriesV2('MONTH6');
+    // }
 
     _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
       switch (status) {
@@ -347,6 +362,9 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
+    GoalProvider goalState = context.watch();
+    DetectStatus detectStatus = context.watch();
+    GlobalTimer globalTimer = context.watch();
     // HistoryStatus historyStatus = context.watch();
     // if (historyStatus)
     // initScoreMap(historyStatus.scoreSeries);
@@ -362,8 +380,37 @@ class _HistoryState extends State<History> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+              detectStatus.nowDetecting ? GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      useSafeArea: false,
+                      builder: (context) {
+                        return const UpdateExplain();
+                      });
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: res.percentHeight(2)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: res.percentWidth(7.5)),
+                        width: res.percentWidth(3),
+                        height: res.percentWidth(3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF236EF3), //globalTimer.useSec % 2 == 1 ? const Color(0xFF236EF3) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      SizedBox(width: res.percentWidth(2),),
+                      TextDefault(content: 'history_view.measuring'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFF236EF3),)
+                    ],
+                  ),
+                ),
+              ): SizedBox(height: res.percentHeight(1),),
                 AnimatedContainer(
-                  margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(4), bottom: res.percentHeight(2)),
+                  margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(1) , bottom: res.percentHeight(2)),
                   height: _showScorePart ? res.percentHeight(12.5) : 0,
                   duration: const Duration(milliseconds: 250),
                   child: SingleChildScrollView(
@@ -718,6 +765,55 @@ class _HistoryState extends State<History> {
                                     ),
                                   ],
                                 ) : const SizedBox()
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: res.percentHeight(2),),
+                          WhiteContainer(
+                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2)),
+                            margin: EdgeInsets.only(right: res.percentWidth(7.5)),
+                            radius: 20,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context, MaterialPageRoute(builder: (
+                                        context) => const PageNavBar(pageIdx: 1,))
+                                    );
+                                  },
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextDefault(content: 'history_view.goal'.tr(), fontSize: 16, isBold: true),
+                                        AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF9696A2),)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: res.percentHeight(2),),
+                                GoalListItem(
+                                  goalType: GoalType.score,
+                                  targetValue: goalState.goalMap['score']['targetValue'] != null ? goalState.goalMap['score']['targetValue'].toDouble() : 85,
+                                  isSet: goalState.goalMap['score']['targetValue'] != null,
+                                  achieveRate: goalState.goalMap['score']['achieved_rate'] ?? 0,
+                                  fontSize: 14,
+                                  padding: EdgeInsets.symmetric(horizontal: res.percentWidth(4), vertical: res.percentHeight(2)),
+                                  isInHistory: true,
+                                ),
+                                SizedBox(height: res.percentHeight(1),),
+                                GoalListItem(
+                                  goalType: GoalType.time,
+                                  targetValue: goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toDouble() : 15,
+                                  isSet: goalState.goalMap['time']['targetValue'] != null,
+                                  achieveRate: goalState.goalMap['time']['achieved_rate'] ?? 0,
+                                  fontSize: 14,
+                                  padding: EdgeInsets.symmetric(horizontal: res.percentWidth(4), vertical: res.percentHeight(2)),
+                                  isInHistory: true,
+                                ),
                               ],
                             ),
                           ),

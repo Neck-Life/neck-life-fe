@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:audio_service/audio_service.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
@@ -14,7 +10,6 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
-import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/view/home/widgets/bottomsheet.dart';
@@ -31,7 +26,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/util/localization_string.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 import '../../theme/component/button.dart';
 import '../start_position/start_position_view.dart';
 import '../../util/responsive.dart';
@@ -39,13 +33,13 @@ import '../../util/responsive.dart';
 class Home extends StatefulWidget {
   const Home({super.key});
   @override
-  _HomeState createState() => _HomeState();
+  State<StatefulWidget> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
 
   static const storage = FlutterSecureStorage();
-  MyAudioHandler? _audioHandler;
+  static MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
@@ -53,6 +47,7 @@ class _HomeState extends State<Home> {
   bool _isAdLoaded = false;
   // bool _isPremium = false;
   bool _isLabMode = true;
+  bool _stopSheetOpened = false;
 
 
   @override
@@ -60,27 +55,32 @@ class _HomeState extends State<Home> {
     super.initState();
     // print('sadf');
     _initLocalNotification();
-    _setAudioHandler();
+    if (_audioHandler == null) {
+      _setAudioHandler();
+    }
     _amplitudeEventManager.viewEvent('mainpage');
+    setState(() {
+      _isLabMode = DetectStatus.isLabMode;
+    });
 
-    _ad = BannerAd(
-        size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/1760857231'
-        listener: BannerAdListener(
-            onAdLoaded: (_) {
-              setState(() {
-                _isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {
-              print(error);
-              ad.dispose();
-            }
-        ),
-        request: const AdRequest()
-    );
-
-    _ad.load();
+    // _ad = BannerAd(
+    //     size: AdSize.banner,
+    //     adUnitId: 'ca-app-pub-4299841579411814/1760857231', //ca-app-pub-3940256099942544/2934735716
+    //     listener: BannerAdListener(
+    //         onAdLoaded: (_) {
+    //           setState(() {
+    //             _isAdLoaded = true;
+    //           });
+    //         },
+    //         onAdFailedToLoad: (ad, error) {
+    //           print(error);
+    //           ad.dispose();
+    //         }
+    //     ),
+    //     request: const AdRequest()
+    // );
+    //
+    // _ad.load();
 
     GlobalTimer.timeEventStream.listen((useSec) {
       // print(useSec);
@@ -95,8 +95,13 @@ class _HomeState extends State<Home> {
 
     DetectStatus.detectAvailableEventStream.listen((flag) {
       if (!flag) {
-        showAirpodsBottomSheet();
-        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
+          Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+          if (!_stopSheetOpened) {
+            _stopSheetOpened = true;
+            showAirpodsBottomSheet();
+          }
+        }
       } else {
         if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
           Provider.of<GlobalTimer>(context, listen: false).startTimer();
@@ -122,6 +127,7 @@ class _HomeState extends State<Home> {
 
     print('$exeCnt $hasWroteReview');
     if (exeCnt >= DetectStatus.reviewRequestCount && hasWroteReview != '1') {
+      await storage.write(key: 'hasWroteReview', value: '1');
       await showReviewRequestPopUp(context);
     }
   }
@@ -180,6 +186,9 @@ class _HomeState extends State<Home> {
   }
 
   void showAirpodsBottomSheet() {
+    setState(() {
+      _stopSheetOpened = true;
+    });
     showModalBottomSheet(
       context: context,
       useSafeArea: false,
@@ -187,6 +196,9 @@ class _HomeState extends State<Home> {
         return const AirpodsConnectlessSheet();
       }
     ).whenComplete(() {
+      setState(() {
+        _stopSheetOpened = false;
+      });
       showSnackbar(LS.tr('home_view.airpods_disconnect_detection_end'));
     });
   }
@@ -198,7 +210,9 @@ class _HomeState extends State<Home> {
       builder: (context) {
         return StopDetectionSheet(onStop: () async {
           await Provider.of<DetectStatus>(context, listen: false).endDetecting();
+          print('end detection2');
           await _audioHandler?.pause();
+          print('end detection');
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection');
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
           // const storage = FlutterSecureStorage();
@@ -406,11 +420,12 @@ class _HomeState extends State<Home> {
                                     if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
                                       showSnackbar(LS.tr('home_view.end_today_free_time'));
                                     } else {
-                                      _audioHandler?.play();
                                       Navigator.push(context, MaterialPageRoute(
                                           builder: (
-                                              context) => const StartPosition()));
-                                      _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+                                              context) => StartPosition(onStart: () {
+                                            _audioHandler?.play();
+                                            _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+                                          },)));
                                     }
                                   } else {
                                     showStopDetectionSheet();
@@ -458,13 +473,13 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
-                      userStatus.isPremium ? const SizedBox() : Container(
-                        margin: EdgeInsets.only(top: res.percentHeight(1.5)),
-                        width: _ad.size.width.toDouble(),
-                        height: _ad.size.height.toDouble(),
-                        alignment: Alignment.center,
-                        child: AdWidget(ad: _ad),
-                      ),
+                      // userStatus.isPremium ? const SizedBox() : Container(
+                      //   margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                      //   width: _ad.size.width.toDouble(),
+                      //   height: _ad.size.height.toDouble(),
+                      //   alignment: Alignment.center,
+                      //   child: AdWidget(ad: _ad),
+                      // ),
                     ],
                   )
               ),

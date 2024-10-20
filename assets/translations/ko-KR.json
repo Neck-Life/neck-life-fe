@@ -97,7 +97,10 @@
     "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
     "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요"
-
+    "goal": "목표",
+    "measuring": "탐지 진행 중",
+    "measuring_title": "히스토리는 언제 업데이트되나요?",
+    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다."
   },
 
   "history_widgets" : {
@@ -294,7 +297,9 @@
   "start_position_view": {
     "explain_txt": "바른 자세를 5초 동안\\n유지해주세요!",
     "measuring_txt": "기준 자세 측정 중",
-    "btn_txt": "기준 자세 측정"
+    "btn_txt": "기준 자세 측정",
+    "guide_txt" : "등과 허리, 목을 곧게 펴고, 턱을 약간 당겨주세요.",
+    "start": "준비됐어요"
   },
 
   "today_history_view": {
@@ -342,7 +347,25 @@
     "internet1" : "인터넷 연결이 필요해요",
     "internet2" : "인터넷 연결이 가능한 곳에서 앱을",
     "internet3" : "실행해주시면 다시 정리해드릴게요."
-
+  },
+  "goal_view": {
+    "goal_txt1": "목표를 추가하고",
+    "goal_txt2": "바른 자세를 만들어보세요",
+    "add_goal": "목표 추가",
+    "complete": "완료",
+    "goal_set_txt1": "둘 중 하나를 선택해주세요",
+    "score": "자세 점수",
+    "time": "자세 유지시간",
+    "goal_set_ask": "몇 {}으로 할까요?",
+    "min": "분",
+    "sc": "점",
+    "add_txt": "추가하기",
+    "del_txt": "삭제하기",
+    "upd_txt": "수정하기",
+    "add_snack": "목표가 추가되었어요.",
+    "upd_snack": "목표가 수정되었어요.",
+    "del_snack": "목표가 삭제되었어요.",
+    "err_popup": "오류가 발생했어요. 다시 시도해주세요"
   }
 
 

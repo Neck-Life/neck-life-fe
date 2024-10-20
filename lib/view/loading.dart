@@ -25,10 +25,10 @@ class _LoadingState extends State<Loading> {
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
       // await Provider.of<HistoryStatus>(context, listen: false).updateHistoryData(DateTime.now().year.toString(), DateTime.now().month.toString().padLeft(2, '0'));
-      await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');
+      // await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');
       Navigator.push(
           context, MaterialPageRoute(builder: (
-          context) => PageNavBar(pageIdx: 1, key: UniqueKey())));
+          context) => PageNavBar(pageIdx: 2, key: UniqueKey())));
     });
     super.initState();
   }
@@ -76,9 +76,9 @@ class _LoadingState extends State<Loading> {
             !_internetConnectness ? (
              Column(
               children: [
-                TextDefault(content: 'loading.internet1'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
-                TextDefault(content: 'loading.internet2'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
-                TextDefault(content: 'loading.internet3'.tr(), fontSize: 16, isBold: true, fontColor: Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet1'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet2'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFFF25959), ),
+                TextDefault(content: 'loading.internet3'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFFF25959), ),
               ],
             )
             ) :  const SizedBox()

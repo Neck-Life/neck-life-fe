@@ -211,7 +211,7 @@ class _SettingState extends State<Settings> {
                               const storage = FlutterSecureStorage();
                               storage.deleteAll();
                               userStatus2.cleanAll();
-                              Provider.of<HistoryStatus>(context, listen: false).clearAll();
+                              // Provider.of<HistoryStatus>(context, listen: false).clearAll();
                               Navigator.push(context, MaterialPageRoute(builder: (
                                   context) => const LoginPage()));
                               // userStatus2.cleanAll();
@@ -395,14 +395,14 @@ class _SettingState extends State<Settings> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextDefault(content: 'setting_view.if_quit'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                  TextDefault(content: 'setting_view.if_quit'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                   GestureDetector(
                     onTap: () {
                       _showDeleteAccountAlert();
                     },
-                    child:  TextDefault(content: 'setting_view.here'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
+                    child:  TextDefault(content: 'setting_view.here'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0), underline: true,),
                   ),
-                   TextDefault(content: ' ${'setting_view.click'.tr()}', fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                   TextDefault(content: ' ${'setting_view.click'.tr()}', fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                 ],
               )
             ],

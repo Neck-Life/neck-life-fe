@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return CustomPopUp(text: 'login_view.login_error'.tr());
+      return CustomPopUp(text: LS.tr('login_view.login_error'));
     });
   }
 

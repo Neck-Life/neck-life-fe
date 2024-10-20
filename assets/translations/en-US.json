@@ -95,7 +95,12 @@
     "posture_score_difference": "Check your change\\nwith posture score",
     "timeLine": "Timeline",
     "tbd_content1": "We are preparing to",
-    "tbd_content2": "detect more postures!"
+    "tbd_content2": "detect more postures!",
+    "goal": "Goals",
+    "measuring": "Detecting",
+    "measuring_title": "When is the history updated?",
+    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab."
+
   },
   "history_widgets": {
     "duration_dropdown": {
@@ -275,7 +280,9 @@
   "start_position_view": {
     "explain_txt": "Please maintain a correct posture for 5 seconds!",
     "measuring_txt": "Measuring...",
-    "btn_txt": "Measure Reference Posture"
+    "btn_txt": "Measure Reference Posture",
+    "guide_txt" : "Straighten your back, waist, and neck, and slightly tuck in your chin.",
+    "start": "I'm ready"
   },
   "today_history_view": {
     "posture_detection": "Posture Detection",
@@ -317,5 +324,25 @@
     "internet1": "Internet connection is required",
     "internet2": "Please run the app with an internet connection",
     "internet3": "and we will organize your records."
+  },
+  "goal_view": {
+    "goal_txt1": "Add goals and",
+    "goal_txt2": "Motivate to correct your Posture",
+    "add_goal": "Add Goal",
+    "complete": "Complete",
+    "goal_set_txt1": "Please select one of the two.",
+    "score": "Posture Score",
+    "time": "Posture Maintenance Time",
+    "goal_set_ask": "How many {} would you like to set?",
+    "min": "m",
+    "sc": "p",
+    "minute": "minutes",
+    "add_txt": "Add",
+    "del_txt": "Delete",
+    "upd_txt": "Edit",
+    "add_snack": "The goal has been added.",
+    "upd_snack": "The goal has been updated.",
+    "del_snack": "The goal has been deleted.",
+    "err_popup": "An error occurred. Please try again."
   }
 }

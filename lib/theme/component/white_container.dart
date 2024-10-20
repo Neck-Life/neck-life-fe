@@ -10,7 +10,8 @@ class WhiteContainer extends StatelessWidget {
     this.child,
     this.padding,
     this.margin,
-    this.radius
+    this.radius,
+    this.borderColor
   });
 
   final double? width;
@@ -19,6 +20,7 @@ class WhiteContainer extends StatelessWidget {
   final EdgeInsets? padding;
   final EdgeInsets? margin;
   final double? radius;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class WhiteContainer extends StatelessWidget {
         borderRadius: radius == null ? BorderRadius.circular(10) : BorderRadius.circular(radius!),
         border: Border.all(
           width: 1,
-          color: const Color(0xFFE5E5EB)
+          color: borderColor ?? const Color(0xFFE5E5EB)
         )
       ),
       child: child

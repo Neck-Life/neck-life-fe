@@ -80,8 +80,6 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>We track usage data to provide more convenient and personalized services.</string>
 		<key>CFBundleLocalizations</key>
 		<array>
 			<string>ko</string>

@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
-import 'package:mocksum_flutter/service/history_provider.dart';
+import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider<DetectStatus>(create: (_) => DetectStatus()),
         ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus()),
-        ChangeNotifierProvider<HistoryStatus>(create: (_) => HistoryStatus()),
+        ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
         ChangeNotifierProvider<GlobalTimer>(create: (_) => GlobalTimer()),
       ],
       child: MaterialApp(

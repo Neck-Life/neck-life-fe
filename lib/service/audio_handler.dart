@@ -195,13 +195,13 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> pause() {
-    // print('pause');
+    print('pause');
     _isPlaying = false;
     _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'END';
     // print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
-    // print(_poseLog);
+    print(_poseLog);
     HistoryStatus.postMeasuredPoseData(_poseLog);
-    // print('poselog $_poseLog');
+    print('poselog $_poseLog');
     _bgAudioPlayer.pause();
     _minInterval = 0;
     _turtleNeckStartedTimeStamp = 0;

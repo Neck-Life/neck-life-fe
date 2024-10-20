@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddress = 'http://43.200.200.34/api/v1';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddress = 'http://43.200.200.34/api/v1';
 
   Map<String, dynamic> _historyData = {'daily' : []};
   Map<String, dynamic> _pastHistoryData = {'daily' : [], 'poseTimerMap': {}};
@@ -552,8 +552,8 @@ class HistoryStatus with ChangeNotifier {
       Response res = await dio.post(
           '$serverAddress/history', data: {'historys': json.decode(dataNotPosted)});
       if (res.data['code'] == 'success') {
-        // print('success');
-        // print('sened $dataNotPosted');
+        print('success not posted');
+        print('sened $dataNotPosted');
         await storage.write(key: 'dataNotPosted', value: '[]');
         return;
       } else {

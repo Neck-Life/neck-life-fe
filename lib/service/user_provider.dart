@@ -8,9 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddress = 'http://43.200.200.34/api/v1';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddress = 'http://43.200.200.34/api/v1';
 
+  static bool sIsLogged = false;
   bool _isLogged = false;
   bool _isPremium = false;
   String _accessTokenTemp = '';
@@ -28,6 +29,7 @@ class UserStatus with ChangeNotifier {
 
   void clearAll() {
     _isLogged = false;
+    sIsLogged = false;
     _isPremium = false;
     _accessTokenTemp = '';
     _refreshTokenTemp = '';
@@ -54,6 +56,7 @@ class UserStatus with ChangeNotifier {
 
   void setIsLogged(bool isLogged) {
     _isLogged = isLogged;
+    sIsLogged = isLogged;
     notifyListeners();
   }
 
@@ -110,6 +113,7 @@ class UserStatus with ChangeNotifier {
       // print("refreshToken: $refreshToken");
 
       _isLogged = true;
+      sIsLogged = true;
       return true;
     } else if (refreshToken != null && !isTokenExpired(refreshToken)) {
       // accessToken이 만료되었지만 refreshToken이 유효할 경우
@@ -128,6 +132,7 @@ class UserStatus with ChangeNotifier {
       await storage.delete(key: 'email');
 
       _isLogged = false;
+      sIsLogged = false;
       return false;
     }
   }
@@ -187,6 +192,7 @@ class UserStatus with ChangeNotifier {
       await storage.delete(key: 'email');
 
       _isLogged = false;
+      sIsLogged = false;
       notifyListeners();
 
     }
@@ -202,6 +208,7 @@ class UserStatus with ChangeNotifier {
     await storage.delete(key: 'email');
 
     _isLogged = false;
+    sIsLogged = false;
     notifyListeners();
 
     Navigator.of(context).pushReplacementNamed('/logout');
@@ -234,6 +241,7 @@ class UserStatus with ChangeNotifier {
     _accessTokenTemp = '';
     _refreshTokenTemp = '';
     _isLogged = false;
+    sIsLogged = false;
     _isPremium = false;
     _email = '';
 
@@ -280,6 +288,7 @@ class UserStatus with ChangeNotifier {
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {
       _isLogged = true;
+      sIsLogged = true;
 
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];

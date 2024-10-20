@@ -2,12 +2,12 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/theme/popup.dart';
+import 'package:mocksum_flutter/view/goal/goal_view.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
-// import 'package:mocksum_flutter/settings.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
+import 'package:mocksum_flutter/view/start_position/start_position_view.dart';
 import 'package:mocksum_flutter/view/tutorial/tutorial_view.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/setting/setting_view.dart';
 import 'package:app_settings/app_settings.dart';
-// import 'history.dart';
 
 class PageNavBar extends StatefulWidget {
   final int? pageIdx;
@@ -42,12 +41,14 @@ class _PageNavBarState extends State<PageNavBar> {
       _index = widget.pageIdx ?? 0;
     });
     Future.delayed(Duration.zero, () async {
-      WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) => _initATTPlugin());
+      // WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) => _initATTPlugin());
       await _updateIsFirstLaunch();
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
           .checkAndUpdateToken();
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
+
+
 
       if (_isFirstLaunch) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
@@ -56,6 +57,11 @@ class _PageNavBarState extends State<PageNavBar> {
       if (!isLogged) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
+        final sensorPermission = await Permission.sensors.status;
+        if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
+          await showSensorPermissionDialog(context);
+          AppSettings.openAppSettings();
+        }
         await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
 
@@ -64,25 +70,19 @@ class _PageNavBarState extends State<PageNavBar> {
     super.initState();
   }
 
-  Future<void> _initATTPlugin() async {
-    await Future.delayed(const Duration(seconds: 1));
-    final TrackingStatus status =
-    await AppTrackingTransparency.trackingAuthorizationStatus;
-    // If the system can show an authorization request dialog
-    if (status == TrackingStatus.notDetermined) {
-      await showCustomTrackingDialog(context);
-      // Wait for dialog popping animation
-      await Future.delayed(const Duration(milliseconds: 200));
-      // Request system's tracking authorization dialog
-      final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization();
-    }
-
-    final sensorPermission = await Permission.sensors.status;
-    if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
-      await showSensorPermissionDialog(context);
-      AppSettings.openAppSettings();
-    }
-  }
+  // Future<void> _initATTPlugin() async {
+  //   await Future.delayed(const Duration(seconds: 1));
+  //   final TrackingStatus status =
+  //   await AppTrackingTransparency.trackingAuthorizationStatus;
+  //   // If the system can show an authorization request dialog
+  //   if (status == TrackingStatus.notDetermined) {
+  //     await showCustomTrackingDialog(context);
+  //     // Wait for dialog popping animation
+  //     await Future.delayed(const Duration(milliseconds: 200));
+  //     // Request system's tracking authorization dialog
+  //     final TrackingStatus status = await AppTrackingTransparency.requestTrackingAuthorization();
+  //   }
+  // }
 
 
   Future<void> showSensorPermissionDialog(BuildContext context) async =>
@@ -123,7 +123,7 @@ class _PageNavBarState extends State<PageNavBar> {
               return Scaffold(
                 body: IndexedStack(
                   index: _index,
-                  children: const [Home(), History(), Settings()], // History(key: UniqueKey(),)
+                  children: const [Home(), Goal(), History(), Settings()], // History(key: UniqueKey(),)
                 ),
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -144,10 +144,12 @@ class _PageNavBarState extends State<PageNavBar> {
                     child: BottomNavigationBar(
                       backgroundColor: const Color(0xFFF9F9F9),
                       selectedLabelStyle: const TextStyle(color: Color(0xFF101010)),
+                      type: BottomNavigationBarType.fixed,
                       items: [
                         BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '홈' : 'Home'),
-                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
-                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
+                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
+                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
                       ],
                       currentIndex: _index,
                       onTap: (newIndex) async {
@@ -156,8 +158,10 @@ class _PageNavBarState extends State<PageNavBar> {
                           if (_index == 0) {
                             _amplitudeEventManager.viewEvent('mainpage');
                           } else if (_index == 1) {
-                            _amplitudeEventManager.viewEvent('history');
+                            _amplitudeEventManager.viewEvent('goal');
                           } else if (_index == 2) {
+                            _amplitudeEventManager.viewEvent('setting');
+                          } else if (_index == 3) {
                             _amplitudeEventManager.viewEvent('setting');
                           }
                         });
