@@ -229,7 +229,8 @@
         "alarm_sensitive_high": "High",
         "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
-        "sound_alarm_turn_on": "Enable sound alert"
+        "sound_alarm_turn_on": "Enable sound alert",
+        "sound_setting": "Alert Sound Settings"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -329,7 +330,7 @@
     "goal_txt1": "Add goals and",
     "goal_txt2": "Motivate to correct your Posture",
     "add_goal": "Add Goal",
-    "complete": "Complete",
+    "complete": "Done",
     "goal_set_txt1": "Please select one of the two.",
     "score": "Posture Score",
     "time": "Posture Maintenance Time",
@@ -344,5 +345,18 @@
     "upd_snack": "The goal has been updated.",
     "del_snack": "The goal has been deleted.",
     "err_popup": "An error occurred. Please try again."
+  },
+  "connect_guide": {
+    "guide": "Is it not working after connecting AirPods?",
+    "title": "If the app is not working even after connecting your AirPods, please check if any of the following apply.",
+    "permission_txt": "* Check the app's permission settings.",
+    "permission_desc": "To use AirPods sensors with this app, the 'Motion & Fitness' permission must be enabled. Please check in the app settings to ensure this permission is activated.",
+    "go_setting": "Go to Settings",
+    "model_txt": "1. Check if your AirPods model is compatible.",
+    "model_desc": "The sensor used by this app is only available on AirPods Pro, AirPods Max, and AirPods 3rd and 4th generation. It will not work with other models.",
+    "conn_txt": "2. Check if your AirPods are connected to another device.",
+    "conn_desc": "If your AirPods are connected to another smartphone, laptop, or device simultaneously, the app may not work. Play music on the device running this app to take over the AirPods connection, or disconnect them from the other device.",
+    "last": "If the app still does not work even after checking the above, please use the 'Send Feedback' option in the app's settings tab, or send an email to somart.necklife@gmail.com, and we will fix the issue as soon as possible."
   }
+
 }

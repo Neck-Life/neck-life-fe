@@ -12,6 +12,7 @@ class DetectStatus with ChangeNotifier {
   static bool sIsNowTurtle = false;
   static int sSensitivity = 1;
   static int sAlarmGap = 5;
+  static double sSoundVolume = 0.4;
 
   static bool isLabMode = true;
 
@@ -20,7 +21,7 @@ class DetectStatus with ChangeNotifier {
   static double nowPitch = 0;
   static int moveDirection = 0;
   static int tickCount = 0;
-  static bool sBgSoundActive = false;
+  static bool sBgSoundActive = true;
   static bool hasWroteReview = false;
   static int reviewRequestCount = 5;
 
@@ -29,7 +30,8 @@ class DetectStatus with ChangeNotifier {
   bool _isNowTurtle = false;
   int _sensitivity = 1;
   int _alarmGap = 5;
-  bool _bgSoungActive = false;
+  bool _bgSoungActive = true;
+  double _soundVolume = 0.4;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
@@ -37,6 +39,7 @@ class DetectStatus with ChangeNotifier {
   int get sensitivity => _sensitivity;
   int get alarmGap => _alarmGap;
   bool get bgSoundActive => _bgSoungActive;
+  double get soundVolume => _soundVolume;
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get detectAvailableEventStream => _detectAvailableEventController.stream;
@@ -58,6 +61,8 @@ class DetectStatus with ChangeNotifier {
     String? alarmSetting = await storage.read(key: 'alarm');
     String? bgSoundSetting = await storage.read(key: 'isBgActive');
     String? rawHasWroteReview = await storage.read(key: 'hasWroteReview');
+    String? soundVolumeStr = await storage.read(key: 'soundVolume');
+
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
       sSensitivity = _sensitivity;
@@ -73,6 +78,10 @@ class DetectStatus with ChangeNotifier {
     if (rawHasWroteReview != null) {
       hasWroteReview = rawHasWroteReview == '1' ? true : false;
       reviewRequestCount = 30;
+    }
+    if (soundVolumeStr != null) {
+      _soundVolume = double.parse(soundVolumeStr);
+      sSoundVolume = _soundVolume;
     }
   }
 
@@ -105,6 +114,14 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'sensitivity', value: _sensitivity.toString());
+  }
+
+  void setSoundVolume(double volume) async {
+    _soundVolume = volume;
+    sSoundVolume = volume;
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'soundVolume', value: _soundVolume.toString());
   }
 
   void setAlarmGap(int alarmGapVal) async {

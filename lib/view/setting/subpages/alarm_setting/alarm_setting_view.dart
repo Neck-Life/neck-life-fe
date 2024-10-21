@@ -23,6 +23,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
   double _sensitivity = 1;
   int _alarmGap = 5;
   bool _bgSoundActive = false;
+  double _volume = 0.4;
 
   @override
   void initState() {
@@ -35,6 +36,12 @@ class _AlarmSettingState extends State<AlarmSetting> {
       });
     });
   }
+
+  // @override
+  // void dispose() {
+  //   Provider.of<DetectStatus>(context, listen: false).setSoundVolume(_volume);
+  //   super.dispose();
+  // }
 
   void changeAlarmDelay(int? value, DetectStatus detectStatus) {
     setState(() {
@@ -156,21 +163,50 @@ class _AlarmSettingState extends State<AlarmSetting> {
               SizedBox(height: res.percentHeight(2)),
               WhiteContainer(
                 width: 87.5,
-                padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(1.5)),
+                padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
                 radius: 20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_alarm_turn_on".tr(), fontSize: 18, isBold: false),
-                    CupertinoSwitch(
-                      value: _bgSoundActive,
-                      activeColor: CupertinoColors.activeBlue,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _bgSoundActive = value ?? false;
-                          detectStatus.setBgSoundActive(_bgSoundActive);
-                        });
-                      },
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_setting".tr(), fontSize: 18, isBold: true),
+                    SizedBox(height: res.percentHeight(2),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_alarm_turn_on".tr(), fontSize: 16, isBold: false),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: CupertinoSwitch(
+                            value: _bgSoundActive,
+                            activeColor: CupertinoColors.activeBlue,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _bgSoundActive = value ?? false;
+                                detectStatus.setBgSoundActive(_bgSoundActive);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SliderTheme(
+                      data: SliderThemeData(
+                          activeTrackColor: const Color(0xFF3077F4),
+                          inactiveTrackColor: const Color(0xFFE5E5EB),
+                          thumbColor: const Color(0xFF3077F4),
+                          overlayShape: SliderComponentShape.noOverlay
+                      ),
+                      child: Slider(
+                          value: _volume,
+                          max: 1,
+                          onChanged: (double? value) {
+                            setState(() {
+                              _volume = value!;
+                              DetectStatus.sSoundVolume = _volume;
+                              print(value);
+                            });
+                          }
+                      ),
                     ),
                   ],
                 ),

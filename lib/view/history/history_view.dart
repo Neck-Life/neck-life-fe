@@ -399,7 +399,7 @@ class _HistoryState extends State<History> {
                         width: res.percentWidth(3),
                         height: res.percentWidth(3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF236EF3), //globalTimer.useSec % 2 == 1 ? const Color(0xFF236EF3) : Colors.transparent,
+                          color: globalTimer.useSec % 2 == 1 ? const Color(0xFF236EF3) : Colors.transparent,
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),

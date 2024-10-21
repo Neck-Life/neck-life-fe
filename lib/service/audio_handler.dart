@@ -52,10 +52,9 @@ class MyAudioHandler extends BaseAudioHandler {
       switch(message) {
         case kApplicationWillTerminate:
           print('app end');
-          if (_isPlaying) {
+          if (DetectStatus.sNowDetecting) {
             _poseLog['history'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
             HistoryStatus.postMeasuredPoseData(_poseLog);
-
           }
           break;
         default:
