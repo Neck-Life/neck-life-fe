@@ -26,6 +26,8 @@ class StartPositionState extends State<StartPosition> {
   bool _timerRunning = false;
   int _lastTime = 5;
   double _avgInitPitch = 0;
+  double _avgInitRoll = 0;
+  double _avgInitYaw = 0;
   Timer? _timer;
   bool _started = false;
 
@@ -51,11 +53,15 @@ class StartPositionState extends State<StartPosition> {
       });
       if (_lastTime <= 3) {
         _avgInitPitch += DetectStatus.nowPitch;
+        _avgInitRoll += DetectStatus.nowRoll;
+        _avgInitYaw += DetectStatus.nowYaw;
       }
       if (_lastTime <= 0) {
 
         timer.cancel();
         DetectStatus.initialPitch = _avgInitPitch / 3;
+        DetectStatus.initialRoll = _avgInitRoll / 3;
+        DetectStatus.initialYaw = _avgInitYaw / 3;
         detectStatus.startDetecting();
         Provider.of<GlobalTimer>(context, listen: false).startTimer();
         widget.onStart!();

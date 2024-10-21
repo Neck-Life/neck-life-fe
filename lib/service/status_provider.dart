@@ -17,8 +17,12 @@ class DetectStatus with ChangeNotifier {
   static bool isLabMode = true;
 
   static double initialPitch = 0;
+  static double initialRoll = 0;
+  static double initialYaw = 0;
+  static double nowYaw = 0;
   static double nowPosition = 0;
   static double nowPitch = 0;
+  static double nowRoll = 0;
   static int moveDirection = 0;
   static int tickCount = 0;
   static bool sBgSoundActive = true;
@@ -30,8 +34,10 @@ class DetectStatus with ChangeNotifier {
   bool _isNowTurtle = false;
   int _sensitivity = 1;
   int _alarmGap = 5;
+
   bool _bgSoungActive = true;
   double _soundVolume = 0.4;
+  bool isBackward = false;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
