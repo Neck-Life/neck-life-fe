@@ -30,7 +30,7 @@ import flutter_local_notifications
 
   override func applicationWillTerminate(_ application: UIApplication) {
       applicationLifeCycleChannel.sendMessage("applicationWillTerminate")
-      sleep(2)
+      sleep(3)
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
@@ -10,6 +11,7 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
+import 'package:mocksum_flutter/view/home/subpage/connect_guide/connect_guide.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/view/home/widgets/bottomsheet.dart';
@@ -213,7 +215,7 @@ class _HomeState extends State<Home> {
           print('end detection2');
           await _audioHandler?.pause();
           print('end detection');
-          _amplitudeEventManager.actionEvent('mainpage', 'enddetection');
+          _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime());
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
           // const storage = FlutterSecureStorage();
           String? executeCount = await storage.read(key: 'executeCount');
@@ -346,14 +348,18 @@ class _HomeState extends State<Home> {
               child: Center(
                   child: Column(
                     children: [
+                      SizedBox(height: res.percentHeight(2),),
                       GestureDetector(
                         onTap: () {
-                          if (!detectStatus.detectAvailable) {
-                            switch (OpenSettingsPlus.shared) {
-                              case OpenSettingsPlusIOS settings: settings.bluetooth();
-                              default: throw Exception('Platform not supported');
-                            }
-                          }
+                          // if (!detectStatus.detectAvailable) {
+                          //   switch (OpenSettingsPlus.shared) {
+                          //     case OpenSettingsPlusIOS settings: settings.bluetooth();
+                          //     default: throw Exception('Platform not supported');
+                          //   }
+                          // }
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (
+                              context) => const ConnectGuide()));
                         },
                         child: SizedBox(
                           width: res.percentWidth(85),
@@ -361,13 +367,27 @@ class _HomeState extends State<Home> {
                           child: Stack(
                             children: [
                               Positioned(
+                                child: Row(
+                                  children: [
+                                    const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
+                                    const SizedBox(width: 5,),
+                                    TextDefault(
+                                      content: 'connect_guide.guide'.tr(),
+                                      fontSize: 13,
+                                      isBold: false,
+                                      fontColor: const Color(0xFF236EF3),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              Positioned(
                                 // left: responsive.percentWidth(7.5),
-                                top: res.percentWidth(5),
+                                top: res.percentWidth(6),
                                 child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
                               ),
                               Positioned(
                                 left: res.percentWidth(23),
-                                top: res.percentWidth(8),
+                                top: res.percentWidth(9),
                                 child: TextDefault(
                                   content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
                                   fontSize: 18,
@@ -376,7 +396,7 @@ class _HomeState extends State<Home> {
                               ),
                               Positioned(
                                 left: res.percentWidth(23),
-                                top: res.percentWidth(8)+25,
+                                top: res.percentWidth(9)+25,
                                 child: TextDefault(
                                   content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
                                   fontSize: 14,

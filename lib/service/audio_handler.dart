@@ -78,14 +78,13 @@ class MyAudioHandler extends BaseAudioHandler {
       switch(message) {
         case kApplicationWillTerminate:
           print('app end');
-          if (_isPlaying) {
+          if (DetectStatus.sNowDetecting) {
             _poseForwardLog['forward'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
             _posePitchLog['pitch'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
             _poseTiltLog['tilt'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
 
             //todo
             HistoryStatus.postMeasuredPoseData(_poseForwardLog, _posePitchLog, _poseTiltLog,_poseRawLog);
-
           }
           break;
         default:

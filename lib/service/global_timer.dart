@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GlobalTimer with ChangeNotifier {
 
+  int _secOnStart = 0;
   int _useSec = 0;
   Timer? _timer;
   late String _lastDate;
@@ -14,6 +15,7 @@ class GlobalTimer with ChangeNotifier {
   static Stream<dynamic> get timeEventStream => _timeEventController.stream;
 
   int get useSec => _useSec;
+  int get secOnStart => _secOnStart;
 
   GlobalTimer() {
     init();
@@ -66,6 +68,7 @@ class GlobalTimer with ChangeNotifier {
 
   void startTimer() {
     // print('starttimer');
+    _secOnStart = _useSec;
     if (!_isRunning) {
       _isRunning = true;
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -78,6 +81,10 @@ class GlobalTimer with ChangeNotifier {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
+  }
+
+  int getDetectionTime() {
+    return _useSec - _secOnStart;
   }
 
   Future<void> emitTimeEvent(dynamic event) async {

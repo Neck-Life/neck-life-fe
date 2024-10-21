@@ -81,7 +81,7 @@ Future<void> initializeAudioSession() async {
   final AudioSession audioSession = await AudioSession.instance;
   await audioSession.configure(const AudioSessionConfiguration(
     avAudioSessionCategory: AVAudioSessionCategory.playback,
-    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
+    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.duckOthers, // check
     androidAudioAttributes: AndroidAudioAttributes(
       contentType: AndroidAudioContentType.music,
       usage: AndroidAudioUsage.media,
