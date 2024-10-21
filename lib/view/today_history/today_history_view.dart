@@ -94,7 +94,7 @@ class _TodayHistoryState extends State<TodayHistory> {
       }
 
       Response res = await HistoryStatus.dio.get(
-          '${HistoryStatus.serverAddress}/history/monthly?year=$newYear&month=$newMonth');
+          '${HistoryStatus.serverAddressV3}/history/monthly?year=$newYear&month=$newMonth');
 
       if (res.data['code'] == 'success') {
         // print('ok');

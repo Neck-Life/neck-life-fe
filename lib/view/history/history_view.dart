@@ -146,7 +146,7 @@ class _HistoryState extends State<History> {
       }
 
       Response res = await HistoryStatus.dio.get(
-          '${HistoryStatus.serverAddress}/history/monthly?year=$year&month=$month');
+          '${HistoryStatus.serverAddressV3}/history/monthly?year=$year&month=$month');
       DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
           // print('ok');
@@ -174,13 +174,15 @@ class _HistoryState extends State<History> {
           }
         });
 
-        timestamp2DurationList(_todayHistory['history'] ?? dummy);
+        print("todayhistory : ${_todayHistory}");
+
+        timestamp2DurationList(_todayHistory['pitch'] ?? dummy);
         storage.write(
-            key: 'posehistoryLocal', value: json.encode(_historyData));
+            key: 'posePitchLocal', value: json.encode(_historyData));
 
       }
     } on DioException catch(e) {
-      String? historyDataStr = await storage.read(key: 'posehistoryLocal');
+      String? historyDataStr = await storage.read(key: 'posePitchLocal');
       if (historyDataStr == null) {
         setState(() {
           _historyData = {'poseCountMap': {}, 'daily' : []};
@@ -271,8 +273,8 @@ class _HistoryState extends State<History> {
             durationType: DurationType.none,
             startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}'
           ));
-        } else if (prevPose == 'NORMAL') {
-          if (value != 'NORMAL') {
+        } else if (prevPose == 'DOWNNORMAL') {
+          if (value != 'DOWNNORMAL') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
               width: duration,
               durationType: DurationType.normal,
@@ -281,7 +283,7 @@ class _HistoryState extends State<History> {
             normalDurationSum += duration;
             normalDurationCount += 1;
           }
-        } else if (prevPose == 'FORWARD') {
+        } else if (prevPose == 'DOWN') {
           // if (value != 'FORWARD') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
               width: duration,
@@ -569,9 +571,9 @@ class _HistoryState extends State<History> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
-                                        PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['tilt'] ?? 0,),
-                                        PoseCountFrame(poseType: PoseType.back, count: _todayHistory['poseCountMap']['BACKWARD'] ?? 0,)
+                                        PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['DOWN'] ?? 0,),
+                                        PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
+                                        PoseCountFrame(poseType: PoseType.back, count: _todayHistory['poseCountMap']['TILT'] ?? 0,)
                                       ],
                                     ),
                                     Positioned(
@@ -616,7 +618,7 @@ class _HistoryState extends State<History> {
                                 Padding(
                                   padding: EdgeInsets.only(left: res.percentWidth(2)),
                                   child: TextDefault(
-                                      content: _todayHistory['history'] != null ?
+                                      content: _todayHistory['pitch'] != null ?
                                           'history_view.average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0, context.locale.languageCode)])
                                         // '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
                                         // : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
@@ -626,7 +628,7 @@ class _HistoryState extends State<History> {
                                   ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                _todayHistory['history'] == null ? Container(
+                                _todayHistory['pitch'] == null ? Container(
                                   margin: EdgeInsets.only(bottom: res.percentHeight(1), left: res.percentWidth(2)),
                                   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2), vertical: res.percentHeight(0.5)),
                                   decoration: BoxDecoration(
