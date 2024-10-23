@@ -33,15 +33,11 @@ class _AlarmSettingState extends State<AlarmSetting> {
         _sensitivity = Provider.of<DetectStatus>(context, listen: false).sensitivity.toDouble();
         _alarmGap = Provider.of<DetectStatus>(context, listen: false).alarmGap;
         _bgSoundActive = Provider.of<DetectStatus>(context, listen: false).bgSoundActive;
+        _volume = Provider.of<DetectStatus>(context, listen: false).soundVolume;
       });
     });
   }
 
-  // @override
-  // void dispose() {
-  //   Provider.of<DetectStatus>(context, listen: false).setSoundVolume(_volume);
-  //   super.dispose();
-  // }
 
   void changeAlarmDelay(int? value, DetectStatus detectStatus) {
     setState(() {
@@ -189,6 +185,9 @@ class _AlarmSettingState extends State<AlarmSetting> {
                         ),
                       ],
                     ),
+                    SizedBox(height: res.percentHeight(1)),
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.volume_setting".tr(), fontSize: 16, isBold: false),
+                    SizedBox(height: res.percentHeight(2)),
                     SliderTheme(
                       data: SliderThemeData(
                           activeTrackColor: const Color(0xFF3077F4),
@@ -202,10 +201,14 @@ class _AlarmSettingState extends State<AlarmSetting> {
                           onChanged: (double? value) {
                             setState(() {
                               _volume = value!;
-                              DetectStatus.sSoundVolume = _volume;
-                              print(value);
                             });
-                          }
+                          },
+                        onChangeEnd: (double? value) {
+                          setState(() {
+                            _volume = value!;
+                            Provider.of<DetectStatus>(context, listen: false).setSoundVolume(_volume);
+                          });
+                        },
                       ),
                     ),
                   ],

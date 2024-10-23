@@ -99,8 +99,8 @@
     "goal": "Goals",
     "measuring": "Detecting",
     "measuring_title": "When is the history updated?",
-    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab."
-
+    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab.",
+    "not_detected": "Not Detected!"
   },
   "history_widgets": {
     "duration_dropdown": {
@@ -112,6 +112,7 @@
     "pose_count_frame": {
       "slouch": "Slouched",
       "turtle": "Tech Neck",
+      "tilt": "Tilted",
       "back": "Reclining",
       "count": ""
     },
@@ -230,7 +231,8 @@
         "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
         "sound_alarm_turn_on": "Enable sound alert",
-        "sound_setting": "Alert Sound Settings"
+        "sound_setting": "Alert Sound Settings",
+        "volume_setting": "Volume Control"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {

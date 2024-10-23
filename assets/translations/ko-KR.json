@@ -100,7 +100,8 @@
     "goal": "목표",
     "measuring": "탐지 진행 중",
     "measuring_title": "히스토리는 언제 업데이트되나요?",
-    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다."
+    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다.",
+    "not_detected": "해당 자세는 한 번도 탐지되지 않았어요!"
   },
 
   "history_widgets" : {
@@ -114,13 +115,13 @@
       "slouch" : "굽은 자세",
       "turtle" : "거북목",
       "back" : "뒤로 빠짐",
+      "tilt": "턱 괴기",
       "count" : "회"
     },
     "score_explain" : {
       "how_to_score" : "자세 점수는 어떻게 계산되나요?",
       "how_to_score_explain" : "자세 점수는 사용자의 자세 변화를 감지하여 계산됩니다. 자세 변화는 사용자의 기준 자세와 비교하여 측정됩니다. 자세 변화가 적을수록 높은 점수를 받습니다.",
       "understand" : "이해했어요"
-
     }
   },
 
@@ -237,7 +238,9 @@
         "alarm_sensitive_high":"높음",
         "alarm_time":"알림 시간 기준 설정",
         "alarm_time_explain":"잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.",
-        "sound_alarm_turn_on":"소리알림 켜기"
+        "sound_alarm_turn_on":"소리 알림 켜기",
+        "sound_setting": "소리 알림 설정",
+        "volume_setting": "불륨 조절"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {

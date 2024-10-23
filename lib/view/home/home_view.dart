@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
       }
     });
 
-    _decideShowReviewPopup();
+    // _decideShowReviewPopup();
   }
 
   Future<void> _decideShowReviewPopup() async {

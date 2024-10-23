@@ -237,7 +237,7 @@ class MyAudioHandler extends BaseAudioHandler {
         _showPushAlarm();
         // _posePitchLog['pitch'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'HEADDOWN';
         if (DetectStatus.sBgSoundActive) {
-          _bgAudioPlayer.setVolume(0.4);
+          _bgAudioPlayer.setVolume(DetectStatus.sSoundVolume);
           Timer(const Duration(seconds: 2), () {
             _bgAudioPlayer.setVolume(0);
           });
@@ -382,7 +382,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
 
-    HistoryStatus.postDataNotPosted();
+    // HistoryStatus.postDataNotPosted();
   }
 
   bool _checkIsHeadDown() {
@@ -463,7 +463,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> pause() {
-    // print('pause');
+    print('pause');
     _isPlaying = false;
 
 

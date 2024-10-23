@@ -1,27 +1,24 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:mocksum_flutter/goal_setting.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
-import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/view/history/widgets/duration_dropdown.dart';
+import 'package:mocksum_flutter/view/history/widgets/duration_list_filter.dart';
 import 'package:mocksum_flutter/view/history/widgets/score_explain.dart';
 import 'package:mocksum_flutter/view/history/widgets/update_explain.dart';
-import 'package:mocksum_flutter/view/home/home_view.dart';
 import 'package:mocksum_flutter/view/today_history/today_history_view.dart';
-import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
@@ -42,16 +39,32 @@ import '../goal/subpage/widget/goal_list_item.dart';
 import '../home/widgets/app_bar.dart';
 
 
+const String appGroupId = 'group.necklifewidget';
+const String iOSWidgetName = 'NeckLifeWidget';
+
 class History extends StatefulWidget {
   const History({super.key});
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
+
+}
+
+void updateWidgetScore(int score, String slouch, String turtle, String tilt) {
+  HomeWidget.saveWidgetData<int>('score', score);
+  HomeWidget.saveWidgetData<String>('slouch', slouch);
+  HomeWidget.saveWidgetData<String>('turtle', turtle);
+  HomeWidget.saveWidgetData<String>('tilt', tilt);
+  HomeWidget.updateWidget(
+    iOSName: iOSWidgetName,
+  );
 }
 
 class _HistoryState extends State<History> {
   final GlobalKey todayKey = GlobalKey();
   final GlobalKey timelineKey = GlobalKey();
+
+  final GlobalKey todayCountKey = GlobalKey();
 
 
   late Map<String, int> poseCount;
@@ -78,7 +91,11 @@ class _HistoryState extends State<History> {
 
   Map<String, dynamic> _scoreSeries = {'historyPointMap': {}};
 
-  final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'FORWARD', '2024-09-26T19:03:27': 'NORMAL', '2024-09-26T19:03:36': 'FORWARD', '2024-09-26T19:03:50': 'NORMAL', '2024-09-26T19:04': 'FORWARD', '2024-09-26T19:04:03': 'NORMAL', '2024-09-26T19:04:06': 'FORWARD', '2024-09-26T19:04:15': 'NORMAL', '2024-09-26T19:04:47': 'END'};
+  PoseType _listChosenType = PoseType.slouch;
+
+  String? imagePath;
+
+  final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'DOWN', '2024-09-26T19:03:27': 'DOWNNORMAL', '2024-09-26T19:03:36': 'DOWN', '2024-09-26T19:03:50': 'DOWNNORMAL', '2024-09-26T19:04': 'DOWN', '2024-09-26T19:04:03': 'DOWNNORMAL', '2024-09-26T19:04:06': 'DOWN', '2024-09-26T19:04:15': 'DOWNNORMAL', '2024-09-26T19:04:47': 'END'};
 
 //  '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'
   @override
@@ -86,6 +103,7 @@ class _HistoryState extends State<History> {
     super.initState();
     print('his view init');
     // if (UserStatus.sIsLogged) {
+    HomeWidget.setAppGroupId(appGroupId);
     getHistoryData(DateTime
         .now()
         .year, DateTime
@@ -97,7 +115,7 @@ class _HistoryState extends State<History> {
     _internetCheckListener = InternetConnection().onStatusChange.listen((InternetStatus status) async {
       switch (status) {
         case InternetStatus.connected:
-          await HistoryStatus.postDataNotPosted();
+          // await HistoryStatus.postDataNotPosted();
           setState(() {
             _isInternetConnected = true;
           });
@@ -130,10 +148,6 @@ class _HistoryState extends State<History> {
         }
       }
     });
-
-    // Future.delayed(Duration.zero, () {
-    //   timestamp2Duration(context.read<HistoryStatus>().todayHistory['history']);
-    // });
   }
 
   Future<void> getHistoryData(int year, int month) async {
@@ -149,7 +163,8 @@ class _HistoryState extends State<History> {
           '${HistoryStatus.serverAddressV3}/history/monthly?year=$year&month=$month');
       DateTime now = DateTime.now();
       if (res.data['code'] == 'success') {
-          // print('ok');
+          print('ok');
+        // print(res.data['data']);
         final historyData = res.data['data'];
 
 
@@ -172,28 +187,35 @@ class _HistoryState extends State<History> {
             // print('asdf');
             _todayHistory = {'poseCountMap': {}, 'daily' : []};
           }
+          _listChosenType = _todayHistory[PoseType.slouch.poseFilter] == null ? (_todayHistory[PoseType.turtle.poseFilter] == null ? (_todayHistory[PoseType.tilt.poseFilter] == null ? PoseType.slouch : PoseType.tilt) : PoseType.turtle) : PoseType.slouch;
         });
 
-        print("todayhistory : ${_todayHistory}");
 
-        timestamp2DurationList(_todayHistory['pitch'] ?? dummy);
+        updateWidgetScore(86, '5', '2', '14'); //todayHistory['point'] ?? 0); _todayHistory['poseCountMap']['FORWARD'] + DOWN, TILT
+
+        // print(historyData);
+
+
+        timestamp2DurationList(_todayHistory[_listChosenType.poseFilter] ?? dummy);
         storage.write(
             key: 'posePitchLocal', value: json.encode(_historyData));
 
       }
     } on DioException catch(e) {
-      String? historyDataStr = await storage.read(key: 'posePitchLocal');
-      if (historyDataStr == null) {
-        setState(() {
-          _historyData = {'poseCountMap': {}, 'daily' : []};
-        });
-      } else {
-        setState(() {
-          _historyData = json.decode(historyDataStr);
-        });
-      }
+      print(e);
+      // String? historyDataStr = await storage.read(key: 'posePitchLocal');
+      // if (historyDataStr == null) {
+      //   setState(() {
+      //     _historyData = {'poseCountMap': {}, 'daily' : []};
+      //   });
+      // } else {
+      //   setState(() {
+      //     _historyData = json.decode(historyDataStr);
+      //   });
+      // }
     } on Exception catch (e) {
       // print(e);
+      print(e);
       setState(() {
         _historyData = {'poseCountMap': {}, 'daily' : []};
       });
@@ -235,7 +257,11 @@ class _HistoryState extends State<History> {
   }
 
   void timestamp2DurationList(Map<String, dynamic>? historyMap) {
-    // print('dummy2 $historyMap');
+    _poseDurationList = [];
+    _normalDurationSum = 0;
+    _normalDurationCount = 0;
+    _chosonDurationIdx = -1;
+    print('dummy2 $historyMap');
     if (historyMap == null) return;
 
     List<PoseDuration> poseDurationList = [];
@@ -273,8 +299,8 @@ class _HistoryState extends State<History> {
             durationType: DurationType.none,
             startTime: '${(time.hour).toString().padLeft(2, '0')}:${(time.minute).toString().padLeft(2, '0')}:${(time.second).toString().padLeft(2, '0')}'
           ));
-        } else if (prevPose == 'DOWNNORMAL') {
-          if (value != 'DOWNNORMAL') {
+        } else if (prevPose == '${_listChosenType.poseIdentifier}NORMAL') {
+          if (value != '${_listChosenType.poseIdentifier}NORMAL') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
               width: duration,
               durationType: DurationType.normal,
@@ -283,7 +309,7 @@ class _HistoryState extends State<History> {
             normalDurationSum += duration;
             normalDurationCount += 1;
           }
-        } else if (prevPose == 'DOWN') {
+        } else if (prevPose == _listChosenType.poseIdentifier) {
           // if (value != 'FORWARD') {
             poseDurationList.add(PoseDuration(xOffset: xOffset,
               width: duration,
@@ -556,9 +582,9 @@ class _HistoryState extends State<History> {
                                       children: [
                                         TextDefault(
                                           // 자세 탐지
-                                            content: 'history_view.posture_detection'.tr(),
-                                            fontSize: 16,
-                                            isBold: true
+                                          content: 'history_view.posture_detection'.tr(),
+                                          fontSize: 16,
+                                          isBold: true
                                         ),
                                         AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF9696A2),)
                                       ],
@@ -571,36 +597,59 @@ class _HistoryState extends State<History> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['DOWN'] ?? 0,),
-                                        PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
-                                        PoseCountFrame(poseType: PoseType.back, count: _todayHistory['poseCountMap']['TILT'] ?? 0,)
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context, MaterialPageRoute(builder: (
+                                                context) => TodayHistory(fullHistoryData: _historyData, date2idx: _data2idx, chosenType: PoseType.slouch,)));
+                                          },
+                                          child: PoseCountFrame(poseType: PoseType.slouch, count: _todayHistory['poseCountMap']['DOWN'] ?? 0,),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context, MaterialPageRoute(builder: (
+                                                context) => TodayHistory(fullHistoryData: _historyData, date2idx: _data2idx, chosenType: PoseType.turtle,)));
+                                          },
+                                          child: PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context, MaterialPageRoute(builder: (
+                                                context) => TodayHistory(fullHistoryData: _historyData, date2idx: _data2idx, chosenType: PoseType.tilt,)));
+                                          },
+                                          child: PoseCountFrame(poseType: PoseType.tilt, count: _todayHistory['poseCountMap']['TILT'] ?? 0,),
+                                        ),
+                                        // PoseCountFrame(poseType: PoseType.turtle, count: _todayHistory['poseCountMap']['FORWARD'] ?? 0,),
+                                        // PoseCountFrame(poseType: PoseType.tilt, count: _todayHistory['poseCountMap']['TILT'] ?? 0,)
                                       ],
                                     ),
-                                    Positioned(
-                                      left: res.percentWidth(25),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                          child: Container(
-                                            width: res.percentWidth(75),
-                                            height: res.percentHeight(30),
-                                            color: Colors.black.withOpacity(0),
-                                            alignment: Alignment.center,
-                                          ),
-                                        ),
-                                      )
-                                    ),
-                                    Positioned(
-                                      left: context.locale.languageCode == 'ko' ? res.percentWidth(34) : res.percentWidth(30),
-                                      top: res.percentHeight(6),
-                                      child: Column(
-                                        children: [
-                                          TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                          TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                        ],
-                                      )
-                                    ),
+                                    // Positioned(
+                                    //   left: res.percentWidth(25),
+                                    //   child: ClipRRect(
+                                    //     borderRadius: BorderRadius.circular(5),
+                                    //     child: BackdropFilter(
+                                    //       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                    //       child: Container(
+                                    //         width: res.percentWidth(75),
+                                    //         height: res.percentHeight(30),
+                                    //         color: Colors.black.withOpacity(0),
+                                    //         alignment: Alignment.center,
+                                    //       ),
+                                    //     ),
+                                    //   )
+                                    // ),
+                                    // Positioned(
+                                    //   left: context.locale.languageCode == 'ko' ? res.percentWidth(34) : res.percentWidth(30),
+                                    //   top: res.percentHeight(6),
+                                    //   child: Column(
+                                    //     children: [
+                                    //       TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
+                                    //       TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
+                                    //     ],
+                                    //   )
+                                    // ),
                                   ],
                                 )
                               ],
@@ -615,20 +664,33 @@ class _HistoryState extends State<History> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Row(
+                                  children: [PoseType.slouch, PoseType.turtle, PoseType.tilt].map((value) {
+                                    return DurationListFilter(type: value, chosen: value == _listChosenType, onClick: () {
+                                      setState(() {
+                                        _listChosenType = value;
+                                        if (_todayHistory[PoseType.turtle.poseFilter] == null && _todayHistory[PoseType.slouch.poseFilter] == null && _todayHistory[PoseType.tilt.poseFilter] == null) {
+                                          // timestamp2DurationList(dummy);
+                                        } else {
+                                          timestamp2DurationList(
+                                              _todayHistory[value.poseFilter]);
+                                        }
+                                      });
+                                    });
+                                  }).toList(),
+                                ),
                                 Padding(
                                   padding: EdgeInsets.only(left: res.percentWidth(2)),
                                   child: TextDefault(
-                                      content: _todayHistory['pitch'] != null ?
-                                          'history_view.average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0, context.locale.languageCode)])
-                                        // '평균 ${TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0)}마다 자세가 무너져요'
-                                        // : '자세 탐지를 하면 1초단위로\n내 자세를 알 수 있어요',
+                                      content: _todayHistory[_listChosenType.poseFilter] != null ?
+                                      (_chosonDurationIdx != -1 ? 'history_view.average_posture_lose_time'.tr(args:[TimeConvert.sec2Min(_normalDurationCount > 0 ? _normalDurationSum~/_normalDurationCount : 0, context.locale.languageCode)]) : 'history_view.not_detected'.tr())
                                       : LS.tr('history_view.today_history_scoring_default'),
                                       fontSize: 16,
                                       isBold: true
                                   ),
                                 ),
                                 SizedBox(height: res.percentHeight(2),),
-                                _todayHistory['pitch'] == null ? Container(
+                                _todayHistory['pitch'] == null && _todayHistory['forward'] == null && _todayHistory['tilt'] == null? Container(
                                   margin: EdgeInsets.only(bottom: res.percentHeight(1), left: res.percentWidth(2)),
                                   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2), vertical: res.percentHeight(0.5)),
                                   decoration: BoxDecoration(
@@ -638,7 +700,7 @@ class _HistoryState extends State<History> {
                                       color: const Color(0xFF8991A0)
                                     )
                                   ),
-                                  child: TextDefault(content: 'history_view.example'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
+                                  child: TextDefault(content: 'history_view.example'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                                 ) : const SizedBox(),
                                 Stack(
                                   children: [
@@ -741,7 +803,7 @@ class _HistoryState extends State<History> {
                                         children: [
                                           TextDefault(
                                             // 거북목 자세 탐지
-                                              content: 'history_view.forward_neck_detection'.tr(),
+                                              content: _listChosenType.poseString,
                                               fontSize: 16,
                                               isBold: false
                                           ),
@@ -755,7 +817,7 @@ class _HistoryState extends State<History> {
                                               ),
                                               AssetIcon('bullet', size: res.percentWidth(1), color: const Color(0xFF9696A2),),
                                               TextDefault(
-                                                content: TimeConvert.sec2Min(_poseDurationList[_chosonDurationIdx].durationSec!, context.locale.languageCode),
+                                                content: TimeConvert.sec2Min(_poseDurationList[_chosonDurationIdx].durationSec ?? 0, context.locale.languageCode),
                                                 fontSize: 16,
                                                 isBold: false,
                                                 fontColor: const Color(0xFF236EF3),

@@ -7,11 +7,11 @@ import 'package:dio/dio.dart';
 
 
 class HistoryStatus with ChangeNotifier {
-  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddressV3 = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v3';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddressV3 = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v3';
 
-  static const String serverAddress = 'http://43.200.200.34/api/v1';
-  static const String serverAddressV3 = 'http://43.200.200.34/api/v3';
+  // static const String serverAddress = 'http://43.200.200.34/api/v1';
+  // static const String serverAddressV3 = 'http://43.200.200.34/api/v3';
 
   Map<String, dynamic> _historyData = {'daily' : []};
   Map<String, dynamic> _pastHistoryData = {'daily' : [], 'poseTimerMap': {}};
@@ -520,6 +520,8 @@ class HistoryStatus with ChangeNotifier {
     try {
       // print(poseHistory);
 
+      print('sadfdsfdfsdssdsdfsa');
+      print({'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
       // todo 데이터 전송방식이 바뀌어서 안보내졌을때 캐시에 저장하는거 수정되어야 함
       Response res = await dio.post(
           '$serverAddressV3/history', data: {'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
@@ -603,6 +605,7 @@ class HistoryStatus with ChangeNotifier {
       return;
     }
 
+
     try {
       Response res = await dio.post(
           '$serverAddressV3/history', data: {'pitch': json.decode(dataNotPostedPitch), 'forward': json.decode(dataNotPostedForward), 'tilt': json.decode(dataNotPostedTilt), 'rawData': json.decode(dataNotPostedRaw)});
@@ -620,7 +623,7 @@ class HistoryStatus with ChangeNotifier {
         throw Exception();
       }
     } on Exception {
-      // print('adsfasffsdfdsfsd');
+      print('adsfasffsdfdsfsd');
       return;
     }
   }
