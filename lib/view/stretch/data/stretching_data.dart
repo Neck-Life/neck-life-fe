@@ -178,4 +178,14 @@ final List<StretchingGroup> stretchingGroups = [
       ),
     ],
   ),
+  StretchingGroup(
+    groupName: '목 뒤로 젖히기운동',
+    actions: [
+      StretchingAction(
+        name: '고개 위로 기울이기',
+        isCompleted: (pitch, roll, yaw) => pitch > 0.8,
+        duration: 5, // 3초 동안 유지
+      ),
+    ],
+  ),
 ];
