@@ -8,7 +8,7 @@ import '../../../service/status_provider.dart';
 import 'models/stretching_action.dart';
 
 class StretchingSession extends StatefulWidget {
-  final StretchingGroup selectedGroup = stretchingGroups[1];
+  final StretchingGroup selectedGroup = stretchingGroups[5];
   // 선택된 그룹을 전달받음, 나중에 프로바이더에서 받아오기
 
   StretchingSession({super.key});

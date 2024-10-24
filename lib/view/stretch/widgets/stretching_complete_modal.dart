@@ -36,7 +36,7 @@ class StretchingCompleteModalSheet extends StatefulWidget {
 }
 
 class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSheet> {
-  int countdown = 29; // 초기값 29로 설정
+  int countdown = 5; // 초기값 29로 설정
   Timer? _timer; // 타이머를 위한 변수
 
   @override
@@ -147,7 +147,7 @@ class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSh
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        text: '안할래요 ($countdown)', // 카운트다운 값 표시
+                        text: '그만하기', // 카운트다운 값 표시
                         backgroundColor: const Color(0xFF8991A0),
                         color: Colors.white,
                         width: res.percentWidth(38),
@@ -156,12 +156,12 @@ class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSh
                       Button(
                         onPressed: () {
                           Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => StretchingSession()),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => StretchingSession()),
+                          // );
                         },
-                        text: '스트레칭 시작',
+                        text: '이어서 하기($countdown)',
                         backgroundColor: const Color(0xFF236EF3),
                         color: Colors.white,
                         width: res.percentWidth(38),

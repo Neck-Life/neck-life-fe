@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 
 class StretchingCompletedScreen extends StatefulWidget {
   const StretchingCompletedScreen({super.key});
@@ -18,6 +19,7 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
     // 3초 후에 이전 화면으로 돌아가는 타이머 설정
     _timer = Timer(const Duration(seconds: 3), () {
       Navigator.pop(context);
+      showStretchingCompleteModal(context);
     });
   }
 
