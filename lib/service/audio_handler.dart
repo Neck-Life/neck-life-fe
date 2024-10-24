@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
@@ -15,6 +16,8 @@ class MyAudioHandler extends BaseAudioHandler {
 
   StreamSubscription<DeviceMotionData>? _subscription;
   double _nowPitch = 0;
+  double _nowRoll = 0;
+  double _nowYaw = 0;
   double _nowPosition = 0;
   int _minInterval = 0;
   int _turtleNeckStartedTimeStamp = 0;
@@ -66,6 +69,8 @@ class MyAudioHandler extends BaseAudioHandler {
 
     _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
       _nowPitch = data.toJson()['pitch'];
+      _nowRoll = data.toJson()['roll'];
+      _nowYaw = data.toJson()['yaw'];
       _headPositionHandler.processSensorData(data);
 
       if(DetectStatus.isLabMode) {
@@ -100,7 +105,8 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
       DetectStatus.nowPitch = _nowPitch;
-
+      DetectStatus.nowRoll = _nowRoll;
+      DetectStatus.nowYaw = _nowYaw;
 
       DetectStatus.nowPosition = _nowPosition;
       DetectStatus.tickCount = (DetectStatus.tickCount+1) % 300;
