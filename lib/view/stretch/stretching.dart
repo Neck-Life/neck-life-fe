@@ -5,10 +5,13 @@ import 'package:mocksum_flutter/view/stretch/widgets/StretchingWidget.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_start_modal.dart';
 
+import '../../service/stretching_timer.dart';
+
 /**
  * 스트레칭괸련 테스트용 화면
  * TODO : 팀지 도중 mm분마다 스트레칭 모달창 띄우기
  */
+StretchingTimer stretchingTimer = StretchingTimer();
 
 class Stretching extends StatefulWidget {
   const Stretching({Key? key}) : super(key: key);
@@ -57,6 +60,12 @@ class _StretchingState extends State<Stretching> {
               );
             },
             child: const Text('스트레칭 세션'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              stretchingTimer.setTimer(context);
+            },
+            child: const Text('스트레칭타이머 설정'),
           ),
         ],
       ),
