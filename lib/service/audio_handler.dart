@@ -30,7 +30,10 @@ class MyAudioHandler extends BaseAudioHandler {
   Map<String, dynamic> _poseForwardLog = {"forward": {}};
   Map<String, dynamic> _posePitchLog = {"pitch": {}};
   Map<String, dynamic> _poseTiltLog = {"tilt": {}};
-  List<dynamic> _poseRawLog = [];
+  List<dynamic> _poseRawLog = [{        'timestamp': DateTime.now().toIso8601String(),
+    'pitch': 0,
+    'roll': 0,
+    'position': 0,}];
 
   bool _isPlaying = false;
 
@@ -108,14 +111,14 @@ class MyAudioHandler extends BaseAudioHandler {
       _isBackward = _headPositionHandler.isBackward();
       // _checkIsBackward();
 
-      //로우데이터 저장
-      _poseRawLog.add({
-        'timestamp': DateTime.now().toIso8601String(),
-        'pitch': _nowPitch,
-        'roll': _nowRoll,
-        'position': _nowPosition,
-        // 'status' : _checkIsNowTurtle() ? 'FORWARD' : 'NORMAL'
-      });
+      // 로우데이터 저장
+      // _poseRawLog.add({
+      //   'timestamp': DateTime.now().toIso8601String(),
+      //   'pitch': _nowPitch,
+      //   'roll': _nowRoll,
+      //   'position': _nowPosition,
+      //   // 'status' : _checkIsNowTurtle() ? 'FORWARD' : 'NORMAL'
+      // });
 
 
       // 로깅 최소시간 설정 - pitch값
@@ -490,6 +493,10 @@ class MyAudioHandler extends BaseAudioHandler {
     _posePitchLog = {"pitch": {}};
     _poseForwardLog = {"forward": {}};
     _poseTiltLog = {"tilt": {}};
+    _poseRawLog =[{        'timestamp': DateTime.now().toIso8601String(),
+      'pitch': 0,
+      'roll': 0,
+      'position': 0,}];
     return super.pause();
   }
 

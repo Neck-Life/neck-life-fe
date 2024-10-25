@@ -56,6 +56,10 @@ class HistoryStatus {
       }
 
 
+      // final JsonData = json.encode({'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
+      // print('JSON 데이터 크기: ${utf8.encode(JsonData).length} bytes');
+
+
       print('sadfdsfdfsdssdsdfsa');
       print({'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
       // todo 데이터 전송방식이 바뀌어서 안보내졌을때 캐시에 저장하는거 수정되어야 함
@@ -63,6 +67,7 @@ class HistoryStatus {
           '$serverAddressV3/history', data: {'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
 
       print(res.data);
+
       if (res.data['code'] == 'success') {
         print('success');
         return;

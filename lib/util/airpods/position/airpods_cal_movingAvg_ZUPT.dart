@@ -75,11 +75,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
     double offset = 0.01;
 
     if(cal_acc<0){
-      cal_acc*=1.7;
+      cal_acc*=2;
     }
 
 
-    if(cal_acc>0 && cal_acc < offset*1.3) {
+    if(cal_acc>0 && cal_acc < offset*1.1) {
       cal_acc = 0;
     }else if (cal_acc<0 &&cal_acc> -offset){
       cal_acc=0;
