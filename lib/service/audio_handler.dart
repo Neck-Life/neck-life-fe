@@ -220,7 +220,7 @@ class MyAudioHandler extends BaseAudioHandler {
         if (_isNowHeadDown  && canPitchLog) {
 
 
-          print(DateTime.now().toIso8601String());
+          // print(DateTime.now().toIso8601String());
 
           // print('NORMAL');
           _posePitchLog['pitch'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'DOWNNORMAL';
@@ -410,7 +410,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
   bool _checkIsForward() {
-    if (DetectStatus.nowPosition > _forwardNeckThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.nowPosition > 0.2) {
       return true;
     } else {
       return false;

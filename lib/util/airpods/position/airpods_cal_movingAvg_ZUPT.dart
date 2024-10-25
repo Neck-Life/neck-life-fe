@@ -72,11 +72,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = cal_acc_y; //y축만 고려하기
-    double offset = 0.006;
+    double offset = 0.01;
 
-    // if(cal_acc<0){
-    //   cal_acc*=1.4;
-    // }
+    if(cal_acc<0){
+      cal_acc*=1.7;
+    }
 
 
     if(cal_acc>0 && cal_acc < offset*1.3) {
@@ -88,9 +88,9 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //
     // cal_acc*=1.4;
 
-    if(cal_acc<0){
-      cal_acc*=1.2;
-    }
+    // if(cal_acc<0){
+    //   cal_acc*=1.2;
+    // }
 
 
 
@@ -157,8 +157,8 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     if(velocity>0.030){
       velocity = 0.030;
-    }else if(velocity<-0.030){
-      velocity = -0.030;
+    }else if(velocity<-0.040){
+      velocity = -0.040;
     }
 
 
@@ -245,7 +245,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
 
-    if(pitchSum > 0.015){
+    if(pitchSum > 0.018){
       // print(pitchSum);
       // print(velocity);
       position = 0;
