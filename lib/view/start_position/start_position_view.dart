@@ -7,6 +7,7 @@ import 'package:mocksum_flutter/theme/component/person_icon.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/start_position/widget/animated_man.dart';
 import 'package:mocksum_flutter/view/start_position/widget/spinning_timer.dart';
+import '../../theme/asset_icon.dart';
 import '../../theme/component/button.dart';
 import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
@@ -62,12 +63,49 @@ class StartPositionState extends State<StartPosition> {
         DetectStatus.initialPitch = _avgInitPitch / 3;
         DetectStatus.initialRoll = _avgInitRoll / 3;
         DetectStatus.initialYaw = _avgInitYaw / 3;
-        detectStatus.startDetecting();
-        Provider.of<GlobalTimer>(context, listen: false).startTimer();
-        widget.onStart!();
+        if (detectStatus.detectAvailable) {
+          detectStatus.startDetecting();
+          Provider.of<GlobalTimer>(context, listen: false).startTimer();
+          widget.onStart!();
+        } else {
+          showSnackbar(LS.tr('home_view.airpods_disconnect_detection_end'));
+        }
         Navigator.pop(context);
       }
     });
+  }
+
+  void showSnackbar(String msg) {
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+                color: const Color(0xFF34A853),
+                borderRadius: BorderRadius.circular(10)
+            ),
+            alignment: Alignment.center,
+            child: const AssetIcon('check', color: Colors.white, size: 20,),
+          ),
+          const SizedBox(width: 10,),
+          TextDefault(
+            content: msg,
+            fontSize: 16,
+            isBold: false,
+            fontColor: Colors.white,
+          )
+        ],
+      ),
+      backgroundColor: const Color(0xFF323238),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+      ),
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -108,7 +146,11 @@ class StartPositionState extends State<StartPosition> {
                       SizedBox(height: res.percentHeight(2),),
                       Button(
                         onPressed: () {
-                          _startTimer();
+                          if (DetectStatus.sDetectAvailable) {
+                            _startTimer();
+                          } else {
+                            showSnackbar(LS.tr('home_view.airpods_disconnect_detection_end'));
+                          }
                         },
                         text: 'start_position_view.start'.tr(),
                         backgroundColor: const Color(0xFF236EF3),

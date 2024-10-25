@@ -24,7 +24,8 @@ class MyAudioHandler extends BaseAudioHandler {
   int _turtleNeckStartedTimeStamp = 0;
   int _turtleNeckStartedTimeStamp2 = 0;
   int _turtleNeckStartedTimeStamp3 = 0;
-  final List<double> _turtleNeckThreshold = [0.5, 0.4, 0.3];
+  final List<double> _slouchTiltThreshold = [0.5, 0.4, 0.3];
+  final List<double> _forwardNeckThreshold = [0.2, 0.15, 0.1];
   final PositionDisplay _headPositionHandler = PositionDisplay();
   Map<String, dynamic> _poseForwardLog = {"forward": {}};
   Map<String, dynamic> _posePitchLog = {"pitch": {}};
@@ -109,7 +110,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
       //로우데이터 저장
       _poseRawLog.add({
-        'timestamp': DateTime.now().toIso8601String().split('.')[0].substring(0, 19),
+        'timestamp': DateTime.now().toIso8601String(),
         'pitch': _nowPitch,
         'roll': _nowRoll,
         'position': _nowPosition,
@@ -234,7 +235,9 @@ class MyAudioHandler extends BaseAudioHandler {
       // print(_isNowHeadDown);
 
       if (DetectStatus.sNowDetecting && _checkIsHeadDown() && _minInterval == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp >= DetectStatus.sAlarmGap*1000) {
-        _showPushAlarm();
+        if (DetectStatus.sPushNotiAvtive) {
+          _showPushAlarm();
+        }
         // _posePitchLog['pitch'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'HEADDOWN';
         if (DetectStatus.sBgSoundActive) {
           _bgAudioPlayer.setVolume(DetectStatus.sSoundVolume);
@@ -290,7 +293,9 @@ class MyAudioHandler extends BaseAudioHandler {
       _isNowForwardOrBackward = _checkIsForward();
 
       if (DetectStatus.sNowDetecting && _checkIsForward() && _minInterval2 == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp2 >= DetectStatus.sAlarmGap*1000) {
-        _showPushAlarm();
+        if (DetectStatus.sPushNotiAvtive) {
+          _showPushAlarm();
+        }
 
         if (DetectStatus.sBgSoundActive) {
           _bgAudioPlayer.setVolume(0.4);
@@ -333,7 +338,9 @@ class MyAudioHandler extends BaseAudioHandler {
       _isNowTilt = _checkIsTilt();
 
       if (DetectStatus.sNowDetecting && _checkIsTilt() && _minInterval3 == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp3 >= DetectStatus.sAlarmGap*1000) {
-        _showPushAlarm();
+        if (DetectStatus.sPushNotiAvtive) {
+          _showPushAlarm();
+        }
 
         if (DetectStatus.sBgSoundActive) {
           _bgAudioPlayer.setVolume(0.4);
@@ -386,7 +393,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsHeadDown() {
-    if (DetectStatus.initialPitch - _nowPitch > _turtleNeckThreshold[DetectStatus.sSensitivity]) {
+    if (DetectStatus.initialPitch - _nowPitch > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
@@ -394,7 +401,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsTilt() {
-    if ((DetectStatus.initialRoll - _nowRoll).abs() > _turtleNeckThreshold[DetectStatus.sSensitivity]) {
+    if ((DetectStatus.initialRoll - _nowRoll).abs() > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;
@@ -403,7 +410,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
   bool _checkIsForward() {
-    if (DetectStatus.nowPosition > 0.15) {
+    if (DetectStatus.nowPosition > _forwardNeckThreshold[DetectStatus.sSensitivity]) {
       return true;
     } else {
       return false;

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), score: 0, slouch: "0", turtle: "0", tilt: "0")
+        SimpleEntry(date: Date(), score: 82, slouch: "5", turtle: "2", tilt: "7")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
@@ -68,17 +68,54 @@ struct NeckLIfeWidgetEntryView : View {
     
 
     var body: some View {
-        VStack {
+        VStack (alignment: .leading) {
             Text(String(entry.score)).foregroundColor(Color(hex: 0x236EF3))
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(hex: 0x236EF3))
-                    .frame(width: CGFloat(100*entry.score/100), height: 5)
+                .font(.system(size: 35, weight: .bold))
+                .offset(y: 10)
+            ZStack (alignment: .leading) {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(hex: 0xD9D9D9))
-                    .frame(width: CGFloat(100*entry.score/100), height: 5)
-            }
+                    .frame(width: CGFloat(110), height: 5)
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(hex: 0x236EF3))
+                    .frame(width: CGFloat(110*entry.score/100), height: 5)
+            }.offset(y: -12)
+            HStack {
+                VStack {
+                    Image("SlouchImg")
+                        .resizable()
+                          .frame(width: 35, height: 35)
+                    Text(entry.slouch)
+                        .foregroundColor(Color(hex: 0xF25959))
+                        .font(.system(size: 20))
+                }
+                VStack {
+                    Image("TurtleImg")
+                        .resizable()
+                          .frame(width: 35, height: 35)
+                    Text(entry.turtle)
+                        .foregroundColor(Color(hex: 0xF25959))
+                        .font(.system(size: 20))
+                }
+                VStack {
+                    Image("TiltImg")
+                        .resizable()
+                          .frame(width: 35, height: 35)
+                    Text(entry.tilt)
+                        .foregroundColor(Color(hex: 0xF25959))
+                        .font(.system(size: 20))
+                }
+            }.offset(y: -10)
         }
+        Text("Start")
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color(hex: 0x236EF3))
+            .cornerRadius(10)
+            .foregroundColor(Color.white)
+            .font(.system(size: 12))
+            .widgetURL(URL(string: "com.googleusercontent.apps.1055838194336-oobg73q1mtdons2sf5f1l8k13macdv7f://start"))
+            .offset(y: -10)
     }
 }
 
@@ -96,8 +133,8 @@ struct NeckLIfeWidget: Widget {
                     .background()
             }
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("NeckLife Widget")
+        .description("This shows basic your today posture stats.")
         .supportedFamilies([.systemSmall])
     }
 }
@@ -106,5 +143,5 @@ struct NeckLIfeWidget: Widget {
     NeckLIfeWidget()
 } timeline: {
     SimpleEntry(date: .now, score: 0, slouch: "0", turtle: "0", tilt: "0")
-    SimpleEntry(date: .now, score: 0, slouch: "0", turtle: "0", tilt: "0")
+//    SimpleEntry(date: .now, score: 0, slouch: "0", turtle: "0", tilt: "0")
 }

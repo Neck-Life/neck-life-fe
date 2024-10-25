@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +41,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final appLinks = AppLinks();
+
   static const storage = FlutterSecureStorage();
   static MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
@@ -50,6 +53,7 @@ class _HomeState extends State<Home> {
   // bool _isPremium = false;
   bool _isLabMode = true;
   bool _stopSheetOpened = false;
+  bool _startWidgetClicked = false;
 
 
   @override
@@ -84,13 +88,34 @@ class _HomeState extends State<Home> {
     //
     // _ad.load();
 
+    final sub = appLinks.uriLinkStream.listen((uri) {
+      print(uri);
+      if (uri.toString().split('//')[1] == 'start' && !_startWidgetClicked) {
+        _startWidgetClicked = true;
+        Future.delayed(const Duration(seconds: 1), () {
+          if (!Provider.of<UserStatus>(context, listen: false).isLogged && !Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
+            return;
+          }
+          if (Provider.of<DetectStatus>(context, listen: false).detectAvailable) {
+            print('push');
+            _startWidgetClicked = false;
+            Navigator.push(context, MaterialPageRoute(
+                builder: (
+                    context) => StartPosition(onStart: () {
+                  _audioHandler?.play();
+                  _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+                },)));
+          }
+        });
+      }
+    });
+
     GlobalTimer.timeEventStream.listen((useSec) {
       // print(useSec);
       if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
-        Provider.of<HistoryStatus>(context, listen: false).resetShouldChangeData();
         _showPushAlarm();
       }
     });

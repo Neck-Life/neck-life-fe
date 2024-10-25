@@ -230,9 +230,10 @@
         "alarm_sensitive_high": "High",
         "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
-        "sound_alarm_turn_on": "Enable sound alert",
-        "sound_setting": "Alert Sound Settings",
-        "volume_setting": "Volume Control"
+        "sound_alarm_turn_on": "Enable Sound Alert",
+        "sound_setting": "Posture Alert Settings",
+        "volume_setting": "Volume Control",
+        "push_setting": "Enable Push Notification"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {

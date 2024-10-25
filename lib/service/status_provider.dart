@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,6 +14,7 @@ class DetectStatus with ChangeNotifier {
   static int sSensitivity = 1;
   static int sAlarmGap = 5;
   static double sSoundVolume = 0.4;
+  static bool sPushNotiAvtive = true;
 
   static bool isLabMode = true;
 
@@ -37,6 +39,8 @@ class DetectStatus with ChangeNotifier {
 
   bool _bgSoungActive = true;
   double _soundVolume = 0.4;
+  bool _pushNotiAvtive = true;
+
   bool isBackward = false;
 
   bool get nowDetecting => _nowDetecting;
@@ -46,6 +50,7 @@ class DetectStatus with ChangeNotifier {
   int get alarmGap => _alarmGap;
   bool get bgSoundActive => _bgSoungActive;
   double get soundVolume => _soundVolume;
+  bool get pushNotiAvtive => _pushNotiAvtive;
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get detectAvailableEventStream => _detectAvailableEventController.stream;
@@ -68,6 +73,7 @@ class DetectStatus with ChangeNotifier {
     String? bgSoundSetting = await storage.read(key: 'isBgActive');
     String? rawHasWroteReview = await storage.read(key: 'hasWroteReview');
     String? soundVolumeStr = await storage.read(key: 'soundVolume');
+    String? pushNotiAcTiveStr = await storage.read(key: 'pushNotiActive');
 
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
@@ -89,12 +95,17 @@ class DetectStatus with ChangeNotifier {
       _soundVolume = double.parse(soundVolumeStr);
       sSoundVolume = _soundVolume;
     }
+    if (pushNotiAcTiveStr != null) {
+      _pushNotiAvtive = pushNotiAcTiveStr == '1' ? true : false;
+      sSoundVolume = _soundVolume;
+    }
   }
 
   void startDetecting() async {
     _nowDetecting = true;
     sNowDetecting = true;
     notifyListeners();
+    log('noti-startDetecting');
     const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '1');
   }
@@ -103,15 +114,20 @@ class DetectStatus with ChangeNotifier {
     _nowDetecting = false;
     sNowDetecting = false;
     notifyListeners();
+    log('noti-endDetecting');
+
     const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
   }
 
   void availableDetect() {
+    bool prevVal = _detectAvailable;
     if (!_detectAvailable) emitDetectableEvent(true);
     _detectAvailable = true;
     sDetectAvailable = true;
-    notifyListeners();
+    if (prevVal != true) notifyListeners();
+    // log('noti-availableDetect');
+
   }
 
   void setSensitivity(double sensitivityVal) async {
@@ -128,6 +144,14 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'soundVolume', value: _soundVolume.toString());
+  }
+
+  void setPushNotiActive(bool value) async {
+    _pushNotiAvtive = value;
+    sPushNotiAvtive = value;
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'pushNotiActive', value: value ? "1" : "0");
   }
 
   void setAlarmGap(int alarmGapVal) async {

@@ -60,7 +60,7 @@ class UserStatus with ChangeNotifier {
     notifyListeners();
   }
 
-  String _decodeBase64(String str) {
+  static String _decodeBase64(String str) {
     String output = str.replaceAll('-', '+').replaceAll('_', '/');
 
     switch (output.length % 4) {
@@ -79,7 +79,7 @@ class UserStatus with ChangeNotifier {
     return utf8.decode(base64Url.decode(output));
   }
 
-  Map<dynamic, dynamic> _parseJwtPayLoad(String token) {
+  static Map<dynamic, dynamic> _parseJwtPayLoad(String token) {
     final parts = token.split('.');
     if (parts.length != 3) {
       throw Exception('invalid token');
@@ -138,7 +138,7 @@ class UserStatus with ChangeNotifier {
   }
 
   // JWT 만료 여부 확인
-  bool isTokenExpired(String token) {
+  static bool isTokenExpired(String token) {
     try {
       final parts = _parseJwtPayLoad(token);
       final exp = parts['exp'];
@@ -160,6 +160,45 @@ class UserStatus with ChangeNotifier {
 
   Future<void> getRefreshedToken() async {
     if (_refreshTokenTemp == '') {
+      return;
+    }
+
+    // print(_refreshTokenTemp);
+    final res = await post(
+      '$serverAddress/members/token',
+      {'refreshToken': _refreshTokenTemp},
+    );
+
+    // print(res.statusCode);
+
+
+    if (res.statusCode ~/ 100 == 2) {
+      Map<String, dynamic> resData = jsonDecode(res.body);
+      _accessTokenTemp = resData['data']['accessToken'];
+      _refreshTokenTemp = resData['data']['refreshToken'];
+
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'accessToken', value: _accessTokenTemp);
+      await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
+
+      // print('토큰 재발급 완료: $_accessTokenTemp');
+    } else {
+      // print('토큰 재발급 실패');
+      _accessTokenTemp = '';
+      _refreshTokenTemp = '';
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: 'accessToken');
+      await storage.delete(key: 'refreshToken');
+      await storage.delete(key: 'email');
+
+      _isLogged = false;
+      sIsLogged = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getRefreshedTokenStatic(String refreshToken) async {
+    if (refreshToken == '') {
       return;
     }
 

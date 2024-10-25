@@ -23,6 +23,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
   double _sensitivity = 1;
   int _alarmGap = 5;
   bool _bgSoundActive = false;
+  bool _pushNotiActive = true;
   double _volume = 0.4;
 
   @override
@@ -34,6 +35,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
         _alarmGap = Provider.of<DetectStatus>(context, listen: false).alarmGap;
         _bgSoundActive = Provider.of<DetectStatus>(context, listen: false).bgSoundActive;
         _volume = Provider.of<DetectStatus>(context, listen: false).soundVolume;
+        _pushNotiActive = Provider.of<DetectStatus>(context, listen: false).pushNotiAvtive;
       });
     });
   }
@@ -169,6 +171,25 @@ class _AlarmSettingState extends State<AlarmSetting> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.push_setting".tr(), fontSize: 16, isBold: false),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: CupertinoSwitch(
+                            value: _pushNotiActive,
+                            activeColor: CupertinoColors.activeBlue,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _pushNotiActive = value ?? false;
+                                detectStatus.setPushNotiActive(_pushNotiActive);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_alarm_turn_on".tr(), fontSize: 16, isBold: false),
                         Transform.scale(
                           scale: 0.8,
@@ -214,6 +235,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                   ],
                 ),
               ),
+              SizedBox(height: res.percentHeight(5),)
             ],
           ),
         ),

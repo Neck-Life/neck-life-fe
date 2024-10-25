@@ -191,9 +191,12 @@ class _HistoryState extends State<History> {
         });
 
 
-        updateWidgetScore(86, '5', '2', '14'); //todayHistory['point'] ?? 0); _todayHistory['poseCountMap']['FORWARD'] + DOWN, TILT
+          updateWidgetScore(_todayHistory['point'] ?? 0,
+              _todayHistory['poseCountMap']['DOWN'] != null ? _todayHistory['poseCountMap']['DOWN'].toString() : "0",
+              _todayHistory['poseCountMap']['FORWARD'] != null ? _todayHistory['poseCountMap']['FORWARD'].toString() : "0",
+              _todayHistory['poseCountMap']['TILT'] != null ? _todayHistory['poseCountMap']['TILT'].toString() : "0");
 
-        // print(historyData);
+          // print(historyData);
 
 
         timestamp2DurationList(_todayHistory[_listChosenType.poseFilter] ?? dummy);
@@ -392,10 +395,11 @@ class _HistoryState extends State<History> {
     Responsive res = Responsive(context);
     GoalProvider goalState = context.watch();
     DetectStatus detectStatus = context.watch();
-    GlobalTimer globalTimer = context.watch();
+
     // HistoryStatus historyStatus = context.watch();
     // if (historyStatus)
     // initScoreMap(historyStatus.scoreSeries);
+    print('his view build ${DateTime.now()}');
     return SafeArea(
         child: Scaffold(
           appBar:  const PreferredSize(
@@ -427,7 +431,7 @@ class _HistoryState extends State<History> {
                         width: res.percentWidth(3),
                         height: res.percentWidth(3),
                         decoration: BoxDecoration(
-                          color: globalTimer.useSec % 2 == 1 ? const Color(0xFF236EF3) : Colors.transparent,
+                          color: Provider.of<GlobalTimer>(context).useSec % 2 == 1 ? const Color(0xFF236EF3) : Colors.transparent,
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),

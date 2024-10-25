@@ -23,6 +23,7 @@ class Goal extends StatefulWidget {
 }
 
 class _GoalState extends State<Goal> {
+  static const storage = FlutterSecureStorage();
 
   Map<String, dynamic> _goalMap = {
     'score': {},
@@ -40,9 +41,9 @@ class _GoalState extends State<Goal> {
 
   Future<void> getGoalStatus() async {
     // print('getsore');
-    const storage = FlutterSecureStorage();
     try {
       String? accessToken = await storage.read(key: 'accessToken');
+
       if (accessToken != null && accessToken != '') {
         HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
       }
@@ -127,7 +128,7 @@ class _GoalState extends State<Goal> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextDefault(content: 'goal_view.goal_txt1'.tr(), fontSize: 26, isBold: true, fontColor: const Color(0xFF101010),),
-                  TextDefault(content: 'goal_view.goal_txt2'.tr(), fontSize: 26, isBold: true, fontColor: Color(0xFF236EF3),),
+                  TextDefault(content: 'goal_view.goal_txt2'.tr(), fontSize: 26, isBold: true, fontColor: const Color(0xFF236EF3),),
                   SizedBox(height: res.percentHeight(2),),
                   GoalListItem(
                     goalType: GoalType.score,
