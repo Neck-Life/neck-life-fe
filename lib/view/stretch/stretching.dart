@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
+import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/StretchingWidget.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_start_modal.dart';
@@ -46,6 +47,16 @@ class _StretchingState extends State<Stretching> {
               showStretchingCompleteModal(context);
             },
             child: Text("스트레칭 완료 모달창 띄우기"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => StretchingSession()),
+              );
+            },
+            child: const Text('스트레칭 세션'),
           ),
         ],
       ),
