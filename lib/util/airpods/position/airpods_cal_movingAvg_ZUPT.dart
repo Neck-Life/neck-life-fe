@@ -66,13 +66,13 @@ class AirpodsCalMovingAvgZupt extends Filter{
       cal_acc_y += sortedY[i];
       // cal_acc_z += sortedZ[i];
     }
-    cal_acc_y /= len-2;
+    cal_acc_y /= len;
     // cal_acc_z /= len-2;
 
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = cal_acc_y; //y축만 고려하기
-    double offset = 0.008;
+    double offset = 0.006;
 
     // if(cal_acc<0){
     //   cal_acc*=1.4;
