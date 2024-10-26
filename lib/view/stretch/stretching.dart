@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
+import 'package:mocksum_flutter/view/stretch/stretching_session_dev.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/StretchingWidget.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_start_modal.dart';
@@ -60,6 +61,16 @@ class _StretchingState extends State<Stretching> {
               );
             },
             child: const Text('스트레칭 세션'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => StretchingSessionDev()),
+              );
+            },
+            child: const Text('스트레칭 세션(dev) 센서기반'),
           ),
           ElevatedButton(
             onPressed: () {
