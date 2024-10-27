@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/view/stretch/data/stretching_data.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
-import 'package:mocksum_flutter/view/stretch/widgets/StretchingWidget.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import '../../../service/status_provider.dart';
 import 'models/stretching_action.dart';
+
+/**
+ * 모션기반 스트레칭 가이드 테스트 환경
+ * TODO : 이 파일 추후에 삭제하기
+ * */
 
 class StretchingSessionDev extends StatefulWidget {
   final StretchingGroup selectedGroup = stretchingGroups[5];

@@ -152,7 +152,7 @@ final List<StretchingGroup> stretchingGroups = [
       StretchingAction(
         name: '고개 위로 기울이기',
         isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 10,
+        duration: 5,
         progressVariable: ProgressVariable.pitch,
       ),
     ],

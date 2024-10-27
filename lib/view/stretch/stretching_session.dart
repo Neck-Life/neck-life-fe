@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
 import 'package:provider/provider.dart';
 
@@ -16,11 +16,6 @@ import '../../util/responsive.dart';
 import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
-/**
- * TODO : 하단 프로그레스바 위젯 생성
- * TODO : 스트레칭 데이터 기반 처리 마이그레이션
- * TODO : 자세탐지 도중 타이머(nn분 간격 스트레칭 알림)
- * */
 class StretchingSession extends StatefulWidget {
   final StretchingGroup selectedGroup = stretchingGroups[5];
 
@@ -54,14 +49,14 @@ class _StretchingSessionState extends State<StretchingSession> {
         pitch = DetectStatus.nowPitch;
         roll = DetectStatus.nowRoll;
         yaw = DetectStatus.nowYaw;
-        stretchingProgressBar.updateProgress(pitch);
-        print(stretchingProgressBar.progress);
+        checkStretchCompletion(pitch, roll, yaw);
       });
     });
   }
 
   @override
   void dispose() {
+    _updateDataTimer?.cancel();
     super.dispose();
   }
   void startTimer(double duration) {
@@ -89,6 +84,33 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void checkStretchCompletion(double pitch, double roll, double yaw) {
     final currentAction = widget.selectedGroup.actions[currentStepIndex];
+    double value;
+    switch (currentAction.progressVariable) {
+      case ProgressVariable.pitch:
+        value = pitch;
+        break;
+      case ProgressVariable.negativePitch:
+        value = -pitch;
+        break;
+      case ProgressVariable.roll:
+        value = roll;
+        break;
+      case ProgressVariable.negativeRoll:
+        value = -roll;
+        break;
+      case ProgressVariable.yaw:
+        value = yaw;
+        break;
+      case ProgressVariable.negativeYaw:
+        value = -yaw;
+        break;
+    }
+
+    bool isThresholdReached = currentAction.isCompleted(pitch,roll,yaw);
+
+    double duration = currentAction.duration;
+    stretchingProgressBar.updateProgress(value, isThresholdReached, _elapsedTime, duration);
+
 
     if (_isActive && isStepCompleted(pitch, roll, yaw)) {
       if (_timer == null || !_timer!.isActive) {
@@ -152,7 +174,10 @@ class _StretchingSessionState extends State<StretchingSession> {
       body: Center(
           child: Column(
         children: [
-          StretchingTitleWidget(text: "스트레칭 시간입니다."),
+          StretchingTitleWidget(
+              // text: "스트레칭 시간입니다."
+              text: stretchingGroupName
+          ),
           Container(
               width: res.percentWidth(90),
               height: res.percentWidth(85),
@@ -166,8 +191,9 @@ class _StretchingSessionState extends State<StretchingSession> {
                   Container(
                       width: res.percentWidth(70),
                       padding: EdgeInsets.only(top: res.percentWidth(7.5)),
-                      child: const Text(
-                        "10초간 고개를\n하늘을 향해 젖혀주세요",
+                      child: Text(
+                        // "10초간 고개를\n하늘을 향해 젖혀주세요",
+                        guideText,
                         style: TextStyle(
                           fontSize: 24, // 폰트 크기
                           fontWeight: FontWeight.bold, // 굵게 설정
@@ -263,139 +289,5 @@ class StretchingTitleWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-
-
-/**
- * 캐릭터 모델
- * Pitch, roll버전
- * */
-class NeckModel extends StatefulWidget {
-  const NeckModel({Key? key}) : super(key: key);
-
-  @override
-  NeckModelState createState() => NeckModelState();
-}
-
-class NeckModelState extends State<NeckModel>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  double degree = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 50))
-      ..addListener(() {
-        setState(() {
-          updateAnimationValues(); // 자식 클래스에서 정의
-        });
-      })
-      ..repeat();
-  }
-
-  // 자식 클래스에서 이 메서드를 오버라이드하여 각도 값 업데이트
-  void updateAnimationValues() {}
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Responsive res = Responsive(context);
-
-    return Container(
-      width: res.percentWidth(35),
-      height: res.percentWidth(35),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(res.percentWidth(25)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(res.percentWidth(25)),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              top: res.percentHeight(7.5),
-              child: Container(
-                width: res.percentWidth(5.5),
-                height: res.percentWidth(85) * 0.3,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFB59E),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: res.percentHeight(12),
-              left: res.percentWidth(6),
-              child: SizedBox(
-                width: res.percentWidth(22),
-                child: Image.asset(
-                  'assets/body.png',
-                  width: res.percentWidth(30),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned(
-                top: res.percentWidth(30) * 0.15,
-                left: res.percentWidth(20) * 0.5 - res.percentWidth(20) * 0.03,
-                child: Transform.rotate(
-                    angle: degree, // **calculated by pitch
-                    origin: Offset(
-                        -res.percentWidth(25) * 0.5 + res.percentWidth(10),
-                        res.percentWidth(25) * 0.5 - res.percentWidth(5)),
-                    child: SizedBox(
-                        width: res.percentWidth(17.5),
-                        height: res.percentWidth(17.5),
-                        child: Image.asset(
-                          "assets/head.png",
-                          width: res.percentWidth(25),
-                          height: res.percentWidth(25),
-                          fit: BoxFit.contain,
-                        )))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NeckPitch extends NeckModel {
-  const NeckPitch({Key? key}) : super(key: key);
-
-  @override
-  NeckPitchState createState() => NeckPitchState();
-}
-
-class NeckPitchState extends NeckModelState {
-  @override
-  void updateAnimationValues() {
-    degree = -DetectStatus.nowPitch; // Pitch 값을 업데이트
-  }
-}
-
-class NeckRoll extends NeckModel {
-  const NeckRoll({Key? key}) : super(key: key);
-
-  @override
-  NeckRollState createState() => NeckRollState();
-}
-
-class NeckRollState extends NeckModelState {
-  @override
-  void updateAnimationValues() {
-    degree = DetectStatus.nowRoll; // Pitch 값을 업데이트
   }
 }

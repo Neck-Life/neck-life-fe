@@ -14,22 +14,28 @@ class StretchingProgressBar extends StatefulWidget {
   _StretchingProgressBarState createState() => _StretchingProgressBarState();
   // 퍼블릭 메서드를 통해 State의 메서드를 호출할 수 있도록 프록시 메서드 추가
   ///파라미터 value 구간 [0, 1]에 맞게 적절히
-  void updateProgress(double value) {
-    key.currentState?.updateProgress(value);
+  void updateProgress(double progress, bool isThresholdReached, double elapsedTime, double duration) {
+    key.currentState?.updateProgress(progress, isThresholdReached, elapsedTime, duration);
   }
 }
 
 
 class _StretchingProgressBarState extends State<StretchingProgressBar> {
   double progress = 0.0; // 초기 progress 값
+  double elapsedTime=0;
+  double duration=0;
+  bool isThresholdReached=false;
 
-  void updateProgress(double value) {
-    if(value < 0) value = 0;
-    if(value > 1) value = 1;
+  void updateProgress(double progress, bool isThresholdReached, double elapsedTime, double duration) {
+    if(progress < 0) progress = 0;
+    if(progress > 1) progress = 1;
     // Timer를 통해 주기적으로 progress 업데이트
     setState(() {
-      progress = value; // targetValue를 progress로 반영
+      this.progress = progress; // targetValue를 progress로 반영
       widget.progress = progress;
+      this.isThresholdReached =isThresholdReached;
+      this.elapsedTime = elapsedTime;
+      this.duration = duration;
     });
   }
   @override
@@ -57,14 +63,24 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SvgPicture.asset('assets/icons/time.svg'),
-              progress < 0.8 ? Text(
+              isThresholdReached
+                  ? Text(
+                '${elapsedTime.toStringAsFixed(0)}초 / ${duration.toStringAsFixed(0)}초',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              )
+              : Text(
                 '고개를 조금 더 기울여볼까요?',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
-              ): Text("측정중"),
+              )
+                  ,
               SvgPicture.asset('assets/icons/time.svg'),
             ],
           ),
