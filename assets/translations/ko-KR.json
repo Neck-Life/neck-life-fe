@@ -92,8 +92,8 @@
     "posture_detection" : "자세 탐지",
     "average_posture_lose_time": "평균 {}마다 자세가 무너져요",
     "forward_neck_detection": "거북목 자세 탐지",
-    "tbd_content1": "더 다양한 나쁜 자세",
-    "tbd_content2": "탐지를 준비하고 있어요!",
+    "tbd_content1": "히스토리 탭은",
+    "tbd_content2": "로그인 후 이용할 수 있어요",
     "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
     "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요",
@@ -206,6 +206,7 @@
     "terms_of_service" : "이용 약관",
     "privacy_policy" : "개인정보 처리방침",
     "logout" : "넥라이프 로그아웃",
+    "login": "넥라이프 로그인",
     "if_quit": "넥라이프를 탈퇴하려면 ",
     "here": "여기를",
     "click": "클릭하세요"
@@ -369,7 +370,9 @@
     "add_snack": "목표가 추가되었어요.",
     "upd_snack": "목표가 수정되었어요.",
     "del_snack": "목표가 삭제되었어요.",
-    "err_popup": "오류가 발생했어요. 다시 시도해주세요"
+    "err_popup": "오류가 발생했어요. 다시 시도해주세요",
+    "tbd_content1": "목표 설정 기능은",
+    "tbd_content2": "로그인 후 이용할 수 있어요"
   },
   "connect_guide": {
     "guide": "에어팟을 연결해도 작동하지 않나요?",

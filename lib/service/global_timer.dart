@@ -10,6 +10,7 @@ class GlobalTimer with ChangeNotifier {
   Timer? _timer;
   late String _lastDate;
   bool _isRunning = false;
+  static int alarmCount = 0;
 
   static final _timeEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get timeEventStream => _timeEventController.stream;
@@ -33,6 +34,7 @@ class GlobalTimer with ChangeNotifier {
     } else {
       _useSec = 0;
     }
+    alarmCount = 0;
 
     if (lastDate != null) {
       // print(lastDate);

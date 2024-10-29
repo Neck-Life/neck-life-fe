@@ -25,4 +25,10 @@ class GoalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void cleanAll() {
+    _settedGoalTypes = {};
+    _goalMap = {'score': {}, 'time': {}};
+    notifyListeners();
+  }
+
 }

@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
+import 'package:mocksum_flutter/view/history/history_view.dart';
+import 'package:mocksum_flutter/view/home/banner/survey_banner.dart';
 import 'package:mocksum_flutter/view/home/subpage/connect_guide/connect_guide.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
@@ -19,6 +22,7 @@ import 'package:mocksum_flutter/view/home/widgets/bottomsheet.dart';
 import 'package:mocksum_flutter/view/home/widgets/neck.dart';
 import 'package:mocksum_flutter/view/home/widgets/start_button.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
+import 'package:mocksum_flutter/view/home/widgets/start_button_msg.dart';
 import 'package:mocksum_flutter/view/home/widgets/stop_bottomsheet.dart';
 import 'package:mocksum_flutter/view/loading.dart';
 import 'package:provider/provider.dart';
@@ -69,24 +73,24 @@ class _HomeState extends State<Home> {
       _isLabMode = DetectStatus.isLabMode;
     });
 
-    // _ad = BannerAd(
-    //     size: AdSize.banner,
-    //     adUnitId: 'ca-app-pub-4299841579411814/1760857231', //ca-app-pub-3940256099942544/2934735716
-    //     listener: BannerAdListener(
-    //         onAdLoaded: (_) {
-    //           setState(() {
-    //             _isAdLoaded = true;
-    //           });
-    //         },
-    //         onAdFailedToLoad: (ad, error) {
-    //           print(error);
-    //           ad.dispose();
-    //         }
-    //     ),
-    //     request: const AdRequest()
-    // );
-    //
-    // _ad.load();
+    _ad = BannerAd(
+        size: AdSize.banner,
+        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/8948635978',
+        listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                _isAdLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              print(error);
+              ad.dispose();
+            }
+        ),
+        request: const AdRequest()
+    );
+
+    _ad.load();
 
     final sub = appLinks.uriLinkStream.listen((uri) {
       print(uri);
@@ -240,7 +244,7 @@ class _HomeState extends State<Home> {
           print('end detection2');
           await _audioHandler?.pause();
           print('end detection');
-          _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime());
+          _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
           // const storage = FlutterSecureStorage();
           String? executeCount = await storage.read(key: 'executeCount');
@@ -359,178 +363,220 @@ class _HomeState extends State<Home> {
     UserStatus userStatus = context.watch();
     GlobalTimer globalTimer = context.watch();
 
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         appBar: const PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: HomeAppBar()
         ),
-        body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SizedBox(
-              width: res.deviceWidth,
-              // decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
-              child: Center(
-                  child: Column(
-                    children: [
-                      SizedBox(height: res.percentHeight(2),),
-                      GestureDetector(
-                        onTap: () {
-                          // if (!detectStatus.detectAvailable) {
-                          //   switch (OpenSettingsPlus.shared) {
-                          //     case OpenSettingsPlusIOS settings: settings.bluetooth();
-                          //     default: throw Exception('Platform not supported');
-                          //   }
-                          // }
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (
-                              context) => const ConnectGuide()));
-                        },
-                        child: SizedBox(
-                          width: res.percentWidth(85),
-                          height: res.percentWidth(85)*0.3,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                child: Row(
+        body: SafeArea(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SizedBox(
+                  width: res.deviceWidth,
+                  // decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
+                  child: Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: res.percentHeight(2),),
+                          GestureDetector(
+                            onTap: () {
+                              // if (!detectStatus.detectAvailable) {
+                              //   switch (OpenSettingsPlus.shared) {
+                              //     case OpenSettingsPlusIOS settings: settings.bluetooth();
+                              //     default: throw Exception('Platform not supported');
+                              //   }
+                              // }
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (
+                                  context) => const ConnectGuide()));
+                            },
+                            child: SizedBox(
+                                width: res.percentWidth(85),
+                                height: res.percentWidth(85)*0.3,
+                                child: Stack(
                                   children: [
-                                    const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
-                                    const SizedBox(width: 5,),
-                                    TextDefault(
-                                      content: 'connect_guide.guide'.tr(),
-                                      fontSize: 13,
-                                      isBold: false,
-                                      fontColor: const Color(0xFF236EF3),
+                                    Positioned(
+                                        child: Row(
+                                          children: [
+                                            const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
+                                            const SizedBox(width: 5,),
+                                            TextDefault(
+                                              content: 'connect_guide.guide'.tr(),
+                                              fontSize: 13,
+                                              isBold: false,
+                                              fontColor: const Color(0xFF236EF3),
+                                            ),
+                                          ],
+                                        )
+                                    ),
+                                    Positioned(
+                                      // left: responsive.percentWidth(7.5),
+                                      top: res.percentWidth(6),
+                                      child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
+                                    ),
+                                    Positioned(
+                                      left: res.percentWidth(23),
+                                      top: res.percentWidth(9),
+                                      child: TextDefault(
+                                        content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
+                                        fontSize: 18,
+                                        isBold: true,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: res.percentWidth(23),
+                                      top: res.percentWidth(9)+25,
+                                      child: TextDefault(
+                                        content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
+                                        fontSize: 14,
+                                        isBold: false,
+                                        fontColor: const Color(0xFF236EF3),
+                                      ),
                                     ),
                                   ],
                                 )
-                              ),
-                              Positioned(
-                                // left: responsive.percentWidth(7.5),
-                                top: res.percentWidth(6),
-                                child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
-                              ),
-                              Positioned(
-                                left: res.percentWidth(23),
-                                top: res.percentWidth(9),
-                                child: TextDefault(
-                                  content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
-                                  fontSize: 18,
-                                  isBold: true,
-                                ),
-                              ),
-                              Positioned(
-                                left: res.percentWidth(23),
-                                top: res.percentWidth(9)+25,
-                                child: TextDefault(
-                                  content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
-                                  fontSize: 14,
-                                  isBold: false,
-                                  fontColor: const Color(0xFF236EF3),
-                                ),
-                              ),
-                            ],
-                          )
-                        ),
-                      ),
-                      Container(
-                          width: res.percentWidth(90),
-                          height: res.percentWidth(97),
-                          margin: const EdgeInsets.only(top: 20),
-                          decoration: BoxDecoration(
-                            color: !detectStatus.isNowTurtle ? const Color(0xFFD8E2F9) : const Color(0xFFF25959),
-                            borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: res.percentWidth(85),
-                                padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
-                                child: TextDefault(
-                                  content: detectStatus.nowDetecting ? LS.tr('home_view.detection_doing') : LS.tr('home_view.detection_start_ask'),
-                                  fontSize: 27,
-                                  isBold: true,
-                                  height: 1.2,
-                                ),
+                          Container(
+                              width: res.percentWidth(90),
+                              height: res.percentWidth(97),
+                              margin: const EdgeInsets.only(top: 20),
+                              decoration: BoxDecoration(
+                                color: !detectStatus.isNowTurtle ? const Color(0xFFD8E2F9) : const Color(0xFFF25959),
+                                borderRadius: BorderRadius.circular(25),
                               ),
-                              SizedBox(height: res.percentHeight(2.5),),
-                              const Neck(),
-                              SizedBox(height: res.percentHeight(2),),
-                              StartButton(
-                                onPressed: () async {
-                                  print('asdf');
-                                  if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
-                                    showSnackbar(LS.tr('home_view.airpods_connect_ask'));
-                                  } else if (!detectStatus.nowDetecting) {
-                                    if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
-                                      showSnackbar(LS.tr('home_view.end_today_free_time'));
-                                    } else {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (
-                                              context) => StartPosition(onStart: () {
-                                            _audioHandler?.play();
-                                            _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
-                                          },)));
-                                    }
-                                  } else {
-                                    showStopDetectionSheet();
-                                  }
-                                },
-                                isDisabled: !detectStatus.detectAvailable,
-                                isRunning: detectStatus.nowDetecting,
-                                useTime: '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}'
-                              ),
-                            ],
-                          )
-                      ),
-                      SizedBox(height: res.percentHeight(2)),
-                      WhiteContainer(
-                        width: 90,
-                        padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3), vertical: res.percentHeight(1)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: res.percentWidth(85),
+                                    padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
+                                    child: TextDefault(
+                                      content: detectStatus.nowDetecting ? LS.tr('home_view.detection_doing') : LS.tr('home_view.detection_start_ask'),
+                                      fontSize: 27,
+                                      isBold: true,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  SizedBox(height: res.percentHeight(2.5),),
+                                  const Neck(),
+                                  SizedBox(height: res.percentHeight(2),),
+                                  Stack(
+                                    children: [
+                                      StartButton(
+                                          onPressed: () async {
+                                            print('asdf');
+                                            if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
+                                              showSnackbar(LS.tr('home_view.airpods_connect_ask'));
+                                            } else if (!detectStatus.nowDetecting) {
+                                              if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
+                                                showSnackbar(LS.tr('home_view.end_today_free_time'));
+                                              } else {
+                                                Navigator.push(context, MaterialPageRoute(
+                                                    builder: (
+                                                        context) => StartPosition(onStart: () async {
+                                                      _audioHandler?.play();
+                                                      _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+
+                                                      String? refreshToken = await storage.read(key: 'refreshToken');
+                                                      if (refreshToken != null) {
+                                                        Response resForToken = await HistoryStatus
+                                                            .dio.post(
+                                                            '$HistoryStatus.serverAddress/members/token',
+                                                            data: {
+                                                              'refreshToken': refreshToken
+                                                            });
+                                                        if (resForToken.statusCode! ~/
+                                                            100 == 2) {
+                                                          String accessTokenNew = resForToken
+                                                              .data['data']['accessToken'] ??
+                                                              '';
+                                                          String refreshTokenNew = resForToken
+                                                              .data['data']['refreshToken'] ??
+                                                              '';
+
+                                                          if (accessTokenNew != '') {
+                                                            HistoryStatus.dio.options
+                                                                .headers["authorization"] =
+                                                            "bearer $accessTokenNew";
+                                                            await storage.write(
+                                                                key: 'accessToken',
+                                                                value: accessTokenNew);
+                                                            await storage.write(
+                                                                key: 'refreshToken',
+                                                                value: refreshTokenNew);
+                                                          }
+                                                        }
+                                                      }
+                                                    })));
+                                              }
+                                            } else {
+                                              showStopDetectionSheet();
+                                            }
+                                          },
+                                          isDisabled: !detectStatus.detectAvailable,
+                                          isRunning: detectStatus.nowDetecting,
+                                          useTime: '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}'
+                                      ),
+                                      // const StartButtonMsg(message: 'Press Start for bad posture alert!'),
+                                      if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
+                                        const StartButtonMsg(message: 'Press Start for bad posture alert!')
+                                      else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
+                                        const StartButtonMsg(message: 'Pressing \'Stop\' will analyse your posture!')
+                                    ],
+                                  ),
+                                ],
+                              )
+                          ),
+                          SizedBox(height: res.percentHeight(2)),
+                          WhiteContainer(
+                            width: 90,
+                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3), vertical: res.percentHeight(1)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
-                                    const AssetIcon('maximize', size: 6,),
-                                    const SizedBox(width: 5,),
-                                    TextDefault(
-                                      content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
-                                      fontSize: 14,
-                                      isBold: false,
-                                    )
+                                    Row(
+                                      children: [
+                                        const AssetIcon('maximize', size: 6,),
+                                        const SizedBox(width: 5,),
+                                        TextDefault(
+                                          content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
+                                          fontSize: 14,
+                                          isBold: false,
+                                        )
+                                      ],
+                                    ),
                                   ],
                                 ),
+                                CupertinoSwitch(
+                                  value: _isLabMode,
+                                  activeColor: CupertinoColors.activeBlue,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      _isLabMode = value;
+                                      DetectStatus.isLabMode = value;
+                                    });
+                                  },
+                                )
                               ],
                             ),
-                            CupertinoSwitch(
-                              value: _isLabMode,
-                              activeColor: CupertinoColors.activeBlue,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  _isLabMode = value;
-                                  DetectStatus.isLabMode = value;
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                      // userStatus.isPremium ? const SizedBox() : Container(
-                      //   margin: EdgeInsets.only(top: res.percentHeight(1.5)),
-                      //   width: _ad.size.width.toDouble(),
-                      //   height: _ad.size.height.toDouble(),
-                      //   alignment: Alignment.center,
-                      //   child: AdWidget(ad: _ad),
-                      // ),
-                    ],
-                  )
-              ),
+                          ),
+                          userStatus.isPremium ? const SizedBox() : Container(
+                            margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                            width: _ad.size.width.toDouble(),
+                            height: _ad.size.height.toDouble(),
+                            alignment: Alignment.center,
+                            child: AdWidget(ad: _ad),
+                          ),
+                          SizedBox(height: res.percentHeight(2),),
+                          // const SurveyBanner()
+                        ],
+                      )
+                  ),
+                )
             )
         ),
-      )
-    );
+      );
   }
 }

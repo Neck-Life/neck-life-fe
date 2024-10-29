@@ -5,10 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/service/goal_provider.dart';
+import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:just_audio/just_audio.dart';
+
+import 'global_timer.dart';
 
 
 class MyAudioHandler extends BaseAudioHandler {
@@ -109,13 +113,14 @@ class MyAudioHandler extends BaseAudioHandler {
       // _checkIsBackward();
 
       //로우데이터 저장
-      _poseRawLog.add({
-        'timestamp': DateTime.now().toIso8601String(),
-        'pitch': _nowPitch,
-        'roll': _nowRoll,
-        'position': _nowPosition,
-        // 'status' : _checkIsNowTurtle() ? 'FORWARD' : 'NORMAL'
-      });
+      // _poseRawLog.add({
+      //   'timestamp': DateTime.now().toIso8601String(),
+      //   'pitch': _nowPitch,
+      //   'roll': _nowRoll,
+      //   'position': _nowPosition,
+      //   // 'status' : _checkIsNowTurtle() ? 'FORWARD' : 'NORMAL'
+      // });
+
 
 
       // 로깅 최소시간 설정 - pitch값
@@ -235,6 +240,7 @@ class MyAudioHandler extends BaseAudioHandler {
       // print(_isNowHeadDown);
 
       if (DetectStatus.sNowDetecting && _checkIsHeadDown() && _minInterval == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp >= DetectStatus.sAlarmGap*1000) {
+        GlobalTimer.alarmCount += 1;
         if (DetectStatus.sPushNotiAvtive) {
           _showPushAlarm();
         }
@@ -293,6 +299,7 @@ class MyAudioHandler extends BaseAudioHandler {
       _isNowForwardOrBackward = _checkIsForward();
 
       if (DetectStatus.sNowDetecting && _checkIsForward() && _minInterval2 == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp2 >= DetectStatus.sAlarmGap*1000) {
+        GlobalTimer.alarmCount += 1;
         if (DetectStatus.sPushNotiAvtive) {
           _showPushAlarm();
         }
@@ -338,6 +345,7 @@ class MyAudioHandler extends BaseAudioHandler {
       _isNowTilt = _checkIsTilt();
 
       if (DetectStatus.sNowDetecting && _checkIsTilt() && _minInterval3 == 0 && DateTime.now().millisecondsSinceEpoch - _turtleNeckStartedTimeStamp3 >= DetectStatus.sAlarmGap*1000) {
+        GlobalTimer.alarmCount += 1;
         if (DetectStatus.sPushNotiAvtive) {
           _showPushAlarm();
         }
@@ -482,7 +490,10 @@ class MyAudioHandler extends BaseAudioHandler {
 
     // print('end ${DateTime.now().toIso8601String().split('.')[0].substring(0, 19)}');
     // print(_poseLog);
-    HistoryStatus.postMeasuredPoseData(_posePitchLog, _poseForwardLog, _poseTiltLog,_poseRawLog);
+    if (UserStatus.sIsLogged) {
+      HistoryStatus.postMeasuredPoseData(
+          _posePitchLog, _poseForwardLog, _poseTiltLog, _poseRawLog);
+    }
     // print('poselog $_poseLog');
     _bgAudioPlayer.pause();
     _minInterval = 0;

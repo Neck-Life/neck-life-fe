@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../util/amplitude.dart';
+
 class DetectStatus with ChangeNotifier {
 
   static String lanCode = 'ko';
@@ -51,6 +53,7 @@ class DetectStatus with ChangeNotifier {
   bool get bgSoundActive => _bgSoungActive;
   double get soundVolume => _soundVolume;
   bool get pushNotiAvtive => _pushNotiAvtive;
+  final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get detectAvailableEventStream => _detectAvailableEventController.stream;
@@ -125,7 +128,10 @@ class DetectStatus with ChangeNotifier {
     if (!_detectAvailable) emitDetectableEvent(true);
     _detectAvailable = true;
     sDetectAvailable = true;
-    if (prevVal != true) notifyListeners();
+    if (prevVal != true) {
+      notifyListeners();
+      _amplitudeEventManager.actionEvent('mainpage', 'connectairpods');
+    }
     // log('noti-availableDetect');
 
   }

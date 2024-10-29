@@ -94,8 +94,8 @@
     "example": "example",
     "posture_score_difference": "Check your change\\nwith posture score",
     "timeLine": "Timeline",
-    "tbd_content1": "We are preparing to",
-    "tbd_content2": "detect more postures!",
+    "tbd_content1": "History tab is available",
+    "tbd_content2": "after logging in",
     "goal": "Goals",
     "measuring": "Detecting",
     "measuring_title": "When is the history updated?",
@@ -198,6 +198,7 @@
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
     "logout": "Logout from NeckLife",
+    "login": "Login to NeckLife",
     "if_quit": "To delete your NeckLife account ",
     "here": "click here",
     "click": "",
@@ -311,10 +312,10 @@
   },
   "tutorial": {
     "tutorial_view": {
-      "step1_airpods": "First, please connect \\nyour AirPods",
+      "step1_airpods": "Please connect \\nyour AirPods",
       "step1_airpods_models": "Only the following models are supported",
       "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods(3rd, 4th Gen)",
-      "step2_posture": "Maintain a correct posture for 5 seconds",
+      "step2_posture": "Press 'Start' button and Maintain a correct posture for 5 seconds",
       "step2_explain": "This step measures your reference posture for accurate posture detection.",
       "step3_concentrate": "Focus on your work with proper posture",
       "step3_explain": "We will notify you if your posture deteriorates unconsciously.",
@@ -347,7 +348,9 @@
     "add_snack": "The goal has been added.",
     "upd_snack": "The goal has been updated.",
     "del_snack": "The goal has been deleted.",
-    "err_popup": "An error occurred. Please try again."
+    "err_popup": "An error occurred. Please try again.",
+    "tbd_content1": "Goal setting is available",
+    "tbd_content2": "after logging in"
   },
   "connect_guide": {
     "guide": "Is it not working after connecting AirPods?",

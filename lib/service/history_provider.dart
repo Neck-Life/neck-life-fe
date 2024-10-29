@@ -57,7 +57,7 @@ class HistoryStatus {
 
 
       print('sadfdsfdfsdssdsdfsa');
-      print({'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
+      // print({'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});
       // todo 데이터 전송방식이 바뀌어서 안보내졌을때 캐시에 저장하는거 수정되어야 함
       Response res = await dio.post(
           '$serverAddressV3/history', data: {'pitch': [pitchLog['pitch']] ,'rawData': rawData, 'forward': [forwardLog['forward']], 'tilt': [tiltLog['tilt']]});

@@ -31,12 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     'email',
   ];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   });
-  // }
+  bool _loginProcessStarted = false;
 
   Future<void> _launchUrl(url) async {
     if (!await launchUrl(url)) {
@@ -71,141 +66,154 @@ class _LoginPageState extends State<LoginPage> {
     UserStatus userStatus = context.watch();
 
     return PopScope(
-        canPop: false,
+        canPop: true,
         child: Scaffold(
-          body: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(10)),
-                padding: EdgeInsets.only(right: res.percentWidth(7.5)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(10)),
+                  padding: EdgeInsets.only(right: res.percentWidth(7.5)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: res.percentWidth(12.5),
+                        height: res.percentWidth(12.5),
+                        child: Image.asset('assets/cliped_logo.png', width: res.percentWidth(15), fit: BoxFit.cover),
+                      ),
+                      SizedBox(height: res.percentHeight(2),),
+                      Row(
+                        children: [
+                          TextDefault(
+                            content: 'login_view.neck_life'.tr(),
+                            fontSize: 28,
+                            isBold: true,
+                            fontColor: const Color(0xFF236EF3),
+                          ),
+                          TextDefault(
+                            content: 'login_view.neck_life_with'.tr(),
+                            fontSize: 28,
+                            isBold: true,
+                            fontColor: const Color(0xFF323238),
+                          )
+                        ],
+                      ),
+                      TextDefault(
+                        content: LS.tr('login_view.neck_life_with_airpods'),
+                        fontSize: 28,
+                        isBold: true,
+                        fontColor: const Color(0xFF323238),
+                      ),
+                      // const Spacer(),
+                      SizedBox(height: res.percentHeight(35),),
+                      TextDefault(content: 'login_view.login_with_social'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFF323238)),
+                      SizedBox(height: res.percentHeight(3),),
+                    ],
+                  ),
+                ),
+                Button(
+                  onPressed: () async {
+                    try {
+                      if (!_loginProcessStarted) {
+                        _loginProcessStarted = true;
+                        final credential = await SignInWithApple
+                            .getAppleIDCredential(
+                          scopes: [
+                            AppleIDAuthorizationScopes.email,
+                          ],
+                        );
+                        print(credential);
+                        bool success = await userStatus.socialLogin(
+                            credential.authorizationCode, 'apple');
+                        print('test $success');
+                        if (success) {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (
+                              context) => const PageNavBar()));
+                        } else {
+                          throw Exception();
+                        }
+                      }
+                    } on Exception catch (e) {
+                      print(e);
+                      _openErrorPopUp();
+                    } finally {
+                      _loginProcessStarted = false;
+                    }
+                  },
+                  icon: 'Apple',
+                  text: context.locale.languageCode == 'ko' ? 'Apple 로그인' : 'Apple Login',
+                  backgroundColor: Colors.black,
+                  color: Colors.white,
+                  width: res.percentWidth(85),
+                  padding: res.percentWidth(4),
+                ),
+                SizedBox(height: res.percentHeight(1.5),),
+                Button(
+                  onPressed: () async {
+                    try {
+                      if (!_loginProcessStarted) {
+                        _loginProcessStarted = true;
+                        String? idToken = await _signInWithGoogle();
+
+                        if (idToken == null) {
+                          throw Exception();
+                        }
+
+                        bool success = await userStatus.socialLogin(
+                            idToken, 'google');
+                        print(success);
+                        if (success) {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (
+                              context) => const PageNavBar()));
+                        } else {
+                          _openErrorPopUp();
+                        }
+                      }
+                    } on Exception catch (e) {
+                      print(e);
+                      _openErrorPopUp();
+                    } finally {
+                      _loginProcessStarted = false;
+                    }
+                  },
+                  icon: 'Google',
+                  text: context.locale.languageCode == 'ko' ? 'Google 로그인' : 'Google Login',
+                  backgroundColor: Colors.white,
+                  color: const Color(0xFF323238),
+                  width: res.percentWidth(85),
+                  padding: res.percentWidth(4),
+                ),
+                SizedBox(height: res.percentHeight(3),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: res.percentWidth(12.5),
-                      height: res.percentWidth(12.5),
-                      child: Image.asset('assets/cliped_logo.png', width: res.percentWidth(15), fit: BoxFit.cover),
+                    TextDefault(content: 'login_view.by_signing_up'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
+                    GestureDetector(
+                      onTap: () async {
+                        await _launchUrl(_ToSUrl);
+                      },
+                      child: TextDefault(content: 'login_view.terms_of_service'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0), underline: true,),
                     ),
-                    SizedBox(height: res.percentHeight(2),),
-                    Row(
-                      children: [
-                        TextDefault(
-                          content: 'login_view.neck_life'.tr(),
-                          fontSize: 28,
-                          isBold: true,
-                          fontColor: const Color(0xFF236EF3),
-                        ),
-                        TextDefault(
-                          content: 'login_view.neck_life_with'.tr(),
-                          fontSize: 28,
-                          isBold: true,
-                          fontColor: const Color(0xFF323238),
-                        )
-                      ],
-                    ),
-                    TextDefault(
-                      content: LS.tr('login_view.neck_life_with_airpods'),
-                      fontSize: 28,
-                      isBold: true,
-                      fontColor: const Color(0xFF323238),
-                    ),
-                    SizedBox(height: res.percentHeight(35),),
-                    TextDefault(content: 'login_view.login_with_social'.tr(), fontSize: 16, isBold: true, fontColor: const Color(0xFF323238)),
-                    SizedBox(height: res.percentHeight(3),),
+                    TextDefault(content: 'login_view.and'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                   ],
                 ),
-              ),
-              Button(
-                onPressed: () async {
-                  try {
-                    final credential = await SignInWithApple
-                        .getAppleIDCredential(
-                      scopes: [
-                        AppleIDAuthorizationScopes.email,
-                      ],
-                    );
-                    print(credential);
-                    bool success = await userStatus.socialLogin(
-                        credential.authorizationCode, 'apple');
-                    print('test $success');
-                    if (success) {
-
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (
-                          context) => const PageNavBar()));
-                    } else {
-                      _openErrorPopUp();
-                    }
-                  } on Exception catch (e) {
-                    print(e);
-                    _openErrorPopUp();
-                  }
-                },
-                icon: 'Apple',
-                text: context.locale.languageCode == 'ko' ? 'Apple 로그인' : 'Apple Login',
-                backgroundColor: Colors.black,
-                color: Colors.white,
-                width: res.percentWidth(85),
-                padding: res.percentWidth(4),
-              ),
-              SizedBox(height: res.percentHeight(1.5),),
-              Button(
-                onPressed: () async {
-                  try {
-                    String? idToken = await _signInWithGoogle();
-
-                    if (idToken == null) {
-                      throw Exception();
-                    }
-
-                    bool success = await userStatus.socialLogin(idToken, 'google');
-                    print(success);
-                    if (success) {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (
-                          context) => const PageNavBar()));
-                    } else {
-                      _openErrorPopUp();
-                    }
-                  } on Exception catch (e) {
-                    print(e);
-                    _openErrorPopUp();
-                  }
-                },
-                icon: 'Google',
-                text: context.locale.languageCode == 'ko' ? 'Google 로그인' : 'Google Login',
-                backgroundColor: Colors.white,
-                color: const Color(0xFF323238),
-                width: res.percentWidth(85),
-                padding: res.percentWidth(4),
-              ),
-              SizedBox(height: res.percentHeight(3),),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextDefault(content: 'login_view.by_signing_up'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
-                  GestureDetector(
-                    onTap: () async {
-                      await _launchUrl(_ToSUrl);
-                    },
-                    child: TextDefault(content: 'login_view.terms_of_service'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
-                  ),
-                  TextDefault(content: 'login_view.and'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      await _launchUrl(_PPUrl);
-                    },
-                    child: TextDefault(content: 'login_view.privacy_policy'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0), underline: true,),
-                  ),
-                  TextDefault(content: 'login_view.are_agreed'.tr(), fontSize: 13, isBold: false, fontColor: Color(0xFF8991A0),),
-                ],
-              )
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        await _launchUrl(_PPUrl);
+                      },
+                      child: TextDefault(content: 'login_view.privacy_policy'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0), underline: true,),
+                    ),
+                    TextDefault(content: 'login_view.are_agreed'.tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
+                  ],
+                )
+              ],
+            ),
           ),
         )
     );

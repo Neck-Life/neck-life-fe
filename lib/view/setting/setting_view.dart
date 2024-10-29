@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:mocksum_flutter/page_navbar.dart';
+import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/util/open_url_helper.dart';
 import 'package:mocksum_flutter/view/setting/subpages/my_subscription/my_subscription_view.dart';
 import 'package:mocksum_flutter/theme/popup.dart';
@@ -38,10 +41,31 @@ class _SettingState extends State<Settings> {
   final _deleteReasonEditController = TextEditingController();
 
 
+  late BannerAd _ad;
+  bool _isAdLoaded = false;
+
   @override
   void initState() {
     super.initState();
 
+    _ad = BannerAd(
+        size: AdSize.banner,
+        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/8948635978',
+        listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                _isAdLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              print(error);
+              ad.dispose();
+            }
+        ),
+        request: const AdRequest()
+    );
+
+    _ad.load();
   }
 
   void _showDeleteAccountAlert() {
@@ -77,11 +101,10 @@ class _SettingState extends State<Settings> {
           onPress: () async {
             UserStatus userStatus2 = Provider.of<UserStatus>(context, listen: false);
             userStatus2.cleanAll();
+            Provider.of<GoalProvider>(context, listen: false).cleanAll();
             await Purchases.logOut();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
             Navigator.push(context, MaterialPageRoute(builder: (
-                context) => const LoginPage()));
-            userStatus2.cleanAll();
+                context) => const PageNavBar()));
           },
         );
       });
@@ -312,19 +335,27 @@ class _SettingState extends State<Settings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(3), bottom: res.percentHeight(3)),
-                child: TextDefault(
-                    content: 'setting_view.setting'.tr(),
-                    fontSize: 24,
-                    isBold: true
+              GestureDetector(
+                onDoubleTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('1.2.1+1'),
+                    duration: Duration(seconds: 1),
+                  ));
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(3), bottom: res.percentHeight(3)),
+                  child: TextDefault(
+                      content: 'setting_view.setting'.tr(),
+                      fontSize: 24,
+                      isBold: true
+                  ),
                 ),
               ),
-              MenuItem(iconStr: 'Bookmark', text: 'setting_view.my_subscriptions'.tr(), isPremium: userStatus.isPremium, onTap: () {
+              userStatus.isLogged ? MenuItem(iconStr: 'Bookmark', text: 'setting_view.my_subscriptions'.tr(), isPremium: userStatus.isPremium, onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (
                     context) => const MySubscription()));
-              }),
+              }) : const SizedBox(),
               Container(
                 width: res.deviceWidth,
                 height: 2,
@@ -347,9 +378,9 @@ class _SettingState extends State<Settings> {
                     context, MaterialPageRoute(builder: (
                     context) => const Tutorials()));
               }),
-              MenuItem(iconStr: 'Chat', text:'setting_view.feedback'.tr(), onTap: () {
+              userStatus.isLogged ? MenuItem(iconStr: 'Chat', text:'setting_view.feedback'.tr(), onTap: () {
                 _showFeedbackSubmitPopUp();
-              }),
+              }) : const SizedBox(),
               Container(
                 width: res.deviceWidth,
                 height: 2,
@@ -380,9 +411,15 @@ class _SettingState extends State<Settings> {
               Center(
                 child: Button(
                   onPressed: () {
-                    _showLogoutAlert();
+                    if (userStatus.isLogged) {
+                      _showLogoutAlert();
+                    } else {
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (
+                          context) => const LoginPage()));
+                    }
                   },
-                  text: 'setting_view.logout'.tr(),
+                  text: userStatus.isLogged ? 'setting_view.logout'.tr() : 'setting_view.login'.tr(),
                   isBorder: true,
                   padding: 15,
                   backgroundColor: Colors.white,
@@ -392,6 +429,7 @@ class _SettingState extends State<Settings> {
                 ),
               ),
               SizedBox(height: res.percentHeight(2),),
+              userStatus.isLogged ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -404,7 +442,14 @@ class _SettingState extends State<Settings> {
                   ),
                    TextDefault(content: ' ${'setting_view.click'.tr()}', fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                 ],
-              )
+              ) : const SizedBox(),
+              userStatus.isPremium ? const SizedBox() : Container(
+                margin: EdgeInsets.only(left: res.percentWidth(10), top: res.percentHeight(1.5)),
+                width: _ad.size.width.toDouble(),
+                height: _ad.size.height.toDouble(),
+                alignment: Alignment.center,
+                child: AdWidget(ad: _ad),
+              ),
             ],
           ),
         ),
