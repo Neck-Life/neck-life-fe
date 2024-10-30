@@ -1,15 +1,20 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  // static const String serverAddress = 'http://43.200.200.34/api/v1';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  static const String serverAddress = 'http://43.200.200.34/api/v1';
+
+  static final String currentTimeZone = FlutterTimezone.getLocalTimezone() as String;
+  static final String currentLanguage = Platform.localeName;
 
   static bool sIsLogged = false;
   bool _isLogged = false;
@@ -159,6 +164,9 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<void> getRefreshedToken() async {
+
+
+
     if (_refreshTokenTemp == '') {
       return;
     }
@@ -166,7 +174,9 @@ class UserStatus with ChangeNotifier {
     // print(_refreshTokenTemp);
     final res = await post(
       '$serverAddress/members/token',
-      {'refreshToken': _refreshTokenTemp},
+      {'refreshToken': _refreshTokenTemp,
+      'timeZone': currentTimeZone,
+      'language': currentLanguage},
     );
 
     // print(res.statusCode);
@@ -319,10 +329,12 @@ class UserStatus with ChangeNotifier {
     // print('asdfasfsafsfs');
     final res = await post(
         '$serverAddress/members',
-        {'code': idToken, 'provider': provider}
+        {'code': idToken, 'provider': provider,
+        'timeZone': currentTimeZone,
+        'language': currentLanguage}
     );
     // print(res.statusCode);
-    // print(res.body);
+    print(res.body);
     // print(res.statusCode);
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {

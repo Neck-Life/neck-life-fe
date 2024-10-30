@@ -1,5 +1,6 @@
 import 'package:audio_session/audio_session.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -8,6 +9,7 @@ import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
+import 'package:mocksum_flutter/util/NotificationService.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +19,7 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(); // Firebase 초기화
 
   await EasyLocalization.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
@@ -26,6 +29,11 @@ void main() async {
   await initializeAudioSession();
   await initGoogleMobileAds();
 
+  NotificationService notificationService = NotificationService();
+  await notificationService.initFirebaseMessaging();
+
+
+
   runApp(EasyLocalization(
     supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],
     path: 'assets/translations',
@@ -34,6 +42,7 @@ void main() async {
   ));
   // runApp(const MyApp());
 }
+
 
 
 class MyApp extends StatefulWidget {
