@@ -1,25 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
-import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
-import 'package:mocksum_flutter/view/stretch/stretching_session_dev.dart';
-import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
-import 'package:mocksum_flutter/view/stretch/widgets/stretching_start_modal.dart';
+import 'package:mocksum_flutter/view/stretch/subpages/stretching_selection.dart';
+import 'package:mocksum_flutter/view/stretch/subpages/stretching_test_env.dart';
+import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
 
-import '../../service/stretching_timer.dart';
+import '../../util/responsive.dart';
+import '../home/widgets/app_bar.dart';
 
-/**
- * <--스트레칭괸련 테스트환경-->
- * TODO : 1. 스트레칭 음성,진동 추가
- * TODO : 2. 스트레칭 종료 후 다시 스트레칭 타이머 작동
- * TODO : 3. 자세탐지 도중 타이머(nn분 간격 스트레칭 알림) -> 백그라운드상에서 모달창 생기면, 타이머가 안돌아가는 이슈
- * TODO : 4. 스트레칭 옵션 설정(주기 타이머, 스트레칭종목 등) 기능 추가 -> 프로바이더 고려
- * TODO : 5. 스트레칭 백그라운드 Push Notification. (기존 소리,진동과는 차별되도록)
- * TODO : 6. 목표에 스트레칭 추가 및 목표달성 이벤트 추가
- * TODO : 7. 정면 캐릭터 사진 적용
- * TODO : 8. 앰플리튜드 추적 코드 추가
- */
-StretchingTimer stretchingTimer = StretchingTimer();
-
+// final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorState>();
+late BuildContext stretchingContext;
 class Stretching extends StatefulWidget {
   const Stretching({Key? key}) : super(key: key);
 
@@ -27,65 +15,85 @@ class Stretching extends StatefulWidget {
   _StretchingState createState() => _StretchingState();
 }
 
-class _StretchingState extends State<Stretching> {
+class _StretchingState extends State<Stretching>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 1, vsync: this); // 탭의 개수를 설정
+    stretchingContext = context;
+    // print('스트레칭 컨텍스트: ${stretchingContext}');
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    Responsive res = Responsive(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stretching Guide'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60), // 고정된 높이
+        child: HomeAppBar(), // 사용자 정의 AppBar 위젯
       ),
       body: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              showStretchingStartModal(context);
-            },
-            child: Text("스트레칭 시작 모달창 띄우기"),
+          TabBar(
+            controller: _tabController,
+            isScrollable: true,
+            // 탭 너비를 텍스트 길이에 맞게 조절
+            labelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+            ),
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(
+                color: Color(0xFF101010),
+                width: 3,
+              ),
+              // insets: EdgeInsets.symmetric(horizontal: res.percentWidth(1)), // 테두리 양쪽 여백 설정
+            ),
+            tabAlignment: TabAlignment.start,
+            tabs: [
+              Tab(text: '스트레칭 알람'),
+              // Tab(text: '스트레칭 선택'),
+              // Tab(text: '추천 스트레칭'),
+              // Tab(text: '테스트환경'),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => StretchingCompletedScreen()),
-              );
-            },
-            child: const Text('스트레칭 완료'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              showStretchingCompleteModal(context);
-            },
-            child: Text("스트레칭 완료 모달창 띄우기"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => StretchingSession()),
-              );
-            },
-            child: const Text('스트레칭 세션'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => StretchingSessionDev()),
-              );
-            },
-            child: const Text('스트레칭 세션(dev) 센서기반'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              stretchingTimer.setTimer(context);
-            },
-            child: const Text('스트레칭타이머 설정'),
+          SizedBox(height: res.percentWidth(1),),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                StretchingAlarmSetting(),
+                // StretchingSelection(),
+                // RecommendedStretching(),
+                // StretchingDevEnv(),
+                // FavoritesPage(),
+              ],
+            ),
           ),
         ],
       ),
     );
+  }
+}
+
+class RecommendedStretching extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('추천 스트레칭 페이지\nTo Be Announced'));
   }
 }

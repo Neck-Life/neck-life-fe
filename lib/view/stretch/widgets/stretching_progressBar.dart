@@ -21,7 +21,6 @@ class StretchingProgressBar extends StatefulWidget {
 
 
 class _StretchingProgressBarState extends State<StretchingProgressBar> {
-  double progress = 0.0; // 초기 progress 값
   double elapsedTime=0;
   double duration=0;
   bool isThresholdReached=false;
@@ -31,7 +30,6 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
     if(progress > 1) progress = 1;
     // Timer를 통해 주기적으로 progress 업데이트
     setState(() {
-      this.progress = progress; // targetValue를 progress로 반영
       widget.progress = progress;
       this.isThresholdReached =isThresholdReached;
       this.elapsedTime = elapsedTime;
@@ -106,7 +104,7 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: FractionallySizedBox(
-                        widthFactor: progress, // 진행률에 따라 너비 조절
+                        widthFactor: widget.progress, // 진행률에 따라 너비 조절
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),

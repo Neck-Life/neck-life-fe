@@ -9,10 +9,18 @@ import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:provider/provider.dart';
 
+import '../../../service/stretching_timer.dart';
+import '../stretching.dart';
 import '../stretching_session.dart';
 
 // 모달창을 띄우는 함수
-void showStretchingStartModal(BuildContext context) {
+
+void showStretchingStartModal() {
+  BuildContext context = stretchingContext;
+  final StretchingTimer stretchingTimer = context.read<StretchingTimer>();
+// 플래그 초기화
+  stretchingTimer.isStretchingMode = false;
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true, // 모달이 화면 크기에 맞춰 스크롤을 조정할 수 있게 설정
@@ -22,7 +30,12 @@ void showStretchingStartModal(BuildContext context) {
     builder: (context) => const FractionallySizedBox(
       child: StretchingStartModalSheet(),
     ),
-  );
+  ).whenComplete(() {
+    // scrim 영역 클릭으로 모달이 닫힐 때 stretchingTimer.setTimer() 호출
+    if (!stretchingTimer.isStretchingMode) {
+      stretchingTimer.setTimer();
+    }
+  });
 }
 
 class StretchingStartModalSheet extends StatefulWidget {
@@ -71,6 +84,7 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
     final GlobalTimer globalTimer = context.watch();
+    final StretchingTimer stretchingTimer = context.watch();
 
     return SafeArea( // SafeArea로 감싸서 화면 안전 영역을 고려
       child: Container(
@@ -91,15 +105,15 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '벌써 nn분이 지났어요\n스트레칭을 해볼까요?',
+                      Text(
+                        '벌써 ${(stretchingTimer.getStretchingInterval()!~/60)}분이 지났어요\n스트레칭을 해볼까요?',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : 0',
+                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : ${stretchingTimer.completedStretchCount}',
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color(0xFF236EF3),
@@ -155,6 +169,8 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                       ),
                       Button(
                         onPressed: () {
+                          // 스트레칭 버튼 클릭 시 플래그 설정
+                          stretchingTimer.isStretchingMode = true;
                           Navigator.pop(context);
                           Navigator.push(
                             context,

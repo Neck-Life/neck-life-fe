@@ -11,12 +11,11 @@ import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:provider/provider.dart';
 
 /**
- * TODO : 스트레칭 완료 모달의 존재의의에 대해 의논해보기 -> deprecated하는걸로
+ * TODO : 스트레칭 완료 모달의 존재의의에 대해 의논해보기
  * */
 
 // 모달창을 띄우는 함수
-@deprecated
-void showStretchingCompleteModal(BuildContext context) {
+void showStretchingExitModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true, // 모달이 화면 크기에 맞춰 스크롤을 조정할 수 있게 설정
@@ -24,49 +23,33 @@ void showStretchingCompleteModal(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
     ),
     builder: (context) => const FractionallySizedBox(
-      child: StretchingCompleteModalSheet(),
+      child: StretchingExitModalSheet(),
     ),
   );
 }
-@deprecated
-class StretchingCompleteModalSheet extends StatefulWidget {
 
-  const StretchingCompleteModalSheet({
+class StretchingExitModalSheet extends StatefulWidget {
+
+  const StretchingExitModalSheet({
     super.key,
   });
 
   @override
-  _StretchingCompleteModalSheetState createState() => _StretchingCompleteModalSheetState();
+  _StretchingExitModalSheetState createState() => _StretchingExitModalSheetState();
 }
 
-class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSheet> {
-  int countdown = 5; // 초기값 29로 설정
+class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
   Timer? _timer; // 타이머를 위한 변수
 
   @override
   void initState() {
     super.initState();
-    _startCountdown(); // 타이머 시작
   }
 
   @override
   void dispose() {
     _timer?.cancel(); // 화면에서 벗어날 때 타이머 해제
     super.dispose();
-  }
-
-  // 타이머로 1초마다 카운트다운 감소
-  void _startCountdown() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (countdown > 0) {
-        setState(() {
-          countdown--; // 1씩 감소
-        });
-      } else {
-        _timer?.cancel(); // 0이 되면 타이머 정지
-        Navigator.pop(context);
-      }
-    });
   }
 
 
@@ -97,14 +80,14 @@ class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSh
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '스트레칭이 끝났습니다!\n자세탐지를 마저할까요?',
+                        '스트레칭을 그만할까요?',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : 0',
+                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : ${stretchingTimer.completedStretchCount}',
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color(0xFF236EF3),
@@ -147,12 +130,11 @@ class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSh
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // "안할래요" 버튼
                       Button(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        text: '그만하기', // 카운트다운 값 표시
+                        text: '이어서하기', // 카운트다운 값 표시
                         backgroundColor: const Color(0xFF8991A0),
                         color: Colors.white,
                         width: res.percentWidth(38),
@@ -160,11 +142,11 @@ class _StretchingCompleteModalSheetState extends State<StretchingCompleteModalSh
                       ),
                       Button(
                         onPressed: () {
-                          // StretchingTimer().setTimer(); //스트레칭 타이머 다시 돌리기
                           stretchingTimer.setTimer();
                           Navigator.pop(context);
+                          Navigator.pop(context);
                         },
-                        text: '이어서 하기($countdown)',
+                        text: '그만하기',
                         backgroundColor: const Color(0xFF236EF3),
                         color: Colors.white,
                         width: res.percentWidth(38),

@@ -1,23 +1,49 @@
 import 'dart:async';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
+import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
+import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
+import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/stretching_exit_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
 import 'package:provider/provider.dart';
 
 import '../../util/responsive.dart';
+import '../../util/time_convert.dart';
 import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
+const NotificationDetails _details = NotificationDetails(
+    android: AndroidNotificationDetails('temp1', 'asdf'),
+    iOS: DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    )
+);
+
+Future<void> _showPushAlarm(String title, String body) async {
+  FlutterLocalNotificationsPlugin localNotification =
+  FlutterLocalNotificationsPlugin();
+  // await localNotification.cancel(11); //목 돌리기 운동처럼 동작시간이 짧으면 알림이 씹힘 ㅠ
+  await localNotification.show(11, // 푸쉬알림고유ID
+      title,
+      body,
+      _details
+  );
+}
 class StretchingSession extends StatefulWidget {
-  final StretchingGroup selectedGroup = stretchingGroups[5];
 
   StretchingSession({super.key});
 
@@ -35,8 +61,8 @@ class _StretchingSessionState extends State<StretchingSession> {
   double _elapsedTime = 0;
   bool _isActive = true;
 
-  String get guideText => widget.selectedGroup.actions[currentStepIndex].name;
-  String get stretchingGroupName => widget.selectedGroup.groupName;
+  String get guideText => selectedStretchingGroup.actions[currentStepIndex].name;
+  String get stretchingGroupName => selectedStretchingGroup.groupName;
 
   StretchingProgressBar stretchingProgressBar = StretchingProgressBar(key: GlobalKey(),);
 
@@ -63,6 +89,7 @@ class _StretchingSessionState extends State<StretchingSession> {
     _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
       setState(() {
         _elapsedTime += 0.25;
+        // print('타이머!');
       });
 
       if (_elapsedTime >= duration) {
@@ -78,12 +105,12 @@ class _StretchingSessionState extends State<StretchingSession> {
   }
 
   bool isStepCompleted(double pitch, double roll, double yaw) {
-    final currentAction = widget.selectedGroup.actions[currentStepIndex];
+    final currentAction = selectedStretchingGroup.actions[currentStepIndex];
     return currentAction.isCompleted(pitch, roll, yaw);
   }
 
   void checkStretchCompletion(double pitch, double roll, double yaw) {
-    final currentAction = widget.selectedGroup.actions[currentStepIndex];
+    final currentAction = selectedStretchingGroup.actions[currentStepIndex];
     double value;
     switch (currentAction.progressVariable) {
       case ProgressVariable.pitch:
@@ -104,6 +131,8 @@ class _StretchingSessionState extends State<StretchingSession> {
       case ProgressVariable.negativeYaw:
         value = -yaw;
         break;
+      default:
+        value = _elapsedTime / currentAction.duration;
     }
 
     bool isThresholdReached = currentAction.isCompleted(pitch,roll,yaw);
@@ -122,11 +151,14 @@ class _StretchingSessionState extends State<StretchingSession> {
   }
 
   void _goToNextStep() {
-    if (currentStepIndex < widget.selectedGroup.actions.length - 1) {
+
+    if (currentStepIndex < selectedStretchingGroup.actions.length - 1) {
+      _showPushAlarm("잘했어요!", "다음단계로 넘어갈게요!");
       setState(() {
         currentStepIndex += 1;
       });
     } else {
+      _showPushAlarm("수고하셨어요", "모든 스트레칭이 끝났습니다!");
       _showCompletionDialog();
     }
   }
@@ -147,26 +179,17 @@ class _StretchingSessionState extends State<StretchingSession> {
     });
   }
 
-
-  void _showCompletedScreen() {
+  void _exitStretching() {
     // _toggleStretchingWidget(); // 스트레칭 비활성화
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => const StretchingCompletedScreen()),
-    );
+    showStretchingExitModal(context);
   }
-
 
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
-    DetectStatus detectStatus = context.watch();
-    UserStatus userStatus = context.watch();
     GlobalTimer globalTimer = context.watch();
 
-    final currentAction = widget.selectedGroup.actions[currentStepIndex]; // 동작 정보 가져오기
-    final double duration = currentAction.duration; // 동작에 따른 duration 설정
+    final currentAction = selectedStretchingGroup.actions[currentStepIndex]; // 동작 정보 가져오기
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -219,8 +242,8 @@ class _StretchingSessionState extends State<StretchingSession> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      print("터치 감지");
-                      _showCompletedScreen();
+                      // print("exit터치 감지");
+                      _exitStretching();
                     },
                     child: Container(
                       width: res.percentWidth(80),
@@ -236,7 +259,7 @@ class _StretchingSessionState extends State<StretchingSession> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextDefault(
-                            content: "시간",
+                            content: "${TimeConvert.sec2TimeFormat(globalTimer.useSec)}",
                             fontSize: 16,
                             isBold: true,
                             fontColor: const Color(0xFF236EF3),

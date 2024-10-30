@@ -5,6 +5,7 @@ enum ProgressVariable {
   negativeRoll,
   yaw,
   negativeYaw,
+  none,
 }
 
 class StretchingAction {
