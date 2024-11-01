@@ -31,6 +31,7 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
       setState(() {
         _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
         _selectedStretchingIndex = Provider.of<StretchingTimer>(context, listen: false).selectedStretchingIndex;
+        selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
       });
     });
   }
@@ -141,7 +142,8 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                           onChanged: (int? newIndex) {
                             setState(() {
                               _selectedStretchingIndex = newIndex!;
-                              stretchingTimer.setStretchingTypeIndex(newIndex);
+                              selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
+                              stretchingTimer.setStretchingTypeIndex(_selectedStretchingIndex);
 
                             });
                           },
