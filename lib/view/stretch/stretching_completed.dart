@@ -5,6 +5,7 @@ import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.d
 import 'package:provider/provider.dart';
 
 import '../../service/stretching_timer.dart';
+import '../../util/localization_string.dart';
 
 class StretchingCompletedScreen extends StatefulWidget {
   const StretchingCompletedScreen({super.key});
@@ -60,14 +61,14 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      '수고하셨어요!',
+                      LS.tr('stretching.completed_view.good_job'),
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '모든 스트레칭이 끝났습니다.',
+                      LS.tr('stretching.completed_view.stretching_complete'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -80,7 +81,7 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                'xx 자료에 의하면, 주기적인 스트레칭은\n집중력을 xx% 향상시켜준다고 해요!',
+                LS.tr('stretching.completed_view.stretching_info'),
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),

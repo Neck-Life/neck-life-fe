@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../theme/component/text_default.dart';
 import '../../../service/stretching_timer.dart';
+import '../../../util/localization_string.dart';
 import '../data/stretching_data.dart';
 import '../models/stretching_action.dart';
 
@@ -56,10 +57,10 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextDefault(content: '스트레칭 알람 주기 설정', fontSize: 18, isBold: true),
+                  TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
                   SizedBox(height: res.percentHeight(0.5)),
                   TextDefault(
-                    content: '자세탐지 도중 스트레칭 알람 주기를 설정할 수 있어요',
+                    content: LS.tr('stretching.stretching_alarm.stretching_alarm_description'),
                     fontSize: 14,
                     isBold: false,
                     fontColor: const Color(0xFF8991A0),
@@ -91,10 +92,10 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextDefault(content: '10초', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '10분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '30분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '50분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10s'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
                       ],
                     ),
                   ),
@@ -117,13 +118,13 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                       children: [
                         SizedBox(height: res.percentHeight(1)),
                         TextDefault(
-                          content: '스트레칭 선택',
+                          content: LS.tr('stretching.stretching_alarm.stretching_selection'),
                           fontSize: 18,
                           isBold: true,
                         ),
                         SizedBox(height: res.percentHeight(0.5)),
                         TextDefault(
-                          content: '선택한 스트레칭으로 가이드해 드릴게요',
+                          content: LS.tr('stretching.stretching_alarm.stretching_selection_description'),
                           fontSize: 14,
                           isBold: false,
                           fontColor: const Color(0xFF8991A0),
@@ -182,13 +183,13 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextDefault(
-                          content: '스트레칭을 왜 해야하나요?',
+                          content: LS.tr('stretching.stretching_alarm.why_stretch'),
                           fontSize: 18,
                           isBold: true,
                         ),
                         SizedBox(height: res.percentHeight(0.5)),
                         TextDefault(
-                          content: '규칙적인 스트레칭은 근육 피로를 평균 60% 줄이고 혈액 순환을 30% 개선합니다.\n거북목을 예방하고 신체 유연성도 높일 수 있답니다!',
+                          content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
                           fontSize: 14,
                           isBold: false,
                           fontColor: const Color(0xFF8991A0),

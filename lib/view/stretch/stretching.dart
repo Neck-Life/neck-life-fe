@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/stretching_selection.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/stretching_test_env.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
 
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import '../home/widgets/app_bar.dart';
 
@@ -22,7 +24,7 @@ class _StretchingState extends State<Stretching>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 1, vsync: this); // 탭의 개수를 설정
+    _tabController = TabController(length: 2, vsync: this); // 탭의 개수를 설정
     stretchingContext = context;
     // print('스트레칭 컨텍스트: ${stretchingContext}');
   }
@@ -66,10 +68,10 @@ class _StretchingState extends State<Stretching>
             ),
             tabAlignment: TabAlignment.start,
             tabs: [
-              Tab(text: '스트레칭 알람'),
+              Tab(text: LS.tr('stretching.stretching_alarm.title')),
               // Tab(text: '스트레칭 선택'),
-              // Tab(text: '추천 스트레칭'),
-              // Tab(text: '테스트환경'),
+              //Tab(text: LS.tr('stretching.recommended_stretching.title')),
+              Tab(text: '테스트환경'),
             ],
           ),
           SizedBox(height: res.percentWidth(1),),
@@ -80,7 +82,7 @@ class _StretchingState extends State<Stretching>
                 StretchingAlarmSetting(),
                 // StretchingSelection(),
                 // RecommendedStretching(),
-                // StretchingDevEnv(),
+                StretchingDevEnv(),
                 // FavoritesPage(),
               ],
             ),

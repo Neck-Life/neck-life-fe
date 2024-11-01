@@ -10,6 +10,8 @@ import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:provider/provider.dart';
 
+import '../../../util/localization_string.dart';
+
 /**
  * TODO : 스트레칭 완료 모달의 존재의의에 대해 의논해보기
  * */
@@ -79,15 +81,15 @@ class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '스트레칭을 그만할까요?',
+                      Text(
+                        LS.tr('stretching.exit_modal.stretch_exit_prompt'),
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : ${stretchingTimer.completedStretchCount}',
+                        LS.tr('stretching.exit_modal.detection_time_info', [TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode), stretchingTimer.completedStretchCount]),
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color(0xFF236EF3),
@@ -134,7 +136,7 @@ class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        text: '이어서하기', // 카운트다운 값 표시
+                        text: LS.tr('stretching.exit_modal.continue_stretching'),
                         backgroundColor: const Color(0xFF8991A0),
                         color: Colors.white,
                         width: res.percentWidth(38),
@@ -146,7 +148,7 @@ class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
-                        text: '그만하기',
+                        text: LS.tr('stretching.exit_modal.stop_stretching'),
                         backgroundColor: const Color(0xFF236EF3),
                         color: Colors.white,
                         width: res.percentWidth(38),

@@ -378,6 +378,62 @@
     "conn_txt": "2. 에어팟이 다른 기기에 연결되어있지 않은지 확인해주세요.",
     "conn_desc": "에어팟이 다른 스마트폰이나 노트북 등의 기기에 동시에 연결되어있다면 본 앱이 작동하지 않을 수 있습니다. 본 앱을 실행중인 기기에서 음악 등을 재생하여 에어팟 연결을 가져오거나, 다른 기기와의 연결을 끊어주세요.",
     "last": "만약 위 경우에 해당하지 않음에도 불구하고 앱이 작동하지 않는다면, 앱의 설정 탭의 '문의/피드백 보내기'를 사용해주시거나 somart.necklife@gmail.com로 메일을 보내주시면 최대한 빠르게 수정하겠습니다."
+  },
+
+  "stretching": {
+    "stretching_alarm": {
+      "title": "스트레칭 알람",
+      "stretching_alarm_setting": "스트레칭 알람 주기 설정",
+      "stretching_alarm_description": "자세탐지 도중 스트레칭 알람 주기를 설정할 수 있어요",
+      "stretching_interval_disabled": "비활성",
+      "stretching_interval_10s": "10초",
+      "stretching_interval_10m": "10분",
+      "stretching_interval_30m": "30분",
+      "stretching_interval_50m": "50분",
+      "stretching_selection": "스트레칭 선택",
+      "stretching_selection_description": "선택한 스트레칭으로 가이드해 드릴게요",
+      "why_stretch": "스트레칭을 왜 해야하나요?",
+      "why_stretch_description": "규칙적인 스트레칭은 근육 피로를 평균 60% 줄이고 혈액 순환을 30% 개선합니다.\\n거북목을 예방하고 신체 유연성도 높일 수 있답니다!"
+    },
+    "recommended_stretching": {
+      "title": "추천 스트레칭",
+      "announce": "추천 스트레칭 페이지\\nTo Be Announced"
+    },
+    "timer": {
+      "stretching_reminder_title": "네키: 스트레칭 알리미",
+      "stretching_reminder_body": "{}분 후에 네키가 스트레칭 알림을 보내드릴게요!",
+      "stretching_time_passed": "벌써 {}분이 지났어요!\n네키랑 같이 스트레칭 해볼까요?"
+    },
+
+    "start_modal": {
+      "stretch_prompt": "벌써 {}분이 지났어요\\n스트레칭을 해볼까요?",
+      "detection_time": "탐지 시간: {}, 스트레칭 : {}",
+      "no_stretch": "안할래요 ({})",
+      "start_stretching": "스트레칭 시작"
+    },
+    "exit_modal": {
+      "stretch_exit_prompt": "스트레칭을 그만할까요?",
+      "detection_time_info": "탐지 시간: {}, 스트레칭 : {}",
+      "continue_stretching": "이어서하기",
+      "stop_stretching": "그만하기"
+    },
+    "stretching_session": {
+      "good_job_next_step_title": "잘했어요!",
+      "good_job_next_step_body": "다음단계로 넘어갈게요!",
+      "congratulations_all_done_title": "수고하셨어요",
+      "congratulations_all_done_body": "모든 스트레칭이 끝났습니다!",
+      "all_done": "모든 스트레칭이 끝났습니다.",
+      "skip_stretching": "스트레칭 건너뛰기"
+    },
+    "completed_view": {
+      "good_job": "수고하셨어요!",
+      "stretching_complete": "모든 스트레칭이 끝났습니다.",
+      "stretching_info": "xx 자료에 의하면, 주기적인 스트레칭은\\n집중력을 xx% 향상시켜준다고 해요!"
+    },
+    "progress_bar": {
+      "slightly_more_tilt": "고개를 조금 더 기울여볼까요?",
+      "time_elapsed": "{}초 / {}초"
+    }
   }
 }
 
