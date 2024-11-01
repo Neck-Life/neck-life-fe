@@ -103,48 +103,54 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/icons/Document.svg'),
-                  SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextDefault(
-                        content: '스트레칭 선택',
-                        fontSize: 18,
-                        isBold: true,
-                      ),
-                      SizedBox(height: res.percentHeight(0.5)),
-                      TextDefault(
-                        content: '선택한 스트레칭으로 가이드해 드릴게요',
-                        fontSize: 14,
-                        isBold: false,
-                        fontColor: const Color(0xFF8991A0),
-                      ),
-                      DropdownButton<StretchingGroup>(
-                        value: selectedStretchingGroup,
-                        icon: Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.blue),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.blueAccent,
+                  SizedBox(width: res.percentWidth(1)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: res.percentHeight(1)),
+                        TextDefault(
+                          content: '스트레칭 선택',
+                          fontSize: 18,
+                          isBold: true,
                         ),
-                        onChanged: (StretchingGroup? newValue) {
-                          setState(() {
-                            selectedStretchingGroup = newValue!;
-                          });
-                        },
-                        items: stretchingGroups
-                            .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
-                          return DropdownMenuItem<StretchingGroup>(
-                            value: group,
-                            child: TextDefault(content: group.groupName, fontSize: 16, isBold: false),
-                          );
-                        }).toList(),
-                      ),
-                    ],
+                        SizedBox(height: res.percentHeight(0.5)),
+                        TextDefault(
+                          content: '선택한 스트레칭으로 가이드해 드릴게요',
+                          fontSize: 14,
+                          isBold: false,
+                          fontColor: const Color(0xFF8991A0),
+                        ),
+                        DropdownButton<StretchingGroup>(
+                          isExpanded: true, // DropdownButton이 전체 너비를 사용하도록 설정
+                          value: selectedStretchingGroup,
+                          icon: Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.blue),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.blueAccent,
+                          ),
+                          onChanged: (StretchingGroup? newValue) {
+                            setState(() {
+                              selectedStretchingGroup = newValue!;
+                            });
+                          },
+                          items: stretchingGroups
+                              .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
+                            return DropdownMenuItem<StretchingGroup>(
+                              value: group,
+                              child: TextDefault(content: group.groupName, fontSize: 16, isBold: false),
+                            );
+                          }).toList(),
+                        ),
+
+                      ],
+                    ),
                   ),
+                  // SvgPicture.asset('assets/icons/Document.svg'),
+                  SizedBox(width: res.percentWidth(1),)
                 ],
               ),
             ),

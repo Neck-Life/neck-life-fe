@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mocksum_flutter/view/stretch/stretching.dart';
 import '../view/stretch/widgets/stretching_start_modal.dart';
 
 /**
@@ -12,7 +11,7 @@ final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorStat
 
 class StretchingTimer extends ChangeNotifier {
   final List<int?> _intervals = [10, 600, 1800, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
-  int _selectedIntervalIndex = 0; // 초기 인덱스
+  int _selectedIntervalIndex = 2; // 초기 인덱스 -> 기본 30분
   Timer? _timer;
   int get selectedIntervalIndex => _selectedIntervalIndex;
   int completedStretchCount = 0;

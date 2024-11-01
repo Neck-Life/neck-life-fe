@@ -39,7 +39,7 @@ final List<StretchingGroup> stretchingGroups = [
       StretchingAction(
         name: '목을 뒤로 젖히기',
         isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 8,
+        duration: 7,
         progressVariable: ProgressVariable.pitch,
       ),
       // 잠시 휴식 동작
@@ -53,7 +53,7 @@ final List<StretchingGroup> stretchingGroups = [
       StretchingAction(
         name: '다시 목을 뒤로 젖히기',
         isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 8,
+        duration: 7,
         progressVariable: ProgressVariable.pitch,
       ),
     ],
@@ -130,6 +130,7 @@ final List<StretchingGroup> stretchingGroups = [
 
 
   // 5. 목 좌우 돌리기
+  // TODO : yaw값은 절대보정이 되지않음. 스트레칭 시작시 바라보는 지점을 영점으로 맞출 필요가 있음
   StretchingGroup(
     groupName: '목 좌우 돌리기 운동[beta]',
     actions: [
