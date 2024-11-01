@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,9 +14,16 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 class UserStatus with ChangeNotifier {
   // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
   static const String serverAddress = 'http://43.200.200.34/api/v1';
+  final Dio dio = Dio();
+  late final String currentTimeZone;
+  final String language =Platform.localeName ;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  static final String currentTimeZone = FlutterTimezone.getLocalTimezone() as String;
-  static final String currentLanguage = Platform.localeName;
+
+
+
+
+
 
   static bool sIsLogged = false;
   bool _isLogged = false;
@@ -42,6 +51,8 @@ class UserStatus with ChangeNotifier {
   }
 
   void init() async {
+
+
     if (_accessTokenTemp == '' || _refreshTokenTemp == '') {
       const storage = FlutterSecureStorage();
 
@@ -176,7 +187,7 @@ class UserStatus with ChangeNotifier {
       '$serverAddress/members/token',
       {'refreshToken': _refreshTokenTemp,
       'timeZone': currentTimeZone,
-      'language': currentLanguage},
+      'language' : language},
     );
 
     // print(res.statusCode);
@@ -190,6 +201,8 @@ class UserStatus with ChangeNotifier {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: _accessTokenTemp);
       await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
+
+      postFcmToken(storage);
 
       // print('토큰 재발급 완료: $_accessTokenTemp');
     } else {
@@ -215,7 +228,10 @@ class UserStatus with ChangeNotifier {
     // print(_refreshTokenTemp);
     final res = await post(
       '$serverAddress/members/token',
-      {'refreshToken': _refreshTokenTemp},
+      {'refreshToken': _refreshTokenTemp,
+        'timeZone': currentTimeZone,
+        'language' : language
+      },
     );
 
     // print(res.statusCode);
@@ -326,13 +342,23 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<bool> socialLogin(String idToken, String provider) async {
+    getTimeZone();
+
+
+
+
+
     // print('asdfasfsafsfs');
     final res = await post(
         '$serverAddress/members',
         {'code': idToken, 'provider': provider,
-        'timeZone': currentTimeZone,
-        'language': currentLanguage}
+        'timeZone': currentTimeZone, 'language' : language
+        }
     );
+
+
+
+
     // print(res.statusCode);
     print(res.body);
     // print(res.statusCode);
@@ -353,9 +379,53 @@ class UserStatus with ChangeNotifier {
       await storage.write(key: 'email', value: resData['data']['email'].toString());
       await storage.write(key: 'provider', value: resData['data']['provider'].toString());
 
+
+      await postFcmToken(storage);
+
       return true;
     }
 
     return false;
   }
+
+  Future<void> postFcmToken(FlutterSecureStorage storage) async {
+    String? fcmToken =await _firebaseMessaging.getToken();
+
+    print("fcmtoken $fcmToken");
+    if (fcmToken != null) {
+      try {
+        // 헤더 설정
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+        };
+        if (_accessTokenTemp != null && _accessTokenTemp.isNotEmpty) {
+          dio.options.headers['authorization'] = 'Bearer $_accessTokenTemp';
+        } else {
+          print("accessToken이 없습니다. 인증이 필요합니다.");
+        }
+
+        // 서버로 FCM 토큰 전송
+        final response = await dio.post(
+          '$serverAddress/members/fcm',
+          data: {'fcmToken': fcmToken},
+        );
+
+        if (response.statusCode == 200) {
+          print("FCM 토큰이 서버에 성공적으로 전송되었습니다.");
+        } else {
+          print("FCM 토큰 전송 실패: ${response.statusCode}");
+        }
+      } catch (e) {
+        print("FCM 토큰 전송 중 오류 발생: $e");
+      }
+    }
+  }
+
+  Future<String> getTimeZone() async {
+    currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    print('Current Time Zone: $currentTimeZone');
+
+    return currentTimeZone;
+  }
+
 }

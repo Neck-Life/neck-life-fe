@@ -32,8 +32,6 @@ void main() async {
   NotificationService notificationService = NotificationService();
   await notificationService.initFirebaseMessaging();
 
-
-
   runApp(EasyLocalization(
     supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],
     path: 'assets/translations',
@@ -42,7 +40,6 @@ void main() async {
   ));
   // runApp(const MyApp());
 }
-
 
 
 class MyApp extends StatefulWidget {

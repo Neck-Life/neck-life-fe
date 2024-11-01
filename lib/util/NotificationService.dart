@@ -19,6 +19,7 @@ class NotificationService {
     // FCM 토큰 가져오기
     String? fcmToken = await _firebaseMessaging.getToken();
 
+
     if (fcmToken != null) {
       print("FCM Token: $fcmToken");
       await sendTokenToServer(fcmToken); // 서버로 FCM 토큰 전송
@@ -26,7 +27,6 @@ class NotificationService {
 
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
-      badge: true,
       sound: true,
     );
 
@@ -43,6 +43,7 @@ class NotificationService {
     // 토큰이 갱신될 때마다 서버로 전송
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       sendTokenToServer(newToken);
+      storage.write(key: 'fcmToken', value: newToken);
     });
   }
 
@@ -57,6 +58,9 @@ class NotificationService {
         dio.options.headers["authorization"] = "Bearer $accessToken";
       } else {
         print("accessToken이 없습니다. 인증이 필요합니다.");
+
+
+
         return;
       }
 
