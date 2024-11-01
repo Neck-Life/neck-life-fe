@@ -21,12 +21,18 @@ class StretchingAlarmSetting extends StatefulWidget {
   State<StatefulWidget> createState() => _StretchingAlarmSettingState();
 }
 class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
-  late double _selectedIntervalIndex;
+  double _selectedIntervalIndex = 2;
+  int _selectedStretchingIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
+        _selectedStretchingIndex = Provider.of<StretchingTimer>(context, listen: false).selectedStretchingIndex;
+      });
+    });
   }
 
   @override
@@ -121,9 +127,9 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                           isBold: false,
                           fontColor: const Color(0xFF8991A0),
                         ),
-                        DropdownButton<StretchingGroup>(
-                          isExpanded: true, // DropdownButton이 전체 너비를 사용하도록 설정
-                          value: selectedStretchingGroup,
+                        DropdownButton<int>(
+                          isExpanded: true,
+                          value: _selectedStretchingIndex,
                           icon: Icon(Icons.arrow_downward),
                           iconSize: 24,
                           elevation: 16,
@@ -132,18 +138,23 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                             height: 2,
                             color: Colors.blueAccent,
                           ),
-                          onChanged: (StretchingGroup? newValue) {
+                          onChanged: (int? newIndex) {
                             setState(() {
-                              selectedStretchingGroup = newValue!;
+                              _selectedStretchingIndex = newIndex!;
+                              stretchingTimer.setStretchingTypeIndex(newIndex);
+
                             });
                           },
-                          items: stretchingGroups
-                              .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
-                            return DropdownMenuItem<StretchingGroup>(
-                              value: group,
-                              child: TextDefault(content: group.groupName, fontSize: 16, isBold: false),
+                          items: List.generate(stretchingGroups.length, (index) {
+                            return DropdownMenuItem<int>(
+                              value: index,
+                              child: TextDefault(
+                                content: stretchingGroups[index].groupName,
+                                fontSize: 16,
+                                isBold: false,
+                              ),
                             );
-                          }).toList(),
+                          }),
                         ),
 
                       ],
