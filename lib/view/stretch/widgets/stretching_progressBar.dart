@@ -95,8 +95,9 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Color(0xFFD8E2F9), // 수정된 테두리 색상
-                        width: 1, // 테두리 두께
+                        // color: Color(0xFFD8E2F9),
+                        color: isThresholdReached ? Color(0xFFD8E2F9) : Color(0x9FED5252),
+                        width: 0.5, // 테두리 두께
                       ),
                     ),
                   ),
@@ -104,11 +105,12 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: FractionallySizedBox(
-                        widthFactor: widget.progress, // 진행률에 따라 너비 조절
+                        widthFactor: isThresholdReached ? elapsedTime/duration : widget.progress , // 진행률에 따라 너비 조절
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFF236EF3),
+                              // color: isThresholdReached ? Color(0xFFD8E2F9) : Color(0x9FED5252),
+                            color: isThresholdReached ? Color(0xFF236EF3) : Color(0x9FED5252),
                           ),
                         ),
                       ),
