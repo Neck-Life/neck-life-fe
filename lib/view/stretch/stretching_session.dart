@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
@@ -52,6 +53,7 @@ class StretchingSession extends StatefulWidget {
 }
 
 class _StretchingSessionState extends State<StretchingSession> {
+  final FlutterTts _flutterTts = FlutterTts();
   double pitch = DetectStatus.nowPitch;
   double roll = DetectStatus.nowRoll;
   double yaw = DetectStatus.nowYaw;
@@ -66,9 +68,15 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   StretchingProgressBar stretchingProgressBar = StretchingProgressBar(key: GlobalKey(),);
 
+  bool isStretchingProcess = false;
+
   @override
   void initState() {
     super.initState();
+    _initializeTts();
+    _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+
+
     // 1초마다 상태를 확인하고 강제로 setState()를 호출해 UI를 갱신
     _updateDataTimer = Timer.periodic(Duration(milliseconds: 50), (_) {
       setState(() {
@@ -83,14 +91,39 @@ class _StretchingSessionState extends State<StretchingSession> {
   @override
   void dispose() {
     _updateDataTimer?.cancel();
+    // _flutterTts.stop();
+
     super.dispose();
   }
+
+  // TTS 초기화 메서드
+  void _initializeTts() async {
+    await _flutterTts.setLanguage("ko-KR"); // 언어 설정
+    await _flutterTts.setSpeechRate(0.5); // 말하기 속도 설정
+    await _flutterTts.setVolume(1.0); // 볼륨 설정
+    await _flutterTts.setPitch(1.0); // 음성 피치 설정
+  }
+
+  // 나레이션 시작
+  Future _speak(String text) async {
+    await _flutterTts.awaitSpeakCompletion(true); // 음성이 끝날 때까지 대기 설정
+    await _flutterTts.speak(text);
+  }
+
+  // 나레이션 멈추기
+  Future _stop() async {
+    await _flutterTts.stop();
+  }
+
   void startTimer(double duration) {
-    _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
-      setState(() {
-        _elapsedTime += 0.25;
-        // print('타이머!');
-      });
+    _timer = Timer.periodic(const Duration(milliseconds: 050), (timer) {
+      if(isStretchingProcess){
+        setState(() {
+          _elapsedTime += 0.050;
+          // print('타이머!');
+        });
+      }
+
 
       if (_elapsedTime >= duration) {
         _goToNextStep();
@@ -111,7 +144,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void checkStretchCompletion(double pitch, double roll, double yaw) {
     final currentAction = selectedStretchingGroup.actions[currentStepIndex];
-    double value;
+    double value=0;
     switch (currentAction.progressVariable) {
       case ProgressVariable.pitch:
         value = pitch;
@@ -132,7 +165,7 @@ class _StretchingSessionState extends State<StretchingSession> {
         value = -yaw;
         break;
       default:
-        value = _elapsedTime / currentAction.duration;
+        // value = _elapsedTime / currentAction.duration;
     }
 
     bool isThresholdReached = currentAction.isCompleted(pitch,roll,yaw);
@@ -142,11 +175,13 @@ class _StretchingSessionState extends State<StretchingSession> {
 
 
     if (_isActive && isStepCompleted(pitch, roll, yaw)) {
+      isStretchingProcess = true;
       if (_timer == null || !_timer!.isActive) {
         startTimer(currentAction.duration); // 동작별 duration을 사용
       }
     } else {
-      _resetTimer();
+      isStretchingProcess = false;
+      // _resetTimer();
     }
   }
 
@@ -156,9 +191,12 @@ class _StretchingSessionState extends State<StretchingSession> {
       _showPushAlarm("잘했어요!", "다음단계로 넘어갈게요!");
       setState(() {
         currentStepIndex += 1;
+        _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
       });
     } else {
       _showPushAlarm("수고하셨어요", "모든 스트레칭이 끝났습니다!");
+      _speak("모든 스트레칭이 끝났습니다.");
+
       _showCompletionDialog();
     }
   }
