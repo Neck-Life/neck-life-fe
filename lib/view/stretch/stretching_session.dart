@@ -1,28 +1,23 @@
 import 'dart:async';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
-import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
-import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
-import 'package:mocksum_flutter/view/stretch/stretching_session.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
-import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_exit_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
 import 'package:provider/provider.dart';
 
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import '../../util/time_convert.dart';
-import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
 const NotificationDetails _details = NotificationDetails(
@@ -74,6 +69,7 @@ class _StretchingSessionState extends State<StretchingSession> {
   void initState() {
     super.initState();
     _initializeTts();
+    //TODO : 한영설정에 따라 음성 반영
     _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
 
 
@@ -91,7 +87,6 @@ class _StretchingSessionState extends State<StretchingSession> {
   @override
   void dispose() {
     _updateDataTimer?.cancel();
-    // _flutterTts.stop();
 
     super.dispose();
   }
@@ -188,13 +183,22 @@ class _StretchingSessionState extends State<StretchingSession> {
   void _goToNextStep() {
 
     if (currentStepIndex < selectedStretchingGroup.actions.length - 1) {
-      _showPushAlarm("잘했어요!", "다음단계로 넘어갈게요!");
+      _showPushAlarm(
+          LS.tr('stretching.stretching_session.good_job_next_step_title'),
+          LS.tr('stretching.stretching_session.good_job_next_step_body')
+      );
       setState(() {
         currentStepIndex += 1;
+        //TODO : 한영설정에 따라 음성 반영
         _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
       });
     } else {
-      _showPushAlarm("수고하셨어요", "모든 스트레칭이 끝났습니다!");
+      _showPushAlarm(
+          LS.tr('stretching.stretching_session.congratulations_all_done_title'),
+          LS.tr('stretching.stretching_session.congratulations_all_done_body')
+      );
+
+      //TODO : 한영설정에 따라 음성 반영
       _speak("모든 스트레칭이 끝났습니다.");
 
       _showCompletionDialog();
@@ -303,7 +307,7 @@ class _StretchingSessionState extends State<StretchingSession> {
                             fontColor: const Color(0xFF236EF3),
                           ),
                           TextDefault(
-                            content: "스트레칭 건너뛰기",
+                            content: LS.tr('stretching.stretching_session.skip_stretching'),
                             fontSize: 16,
                             isBold: false,
                             fontColor: Colors.black,

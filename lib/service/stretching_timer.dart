@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../util/localization_string.dart';
 import '../view/stretch/data/stretching_data.dart';
 import '../view/stretch/widgets/stretching_start_modal.dart';
 
@@ -89,15 +90,14 @@ class StretchingTimer extends ChangeNotifier {
 
     int? _interval = getStretchingInterval();
     _showPushAlarm(
-        '네키 : 스트레칭 알리미',
-        '${(_interval!~/60)}분 후에 네키가 스트레칭 알림을 보내드릴게요!'
+        LS.tr('stretching.timer.stretching_reminder_title', [_interval!~/60]),
+        LS.tr('stretching.timer.stretching_reminder_body',[_interval~/60])
     );
 
     _timer = Timer(Duration(seconds: _interval), () {
       _showPushAlarm(
-          '네키 : 스트레칭 알리미',
-        '벌써 ${(_interval!~/60)}분이 지났어요!\n'
-          '네키랑 같이 스트레칭 해볼까요?'
+        LS.tr('stretching.timer.stretching_reminder_title', [_interval~/60]),
+        LS.tr('stretching.timer.stretching_time_passed', [_interval~/60]),
       );
       showStretchingStartModal();
     });

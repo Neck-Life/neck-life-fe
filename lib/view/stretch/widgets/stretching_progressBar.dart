@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../util/localization_string.dart';
 import '../../../util/responsive.dart';
 
 
@@ -63,7 +64,7 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
               SvgPicture.asset('assets/icons/time.svg'),
               isThresholdReached
                   ? Text(
-                '${elapsedTime.toStringAsFixed(0)}초 / ${duration.toStringAsFixed(0)}초',
+                LS.tr('stretching.progress_bar.time_elapsed', [elapsedTime.toStringAsFixed(0),duration.toStringAsFixed(0)]),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class _StretchingProgressBarState extends State<StretchingProgressBar> {
                 ),
               )
               : Text(
-                '고개를 조금 더 기울여볼까요?',
+                LS.tr('stretching.progress_bar.slightly_more_tilt'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
