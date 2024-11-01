@@ -7,6 +7,7 @@ import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus()),
         ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
         ChangeNotifierProvider<GlobalTimer>(create: (_) => GlobalTimer()),
+        ChangeNotifierProvider<StretchingTimer>(create: (_) => StretchingTimer()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

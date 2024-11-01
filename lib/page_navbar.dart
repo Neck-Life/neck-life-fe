@@ -8,6 +8,7 @@ import 'package:mocksum_flutter/view/goal/goal_view.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/view/start_position/start_position_view.dart';
+import 'package:mocksum_flutter/view/stretch/stretching.dart';
 import 'package:mocksum_flutter/view/tutorial/tutorial_view.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
@@ -123,7 +124,7 @@ class _PageNavBarState extends State<PageNavBar> {
               return Scaffold(
                 body: IndexedStack(
                   index: _index,
-                  children: const [Home(), Goal(), History(), Settings()], // History(key: UniqueKey(),)
+                  children: const [Home(), Stretching(), Goal(), History(), Settings()], // History(key: UniqueKey(),)
                 ),
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -147,9 +148,10 @@ class _PageNavBarState extends State<PageNavBar> {
                       type: BottomNavigationBarType.fixed,
                       items: [
                         BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '홈' : 'Home'),
-                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
-                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
-                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
+                        BottomNavigationBarItem(icon: AssetIcon('time', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '스트레칭' : 'Stretching'),
+                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
+                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 4 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
                       ],
                       currentIndex: _index,
                       onTap: (newIndex) async {
@@ -158,10 +160,12 @@ class _PageNavBarState extends State<PageNavBar> {
                           if (_index == 0) {
                             _amplitudeEventManager.viewEvent('mainpage');
                           } else if (_index == 1) {
-                            _amplitudeEventManager.viewEvent('goal');
+                            _amplitudeEventManager.viewEvent('stretching');
                           } else if (_index == 2) {
-                            _amplitudeEventManager.viewEvent('setting');
+                            _amplitudeEventManager.viewEvent('goal');
                           } else if (_index == 3) {
+                            _amplitudeEventManager.viewEvent('history');
+                          } else if (_index == 4) {
                             _amplitudeEventManager.viewEvent('setting');
                           }
                         });

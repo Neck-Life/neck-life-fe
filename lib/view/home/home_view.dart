@@ -28,6 +28,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/util/localization_string.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../service/stretching_timer.dart';
 import '../../theme/component/button.dart';
 import '../start_position/start_position_view.dart';
 import '../../util/responsive.dart';
@@ -217,6 +218,7 @@ class _HomeState extends State<Home> {
           print('end detection');
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime());
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+          Provider.of<StretchingTimer>(context, listen: false).cancelTimer(); //스트레칭 알리미 종료
           // const storage = FlutterSecureStorage();
           String? executeCount = await storage.read(key: 'executeCount');
           await storage.write(key: 'executeCount', value: (int.parse(executeCount ?? '0')+1).toString());
@@ -333,6 +335,7 @@ class _HomeState extends State<Home> {
     DetectStatus detectStatus = context.watch();
     UserStatus userStatus = context.watch();
     GlobalTimer globalTimer = context.watch();
+    StretchingTimer stretchingTimer = context.watch();
 
     return SafeArea(
       child: Scaffold(
@@ -446,6 +449,7 @@ class _HomeState extends State<Home> {
                                             _audioHandler?.play();
                                             _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
                                           },)));
+                                      stretchingTimer.setTimer();
                                     }
                                   } else {
                                     showStopDetectionSheet();

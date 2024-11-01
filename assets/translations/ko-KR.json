@@ -96,7 +96,7 @@
     "tbd_content2": "탐지를 준비하고 있어요!",
     "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
-    "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요"
+    "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요",
     "goal": "목표",
     "measuring": "탐지 진행 중",
     "measuring_title": "히스토리는 언제 업데이트되나요?",
