@@ -247,95 +247,98 @@ class _StretchingSessionState extends State<StretchingSession> {
 
     final currentAction = selectedStretchingGroup.actions[currentStepIndex]; // 동작 정보 가져오기
 
-    return Scaffold(
-      appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(60), child: HomeAppBar()),
-      body: Center(
-          child: Column(
-        children: [
-          StretchingTitleWidget(
-              // text: "스트레칭 시간입니다."
-              text: stretchingGroupName
-          ),
-          Container(
-              width: res.percentWidth(90),
-              height: res.percentWidth(85),
-              margin: const EdgeInsets.only(top: 20),
-              decoration: BoxDecoration(
-                color: const Color(0xFFD8E2F9),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                      width: res.percentWidth(70),
-                      padding: EdgeInsets.only(top: res.percentWidth(7.5)),
-                      child: Text(
-                        // "10초간 고개를\n하늘을 향해 젖혀주세요",
-                        guideText,
-                        style: TextStyle(
-                          fontSize: 24, // 폰트 크기
-                          fontWeight: FontWeight.bold, // 굵게 설정
-                          height: 1.2, // 줄 간격 설정
-                        ),
-                        textAlign: TextAlign.center,
-                        // 정렬은 필요에 따라 설정 (중앙 정렬로 설정)
-                        softWrap: true,
-                      )),
-                  SizedBox(
-                    height: res.percentHeight(2.5),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const NeckPitch(),
-                      SizedBox(width: res.percentWidth(5)),
-                      const NeckRoll(),
-                    ],
-                  ),
-                  SizedBox(
-                    height: res.percentHeight(2),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      // print("exit터치 감지");
-                      _exitStretching();
-                    },
-                    child: Container(
-                      width: res.percentWidth(80),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                          vertical: res.percentHeight(2),
-                          horizontal: res.percentWidth(5)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextDefault(
-                            content: "${TimeConvert.sec2TimeFormat(globalTimer.useSec)}",
-                            fontSize: 16,
-                            isBold: true,
-                            fontColor: const Color(0xFF236EF3),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: const PreferredSize(
+            preferredSize: Size.fromHeight(60), child: HomeAppBar()),
+        body: Center(
+            child: Column(
+          children: [
+            StretchingTitleWidget(
+                // text: "스트레칭 시간입니다."
+                text: stretchingGroupName
+            ),
+            Container(
+                width: res.percentWidth(90),
+                height: res.percentWidth(85),
+                margin: const EdgeInsets.only(top: 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD8E2F9),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                        width: res.percentWidth(70),
+                        padding: EdgeInsets.only(top: res.percentWidth(7.5)),
+                        child: Text(
+                          // "10초간 고개를\n하늘을 향해 젖혀주세요",
+                          guideText,
+                          style: TextStyle(
+                            fontSize: 24, // 폰트 크기
+                            fontWeight: FontWeight.bold, // 굵게 설정
+                            height: 1.2, // 줄 간격 설정
                           ),
-                          TextDefault(
-                            content: LS.tr('stretching.stretching_session.skip_stretching'),
-                            fontSize: 16,
-                            isBold: false,
-                            fontColor: Colors.black,
-                          )
-                        ],
+                          textAlign: TextAlign.center,
+                          // 정렬은 필요에 따라 설정 (중앙 정렬로 설정)
+                          softWrap: true,
+                        )),
+                    SizedBox(
+                      height: res.percentHeight(2.5),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const NeckPitch(),
+                        SizedBox(width: res.percentWidth(5)),
+                        const NeckRoll(),
+                      ],
+                    ),
+                    SizedBox(
+                      height: res.percentHeight(2),
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        // print("exit터치 감지");
+                        _exitStretching();
+                      },
+                      child: Container(
+                        width: res.percentWidth(80),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(
+                            vertical: res.percentHeight(2),
+                            horizontal: res.percentWidth(5)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextDefault(
+                              content: "${TimeConvert.sec2TimeFormat(globalTimer.useSec)}",
+                              fontSize: 16,
+                              isBold: true,
+                              fontColor: const Color(0xFF236EF3),
+                            ),
+                            TextDefault(
+                              content: LS.tr('stretching.stretching_session.skip_stretching'),
+                              fontSize: 16,
+                              isBold: false,
+                              fontColor: Colors.black,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )),
-          SizedBox(height: res.percentHeight(5)),
-          stretchingProgressBar,
-        ],
-      )),
+                  ],
+                )),
+            SizedBox(height: res.percentHeight(5)),
+            stretchingProgressBar,
+          ],
+        )),
+      ),
     );
   }
 }

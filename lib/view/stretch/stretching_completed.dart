@@ -45,48 +45,51 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/logo_circular.png',
-                      width: 200,
-                      height: 200,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      LS.tr('stretching.completed_view.good_job'),
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/logo_circular.png',
+                        width: 200,
+                        height: 200,
                       ),
-                    ),
-                    Text(
-                      LS.tr('stretching.completed_view.stretching_complete'),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      SizedBox(height: 10),
+                      Text(
+                        LS.tr('stretching.completed_view.good_job'),
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        LS.tr('stretching.completed_view.stretching_complete'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: Text(
-                LS.tr('stretching.completed_view.stretching_info'),
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Text(
+                  LS.tr('stretching.completed_view.stretching_info'),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
