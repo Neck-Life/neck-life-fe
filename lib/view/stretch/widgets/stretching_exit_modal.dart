@@ -145,6 +145,7 @@ class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
                       Button(
                         onPressed: () {
                           stretchingTimer.setTimer();
+                          StretchingTimer.isStretchingMode = false;
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },

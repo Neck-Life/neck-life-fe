@@ -20,7 +20,7 @@ void showStretchingStartModal() {
   BuildContext context = stretchingContext;
   final StretchingTimer stretchingTimer = context.read<StretchingTimer>();
 // 플래그 초기화
-  stretchingTimer.isStretchingMode = false;
+  StretchingTimer.isStretchingMode = false;
 
   showModalBottomSheet(
     context: context,
@@ -33,7 +33,7 @@ void showStretchingStartModal() {
     ),
   ).whenComplete(() {
     // scrim 영역 클릭으로 모달이 닫힐 때 stretchingTimer.setTimer() 호출
-    if (!stretchingTimer.isStretchingMode) {
+    if (!StretchingTimer.isStretchingMode) {
       stretchingTimer.setTimer();
     }
   });
@@ -171,7 +171,7 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                       Button(
                         onPressed: () {
                           // 스트레칭 버튼 클릭 시 플래그 설정
-                          stretchingTimer.isStretchingMode = true;
+                          StretchingTimer.isStretchingMode = true;
                           Navigator.pop(context);
                           Navigator.push(
                             context,

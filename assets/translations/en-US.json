@@ -379,9 +379,9 @@
       "announce": "Recommended stretches\\nComing soon"
     },
     "timer": {
-      "stretching_reminder_title": "Neckie: Your Stretch Assistant",
-      "stretching_reminder_body": "Neckie will remind you to stretch in {} minutes!",
-      "stretching_time_passed": "{} minutes have passed!\\nLet’s take a stretch break with Neckie!"
+      "stretching_reminder_title": "Necki: Your Stretch Assistant",
+      "stretching_reminder_body": "Necki will remind you to stretch in {} minutes!",
+      "stretching_time_passed": "{} minutes have passed!\\nLet’s take a stretch break with Necki!"
     },
     "start_modal": {
       "stretch_prompt": "{} minutes have passed.\\nReady to stretch?",

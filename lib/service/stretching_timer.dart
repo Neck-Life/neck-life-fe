@@ -22,7 +22,7 @@ class StretchingTimer extends ChangeNotifier {
   int get selectedStretchingIndex => _selectedStretchingIndex;
 
   int completedStretchCount = 0;
-  bool isStretchingMode = false;
+  static bool isStretchingMode = false;
 
   StretchingTimer(){
     init();
