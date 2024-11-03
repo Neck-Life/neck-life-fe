@@ -409,7 +409,7 @@
       "stretching_info": "Research suggests that regular stretching can boost focus by up to xx%!"
     },
     "progress_bar": {
-      "slightly_more_tilt": "Try tilting your head a bit further.",
+      "slightly_more_tilt": "Could you tilt your head a bit more?",
       "time_elapsed": "{} sec / {} sec"
     }
   }

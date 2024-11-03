@@ -69,8 +69,12 @@ class _StretchingSessionState extends State<StretchingSession> {
   void initState() {
     super.initState();
     _initializeTts();
-    //TODO : 한영설정에 따라 음성 반영
-    _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+    if(DetectStatus.lanCode == 'ko') {
+      _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+    } else {
+      //영어
+      _speak("${guideText} for ${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()} seconds");
+    }
 
 
     // 1초마다 상태를 확인하고 강제로 setState()를 호출해 UI를 갱신
@@ -93,7 +97,11 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   // TTS 초기화 메서드
   void _initializeTts() async {
-    await _flutterTts.setLanguage("ko-KR"); // 언어 설정
+    if(DetectStatus.lanCode == 'ko'){
+      await _flutterTts.setLanguage("ko-KR"); // 언어 설정
+    }else{
+      await _flutterTts.setLanguage("en-US"); // 언어 설정
+    }
     await _flutterTts.setSpeechRate(0.5); // 말하기 속도 설정
     await _flutterTts.setVolume(1.0); // 볼륨 설정
     await _flutterTts.setPitch(1.0); // 음성 피치 설정
@@ -189,8 +197,11 @@ class _StretchingSessionState extends State<StretchingSession> {
       );
       setState(() {
         currentStepIndex += 1;
-        //TODO : 한영설정에 따라 음성 반영
-        _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+        if(DetectStatus.lanCode == 'ko') {
+          _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+        } else { // 영어
+          _speak("${guideText} for ${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()} seconds");
+        }
       });
     } else {
       _showPushAlarm(
@@ -198,8 +209,11 @@ class _StretchingSessionState extends State<StretchingSession> {
           LS.tr('stretching.stretching_session.congratulations_all_done_body')
       );
 
-      //TODO : 한영설정에 따라 음성 반영
-      _speak("모든 스트레칭이 끝났습니다.");
+      if(DetectStatus.lanCode =='ko') {
+        _speak("모든 스트레칭이 끝났습니다.");
+      } else {
+        _speak("All stretches completed.");
+      }
 
       _showCompletionDialog();
     }
