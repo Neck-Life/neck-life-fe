@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,7 +92,7 @@ class _GoalSettingState extends State<GoalSetting> {
           _initialValue = targetValue != null ? targetValue.toInt() : 0;
         } else {
           var targetValue = context.read<GoalProvider>().goalMap['time']['targetValue'];
-          _goalValue = targetValue != null ? targetValue.toInt() ~/ 60 : 15;
+          _goalValue = targetValue != null ? targetValue.toInt() : 900;
           _initialValue = targetValue != null ? targetValue.toInt() : 0;
         }
       });
@@ -447,7 +449,7 @@ class _GoalSettingState extends State<GoalSetting> {
                     onTap: () {
                       setState(() {
                         _chosenGoalType = GoalType.time;
-                        _goalValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 15;
+                        _goalValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 900;
                         _initialValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 0;
                       });
                     },
@@ -489,11 +491,13 @@ class _GoalSettingState extends State<GoalSetting> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (_goalValue > 5) {
-                            setState(() {
+                          setState(() {
+                            if (_chosenGoalType == GoalType.score && _goalValue > 5) {
                               _goalValue -= 5;
-                            });
-                          }
+                            } else if (_chosenGoalType == GoalType.time && _goalValue > 300) {
+                              _goalValue -= 300;
+                            }
+                          });
                         },
                         child: WhiteContainer(
                           width: res.percentWidth(1.5),
@@ -510,14 +514,19 @@ class _GoalSettingState extends State<GoalSetting> {
                             color: const Color(0xFFF4F4F7),
                             borderRadius: BorderRadius.circular(10)
                         ),
-                        child: TextDefault(content: '$_goalValue${_chosenGoalType == GoalType.score ? 'goal_view.sc'.tr() : 'goal_view.min'.tr()}', fontSize: 14, isBold: false, fontColor: const Color(0xFF236EF3),),
+                        child: TextDefault(content: '${_chosenGoalType == GoalType.time ? _goalValue ~/ 60 : _goalValue}${_chosenGoalType == GoalType.score ? 'goal_view.sc'.tr() : 'goal_view.min'.tr()}', fontSize: 14, isBold: false, fontColor: const Color(0xFF236EF3),),
                       ),
                       GestureDetector(
                         onTap: () {
                           if (_chosenGoalType == GoalType.score && _goalValue >= 100) return;
                           setState(() {
-                            _goalValue += 5;
+                            if (_chosenGoalType == GoalType.score) {
+                              _goalValue += 5;
+                            } else if (_chosenGoalType == GoalType.time) {
+                              _goalValue += 300;
+                            }
                           });
+                          log('sdfg');
                         },
                         child: WhiteContainer(
                           width: res.percentWidth(1.5),

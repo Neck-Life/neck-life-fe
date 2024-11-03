@@ -42,14 +42,17 @@ class _StartButtonState extends State<StartButton> {
 
     return GestureDetector(
       /// Click Event
-      onTapUp: (details) {
-        onPressed(false);
-        if (!widget.isDisabled) {
-          widget.onPressed();
-        }
+      // onTapUp: (details) {
+      //   onPressed(false);
+      //   if (!widget.isDisabled) {
+      //     widget.onPressed();
+      //   }
+      // },
+      // onTapDown: (details) => onPressed(true),
+      // onTapCancel: () => onPressed(false),
+      onTap: () {
+        widget.onPressed();
       },
-      onTapDown: (details) => onPressed(true),
-      onTapCancel: () => onPressed(false),
 
       /// Container
       child: Container(

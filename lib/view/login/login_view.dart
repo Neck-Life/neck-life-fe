@@ -123,11 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                             AppleIDAuthorizationScopes.email,
                           ],
                         );
-                        print(credential);
+                        // print(credential);
                         bool success = await userStatus.socialLogin(
                             credential.authorizationCode, 'apple');
-                        print('test $success');
                         if (success) {
+                          userStatus.setIsLogged(true);
                           Navigator.push(
                               context, MaterialPageRoute(builder: (
                               context) => const PageNavBar()));
@@ -165,6 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                             idToken, 'google');
                         print(success);
                         if (success) {
+                          userStatus.setIsLogged(success);
                           Navigator.push(
                               context, MaterialPageRoute(builder: (
                               context) => const PageNavBar()));

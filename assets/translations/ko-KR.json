@@ -140,7 +140,9 @@
     "detection_start_ask" : "자세 탐지를\\n시작할까요?",
     "airpods_connect_ask" : "에어팟을 연결해주세요",
     "end_today_free_time" : "오늘의 사용 제한 시간이 끝났습니다.",
-    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지"
+    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지",
+    "start_cta": "자세 모니터링을 시작해보세요!",
+    "stop_cta": "탐지를 끝내면 자세 기록이 업데이트돼요!"
   },
 
   "home_widgets" : {
@@ -304,7 +306,11 @@
     "measuring_txt": "기준 자세 측정 중",
     "btn_txt": "기준 자세 측정",
     "guide_txt" : "등과 허리, 목을 곧게 펴고, 턱을 약간 당겨주세요.",
-    "start": "준비됐어요"
+    "start": "준비됐어요",
+    "snackbar_txt": "무료 플랜에는 하루 당 시간 제한이 있어요",
+    "detect_txt": "동안 탐지할게요",
+    "direct_stop": "타이머 없이 사용할게요",
+    "today_time": "오늘의 남은 탐지 시간"
   },
 
   "today_history_view": {

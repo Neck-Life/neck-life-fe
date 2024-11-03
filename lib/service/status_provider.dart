@@ -45,6 +45,9 @@ class DetectStatus with ChangeNotifier {
 
   bool isBackward = false;
 
+  bool _useTimeLimit = true;
+  int _detectionMin = 10;
+
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
   bool get isNowTurtle => _isNowTurtle;
@@ -53,6 +56,8 @@ class DetectStatus with ChangeNotifier {
   bool get bgSoundActive => _bgSoungActive;
   double get soundVolume => _soundVolume;
   bool get pushNotiAvtive => _pushNotiAvtive;
+  bool get useTimeLimit => _useTimeLimit;
+  int get detectionMin => _detectionMin;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
@@ -200,6 +205,14 @@ class DetectStatus with ChangeNotifier {
 
   void toNotTurtle() {
     _isNowTurtle = false;
+    notifyListeners();
+  }
+
+  void setUseTimeLimit(bool isUsed, [int? min]) {
+    _useTimeLimit = isUsed;
+    if (min != null) {
+      _detectionMin = min;
+    }
     notifyListeners();
   }
 }

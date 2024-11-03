@@ -183,6 +183,7 @@ class _HistoryState extends State<History> {
         }
         setState(() {
           _historyData = historyData;
+          print('asdf $_historyData');
           _data2idx = date2idx;
           String dateStr = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}';
           if (date2idx.containsKey(dateStr)) {
@@ -928,7 +929,7 @@ class _HistoryState extends State<History> {
                                       SizedBox(height: res.percentHeight(1),),
                                       GoalListItem(
                                         goalType: GoalType.time,
-                                        targetValue: goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toDouble() : 15,
+                                        targetValue: goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toDouble() : 900,
                                         isSet: goalState.goalMap['time']['targetValue'] != null,
                                         achieveRate: goalState.goalMap['time']['achieved_rate'] ?? 0,
                                         fontSize: 14,

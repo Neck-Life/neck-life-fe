@@ -137,7 +137,9 @@
     "airpods_connect_ask": "Please connect your AirPods",
     "end_today_free_time": "Today's usage time limit has been reached.",
     "turtle_neck_forward_backward_detection": "Detect Head Move Back and Forth",
-    "detection_doing": "Detecting Your\\nHead Posture"
+    "detection_doing": "Detecting Your\\nHead Posture",
+    "start_cta": "Press Start for bad posture alert!",
+    "stop_cta": "Pressing 'Stop' will update your history!"
   },
   "home_widgets": {
     "bottomsheet": {
@@ -287,7 +289,11 @@
     "measuring_txt": "Measuring...",
     "btn_txt": "Measure Reference Posture",
     "guide_txt" : "Straighten your back, waist, and neck, and slightly tuck in your chin.",
-    "start": "I'm ready"
+    "start": "I'm ready",
+    "snackbar_txt": "The free plan has a daily time limit.",
+    "detect_txt": "Detect for",
+    "direct_stop": "Use without a timer",
+    "today_time": "Remaining time for today"
   },
   "today_history_view": {
     "posture_detection": "Posture Detection",

@@ -13,8 +13,6 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
-import 'package:mocksum_flutter/view/history/history_view.dart';
-import 'package:mocksum_flutter/view/home/banner/survey_banner.dart';
 import 'package:mocksum_flutter/view/home/subpage/connect_guide/connect_guide.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
@@ -32,6 +30,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/util/localization_string.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'package:live_activities/live_activities.dart';
 
 import '../../theme/component/button.dart';
 import '../start_position/start_position_view.dart';
@@ -51,6 +50,9 @@ class _HomeState extends State<Home> {
   static MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
+  // final DynamicIslandManager diManager = DynamicIslandManager(channelKey: 'NECKLIFEDI');
+  // final _liveActivitiesPlugin = LiveActivities();
+  String? activityID;
 
   late BannerAd _ad;
   bool _isAdLoaded = false;
@@ -64,6 +66,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     // print('sadf');
+    final now = DateTime.now();
     _initLocalNotification();
     if (_audioHandler == null) {
       _setAudioHandler();
@@ -73,24 +76,26 @@ class _HomeState extends State<Home> {
       _isLabMode = DetectStatus.isLabMode;
     });
 
-    _ad = BannerAd(
-        size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/8948635978',
-        listener: BannerAdListener(
-            onAdLoaded: (_) {
-              setState(() {
-                _isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {
-              print(error);
-              ad.dispose();
-            }
-        ),
-        request: const AdRequest()
-    );
+    // _liveActivitiesPlugin.init(appGroupId: "group.necklifewidget");
 
-    _ad.load();
+    // _ad = BannerAd(
+    //     size: AdSize.banner,
+    //     adUnitId: 'ca-app-pub-4299841579411814/6474192470', // 'ca-app-pub-4299841579411814/8948635978',
+    //     listener: BannerAdListener(
+    //         onAdLoaded: (_) {
+    //           setState(() {
+    //             _isAdLoaded = true;
+    //           });
+    //         },
+    //         onAdFailedToLoad: (ad, error) {
+    //           print(error);
+    //           ad.dispose();
+    //         }
+    //     ),
+    //     request: const AdRequest()
+    // );
+    //
+    // _ad.load();
 
     final sub = appLinks.uriLinkStream.listen((uri) {
       print(uri);
@@ -105,9 +110,50 @@ class _HomeState extends State<Home> {
             _startWidgetClicked = false;
             Navigator.push(context, MaterialPageRoute(
                 builder: (
-                    context) => StartPosition(onStart: () {
+                    context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
                   _audioHandler?.play();
                   _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+
+                  String? refreshToken = await storage.read(key: 'refreshToken');
+                  if (refreshToken != null) {
+                    Response resForToken = await HistoryStatus
+                        .dio.post(
+                        '${HistoryStatus.serverAddress}/members/token',
+                        data: {
+                          'refreshToken': refreshToken
+                        });
+                    if (resForToken.statusCode! ~/
+                        100 == 2) {
+                      String accessTokenNew = resForToken
+                          .data['data']['accessToken'] ??
+                          '';
+                      String refreshTokenNew = resForToken
+                          .data['data']['refreshToken'] ??
+                          '';
+
+                      if (accessTokenNew != '') {
+                        HistoryStatus.dio.options
+                            .headers["authorization"] =
+                        "bearer $accessTokenNew";
+                        await storage.write(
+                            key: 'accessToken',
+                            value: accessTokenNew);
+                        await storage.write(
+                            key: 'refreshToken',
+                            value: refreshTokenNew);
+                      }
+                    }
+                  }
+                  // final id = await _liveActivitiesPlugin.createActivity(
+                  //     DynamicIslandStopwatchDataModel(
+                  //         elapsedSeconds: 0,
+                  //         useTimeLimit: useTimeLimit,
+                  //         detectionMin: detectionMin
+                  //     ).toMap()
+                  // );
+                  // setState(() {
+                  //   activityID = id;
+                  // });
                 },)));
           }
         });
@@ -115,19 +161,56 @@ class _HomeState extends State<Home> {
     });
 
     GlobalTimer.timeEventStream.listen((useSec) {
+
+      // if (activityID != null) {
+      //   _liveActivitiesPlugin.updateActivity(
+      //     activityID!,
+      //     DynamicIslandStopwatchDataModel(
+      //         elapsedSeconds: useSec - Provider
+      //             .of<GlobalTimer>(context, listen: false)
+      //             .secOnStart,
+      //         useTimeLimit: Provider
+      //             .of<DetectStatus>(context, listen: false)
+      //             .useTimeLimit,
+      //         detectionMin: Provider
+      //             .of<DetectStatus>(context, listen: false)
+      //             .detectionMin
+      //     ).toMap()
+      //   );
+      // }
       // print(useSec);
       if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        // _liveActivitiesPlugin.endAllActivities();
+        setState(() {
+          activityID = null;
+        });
         _showPushAlarm();
       }
+
+      if (Provider.of<DetectStatus>(context, listen: false).useTimeLimit &&
+          useSec - Provider.of<GlobalTimer>(context, listen: false).secOnStart >= Provider.of<DetectStatus>(context, listen: false).detectionMin*60) {
+
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
+        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        // _liveActivitiesPlugin.endAllActivities();
+        setState(() {
+          activityID = null;
+        });
+        _showPushAlarm2();
+      }
+
+
     });
 
     DetectStatus.detectAvailableEventStream.listen((flag) {
       if (!flag) {
         if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+          // _liveActivitiesPlugin.endAllActivities();
           if (!_stopSheetOpened) {
             _stopSheetOpened = true;
             showAirpodsBottomSheet();
@@ -170,6 +253,17 @@ class _HomeState extends State<Home> {
     await localNotification.show(0,
         LS.tr('home_view.today_free_time_end'),
         LS.tr('home_view.today_free_time_end_premium'),
+        _details
+    );
+  }
+
+  Future<void> _showPushAlarm2() async {
+    FlutterLocalNotificationsPlugin localNotification =
+    FlutterLocalNotificationsPlugin();
+
+    await localNotification.show(0,
+        '탐지가 종료되었어요',// LS.tr('home_view.today_free_time_end'),
+        '탐지 결과를 앱에서 확인해보세요!',
         _details
     );
   }
@@ -246,6 +340,7 @@ class _HomeState extends State<Home> {
           print('end detection');
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+          // _liveActivitiesPlugin.endAllActivities();
           // const storage = FlutterSecureStorage();
           String? executeCount = await storage.read(key: 'executeCount');
           await storage.write(key: 'executeCount', value: (int.parse(executeCount ?? '0')+1).toString());
@@ -353,6 +448,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     _ad.dispose();
+    // _liveActivitiesPlugin.dispose();
     super.dispose();
   }
 
@@ -473,7 +569,7 @@ class _HomeState extends State<Home> {
                                               } else {
                                                 Navigator.push(context, MaterialPageRoute(
                                                     builder: (
-                                                        context) => StartPosition(onStart: () async {
+                                                        context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
                                                       _audioHandler?.play();
                                                       _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
 
@@ -481,7 +577,7 @@ class _HomeState extends State<Home> {
                                                       if (refreshToken != null) {
                                                         Response resForToken = await HistoryStatus
                                                             .dio.post(
-                                                            '$HistoryStatus.serverAddress/members/token',
+                                                            '${HistoryStatus.serverAddress}/members/token',
                                                             data: {
                                                               'refreshToken': refreshToken
                                                             });
@@ -507,6 +603,16 @@ class _HomeState extends State<Home> {
                                                           }
                                                         }
                                                       }
+                                                      // final id = await _liveActivitiesPlugin.createActivity(
+                                                      //   DynamicIslandStopwatchDataModel(
+                                                      //     elapsedSeconds: 0,
+                                                      //     useTimeLimit: useTimeLimit,
+                                                      //     detectionMin: detectionMin
+                                                      //   ).toMap()
+                                                      // );
+                                                      // setState(() {
+                                                      //   activityID = id;
+                                                      // });
                                                     })));
                                               }
                                             } else {
@@ -515,13 +621,15 @@ class _HomeState extends State<Home> {
                                           },
                                           isDisabled: !detectStatus.detectAvailable,
                                           isRunning: detectStatus.nowDetecting,
-                                          useTime: '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}'
+                                          useTime: !detectStatus.useTimeLimit ?
+                                                    '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}' :
+                                                    TimeConvert.sec2TimeFormat(detectStatus.detectionMin*60 - (globalTimer.useSec-globalTimer.secOnStart))
                                       ),
                                       // const StartButtonMsg(message: 'Press Start for bad posture alert!'),
                                       if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
-                                        const StartButtonMsg(message: 'Press Start for bad posture alert!')
+                                        StartButtonMsg(message: 'home_view.start_cta'.tr())
                                       else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
-                                        const StartButtonMsg(message: 'Pressing \'Stop\' will analyse your posture!')
+                                        StartButtonMsg(message: 'home_view.stop_cta'.tr())
                                     ],
                                   ),
                                 ],
@@ -562,13 +670,13 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          userStatus.isPremium ? const SizedBox() : Container(
-                            margin: EdgeInsets.only(top: res.percentHeight(1.5)),
-                            width: _ad.size.width.toDouble(),
-                            height: _ad.size.height.toDouble(),
-                            alignment: Alignment.center,
-                            child: AdWidget(ad: _ad),
-                          ),
+                          // userStatus.isPremium ? const SizedBox() : Container(
+                          //   margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                          //   width: _ad.size.width.toDouble(),
+                          //   height: _ad.size.height.toDouble(),
+                          //   alignment: Alignment.center,
+                          //   child: AdWidget(ad: _ad),
+                          // ),
                           SizedBox(height: res.percentHeight(2),),
                           // const SurveyBanner()
                         ],

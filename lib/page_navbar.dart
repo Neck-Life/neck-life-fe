@@ -48,7 +48,7 @@ class _PageNavBarState extends State<PageNavBar> {
           .checkAndUpdateToken();
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
-
+      print('login checked');
 
       if (_isFirstLaunch) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
@@ -158,7 +158,7 @@ class _PageNavBarState extends State<PageNavBar> {
                           } else if (_index == 1) {
                             _amplitudeEventManager.viewEvent('goal');
                           } else if (_index == 2) {
-                            _amplitudeEventManager.viewEvent('setting');
+                            _amplitudeEventManager.viewEvent('history');
                           } else if (_index == 3) {
                             _amplitudeEventManager.viewEvent('setting');
                           }

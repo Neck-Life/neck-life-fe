@@ -19,6 +19,7 @@ import 'package:mocksum_flutter/view/setting/widgets/two_btn_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
+import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 
 
@@ -31,12 +32,10 @@ class Settings extends StatefulWidget {
 
 class _SettingState extends State<Settings> {
 
-  final Uri _ToSUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Term-of-service-a040519dd560492c95ecf320c857c66a');
-  final Uri _PPUrl = Uri.parse('https://cheerful-guardian-073.notion.site/Privacy-Policy-f50f241b48d44e74a4ffe9bbc9f87dcf?pvs=4');
   final OpenUrlHelper openUrlHelper = OpenUrlHelper();
 
   int _deleteAccountReasonIdx = 0;
-  List<String>_deleteReasonList = ['setting_view.delete_reason1'.tr(), 'setting_view.delete_reason2'.tr(), 'setting_view.delete_reason3'.tr(),
+  List<String> _deleteReasonList = ['setting_view.delete_reason1'.tr(), 'setting_view.delete_reason2'.tr(), 'setting_view.delete_reason3'.tr(),
     'setting_view.delete_reason4'.tr(), 'setting_view.delete_reason5'.tr()];
   final _deleteReasonEditController = TextEditingController();
 
@@ -50,7 +49,7 @@ class _SettingState extends State<Settings> {
 
     _ad = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/8948635978',
+        adUnitId: 'ca-app-pub-4299841579411814/8948635978', // 'ca-app-pub-4299841579411814/8948635978',
         listener: BannerAdListener(
             onAdLoaded: (_) {
               setState(() {
@@ -295,7 +294,7 @@ class _SettingState extends State<Settings> {
 
   void _openErrorPopUp() {
     showDialog(context: context, builder: (ctx) {
-      return  CustomPopUp(text: 'setting_view.error'.tr());
+      return  CustomPopUp(text: LS.tr('setting_view.error'));
     });
   }
 
@@ -338,7 +337,7 @@ class _SettingState extends State<Settings> {
               GestureDetector(
                 onDoubleTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('1.2.1+1'),
+                    content: Text('1.2.3+1'),
                     duration: Duration(seconds: 1),
                   ));
                 },

@@ -42,7 +42,7 @@ class _GoalState extends State<Goal> {
     }
     _ad = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/2934735716', // 'ca-app-pub-4299841579411814/8948635978',
+        adUnitId: 'ca-app-pub-4299841579411814/8948635978', // 'ca-app-pub-4299841579411814/8948635978',
         listener: BannerAdListener(
             onAdLoaded: (_) {
               setState(() {
@@ -168,7 +168,7 @@ class _GoalState extends State<Goal> {
                         SizedBox(height: res.percentHeight(1),),
                         GoalListItem(
                             goalType: GoalType.time,
-                            targetValue: goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toDouble() : 15,
+                            targetValue: goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toDouble() : 900,
                             isSet: goalState.goalMap['time']['targetValue'] != null,
                             achieveRate: goalState.goalMap['time']['achieved_rate'] ?? 0
                         )

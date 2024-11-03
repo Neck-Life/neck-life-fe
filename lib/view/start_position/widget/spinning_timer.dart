@@ -47,7 +47,7 @@ class SpinningTimer extends StatelessWidget {
           ],
         ),
       ),
-    );;
+    );
   }
 
 }

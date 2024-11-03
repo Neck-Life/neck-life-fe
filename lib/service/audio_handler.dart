@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
@@ -34,7 +33,10 @@ class MyAudioHandler extends BaseAudioHandler {
   Map<String, dynamic> _poseForwardLog = {"forward": {}};
   Map<String, dynamic> _posePitchLog = {"pitch": {}};
   Map<String, dynamic> _poseTiltLog = {"tilt": {}};
-  List<dynamic> _poseRawLog = [];
+  List<dynamic> _poseRawLog = [{'timestamp': DateTime.now().toIso8601String(),
+    'pitch': 0,
+    'roll': 0,
+    'position': 0,}];
 
   bool _isPlaying = false;
 
@@ -501,6 +503,10 @@ class MyAudioHandler extends BaseAudioHandler {
     _posePitchLog = {"pitch": {}};
     _poseForwardLog = {"forward": {}};
     _poseTiltLog = {"tilt": {}};
+    _poseRawLog =[{        'timestamp': DateTime.now().toIso8601String(),
+      'pitch': 0,
+      'roll': 0,
+      'position': 0,}];
     return super.pause();
   }
 
