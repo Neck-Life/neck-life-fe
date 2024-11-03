@@ -94,13 +94,13 @@
     "example": "example",
     "posture_score_difference": "Check your change\\nwith posture score",
     "timeLine": "Timeline",
-    "tbd_content1": "We are preparing to",
-    "tbd_content2": "detect more postures!",
+    "tbd_content1": "History tab is available",
+    "tbd_content2": "after logging in",
     "goal": "Goals",
     "measuring": "Detecting",
     "measuring_title": "When is the history updated?",
-    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab."
-
+    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab.",
+    "not_detected": "Not Detected!"
   },
   "history_widgets": {
     "duration_dropdown": {
@@ -112,6 +112,7 @@
     "pose_count_frame": {
       "slouch": "Slouched",
       "turtle": "Tech Neck",
+      "tilt": "Tilted",
       "back": "Reclining",
       "count": ""
     },
@@ -136,7 +137,9 @@
     "airpods_connect_ask": "Please connect your AirPods",
     "end_today_free_time": "Today's usage time limit has been reached.",
     "turtle_neck_forward_backward_detection": "Detect Head Move Back and Forth",
-    "detection_doing": "Detecting Your\\nHead Posture"
+    "detection_doing": "Detecting Your\\nHead Posture",
+    "start_cta": "Press Start for bad posture alert!",
+    "stop_cta": "Pressing 'Stop' will update your history!"
   },
   "home_widgets": {
     "bottomsheet": {
@@ -197,6 +200,7 @@
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
     "logout": "Logout from NeckLife",
+    "login": "Login to NeckLife",
     "if_quit": "To delete your NeckLife account ",
     "here": "click here",
     "click": "",
@@ -229,8 +233,10 @@
         "alarm_sensitive_high": "High",
         "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
-        "sound_alarm_turn_on": "Enable sound alert",
-        "sound_setting": "Alert Sound Settings"
+        "sound_alarm_turn_on": "Enable Sound Alert",
+        "sound_setting": "Posture Alert Settings",
+        "volume_setting": "Volume Control",
+        "push_setting": "Enable Push Notification"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -283,7 +289,11 @@
     "measuring_txt": "Measuring...",
     "btn_txt": "Measure Reference Posture",
     "guide_txt" : "Straighten your back, waist, and neck, and slightly tuck in your chin.",
-    "start": "I'm ready"
+    "start": "I'm ready",
+    "snackbar_txt": "The free plan has a daily time limit.",
+    "detect_txt": "Detect for",
+    "direct_stop": "Use without a timer",
+    "today_time": "Remaining time for today"
   },
   "today_history_view": {
     "posture_detection": "Posture Detection",
@@ -308,10 +318,10 @@
   },
   "tutorial": {
     "tutorial_view": {
-      "step1_airpods": "First, please connect \\nyour AirPods",
+      "step1_airpods": "Please connect \\nyour AirPods",
       "step1_airpods_models": "Only the following models are supported",
       "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods(3rd, 4th Gen)",
-      "step2_posture": "Maintain a correct posture for 5 seconds",
+      "step2_posture": "Press 'Start' button and Maintain a correct posture for 5 seconds",
       "step2_explain": "This step measures your reference posture for accurate posture detection.",
       "step3_concentrate": "Focus on your work with proper posture",
       "step3_explain": "We will notify you if your posture deteriorates unconsciously.",
@@ -344,7 +354,9 @@
     "add_snack": "The goal has been added.",
     "upd_snack": "The goal has been updated.",
     "del_snack": "The goal has been deleted.",
-    "err_popup": "An error occurred. Please try again."
+    "err_popup": "An error occurred. Please try again.",
+    "tbd_content1": "Goal setting is available",
+    "tbd_content2": "after logging in"
   },
   "connect_guide": {
     "guide": "Is it not working after connecting AirPods?",

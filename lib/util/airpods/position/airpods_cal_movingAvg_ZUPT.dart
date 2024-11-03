@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
@@ -14,6 +15,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> velocities = [0.0];
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
+  List<double> pitchs = [0.0]; //가속도Y 히스토리
   // List<double> pastZ = [0.0]; //가속도Z 히스토리
   static const double threshold = 0.015; //변위 최댓값 설정
   bool isRotated = false;
@@ -25,6 +27,8 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> stablePositions = [0.0];
   bool stopFlag = false;
   double stablePosition = 0.0;
+
+  bool canBackward = false;
 
 
   /// position값을 [0,limitValue]범위로 리턴, 비워두면 기존값그대로 리턴
@@ -62,25 +66,31 @@ class AirpodsCalMovingAvgZupt extends Filter{
       cal_acc_y += sortedY[i];
       // cal_acc_z += sortedZ[i];
     }
-    cal_acc_y /= len-2;
+    cal_acc_y /= len;
     // cal_acc_z /= len-2;
 
     //가속도의 편차 줄이기
     // double cal_acc = -cal_acc_y + cal_acc_z; //y,z축 둘다 고려하기
     double cal_acc = cal_acc_y; //y축만 고려하기
-    double offset = 0.007;
+    double offset = 0.01;
 
     if(cal_acc<0){
-      cal_acc*=1.4;
+      cal_acc*=1.7;
     }
 
 
-    if(cal_acc>0 && cal_acc < offset*1.5) {
+    if(cal_acc>0 && cal_acc < offset*1.3) {
       cal_acc = 0;
     }else if (cal_acc<0 &&cal_acc> -offset){
       cal_acc=0;
 
     }
+    //
+    // cal_acc*=1.4;
+
+    // if(cal_acc<0){
+    //   cal_acc*=1.2;
+    // }
 
 
 
@@ -118,20 +128,20 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
     if(velocity.abs() < 0.0002){
-      velocity = velocity *15;
+      velocity = velocity *30;
       // print("1");
     }else if(velocity.abs() < 0.0008){
-      velocity = velocity *13;
+      velocity = velocity *22;
       // print("2");
     }else if(velocity.abs() < 0.0012){
-      velocity = velocity *12;
+      velocity = velocity *15;
       // print("3");
     }else if(velocity.abs() < 0.002){
-      velocity = velocity *6;
+      velocity = velocity *9;
       // print("4");
     }
     else if(velocity.abs() < 0.006){
-      velocity = velocity *2;
+      velocity = velocity *4;
       // print("5");
     }
 
@@ -145,11 +155,11 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
 
-    // if(velocity>0.015){
-    //   velocity = 0.015;
-    // }else if(velocity<-0.015){
-    //   velocity = -0.018;
-    // }
+    if(velocity>0.030){
+      velocity = 0.030;
+    }else if(velocity<-0.040){
+      velocity = -0.040;
+    }
 
 
 
@@ -206,7 +216,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     //         임시 움직임 없애기 끝
 
     //ZUPT : 영속도 업데이트
-     [velocity, position] = applyZUPT(velocity, position);
+    [velocity, position] = applyZUPT(velocity, position);
 
 
     if(position > threshold) position = threshold;
@@ -215,6 +225,57 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     // print("position : ${stablePosition}");
     // print("veloticy : ${velocity}");
+
+
+    // print(data.attitude.yaw.toDouble());
+    if ((DetectStatus.initialYaw - data.attitude.yaw.toDouble()).abs() > 0.6) {
+      position = 0;
+      velocity = 0;
+      // print("머리가 돌아갔어요");
+    }
+
+    // print("머리가 ");
+    // print(position);
+    pitchs.add( (data.attitude.pitch.toDouble()- last_pitch).abs());
+
+    int size = 30;
+    if(pitchs.length > size) pitchs.removeAt(0);
+
+    double pitchSum= pitchs.reduce((a,b)=>a+b)/size;
+
+
+
+    if(pitchSum > 0.018){
+      // print(pitchSum);
+      // print(velocity);
+      position = 0;
+      velocity = 0;
+    }
+    // for(int i = 0; i < pitchs.length/2; i++){
+    //   pitchSum1 += pitchs[i];
+    // }
+    //
+    // double pitchSum2=0;
+    // for(int i = (size/2).toInt(); i < pitchs.length; i++){
+    //   pitchSum2 += pitchs[i];
+    // }
+    //
+    // pitchSum2/=pitchs.length/2;
+    // pitchSum1/=pitchs.length/2;
+
+
+
+
+
+
+
+    // if(pitchSum1 * pitchSum2 < 0 && (pitchSum1.abs() > 0.03 && pitchSum2.abs() > 0.05)){
+    //   print("pitchSum1 : $pitchSum1 , pitchSum2 : $pitchSum2");
+    //
+    //   sleep(Duration(milliseconds: 1000));
+    //   position = 0;
+    //   velocity = 0;
+    // }
 
 
 
@@ -231,6 +292,14 @@ class AirpodsCalMovingAvgZupt extends Filter{
     last_pitch = data.attitude.pitch.toDouble();
     last_roll = data.attitude.roll.toDouble();
     last_yaw = data.attitude.yaw.toDouble();
+
+    // if ( positions.length > 40){
+    //   List<double> range = positions.getRange(positions.length-30, positions.length).toList();
+    //   // print(range);
+    //   // print(velocity);
+    //   canBackward = checkCanBackward(range, velocity);
+    // }
+
 
 
   }
@@ -332,3 +401,10 @@ bool hasRotated(double currentPitch, double currentRoll, double currentYaw) {
   return rotated;
 }
 
+bool checkCanBackward(List<double> stablePositions , double velocity){
+  if(stablePositions.reduce((a,b)=> (a+b)) <= 0 && velocity < -500){
+    print("뒤로가기 가능");
+    return true;
+  }
+  return false;
+}

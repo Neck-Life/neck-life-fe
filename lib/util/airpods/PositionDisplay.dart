@@ -25,6 +25,9 @@ class PositionDisplay{
     filter.processSensorData(data);
   }
 
+  bool isBackward(){
+    return filter.canBackward;
+  }
   // bool getMoved2Forward() {
   //   return filter.moved2Forward;
   // }

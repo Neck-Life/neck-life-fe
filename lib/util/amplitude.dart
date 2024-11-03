@@ -23,9 +23,9 @@ class AmplitudeEventManager {
     // print('viewed_$viewName');
   }
 
-  Future<void> actionEvent(String viewName, String actionName, [int? property]) async {
+  Future<void> actionEvent(String viewName, String actionName, [int? property, int? property2]) async {
     if (actionName == 'enddetection') {
-      await Amplitude.getInstance().logEvent('action_${viewName}_$actionName', eventProperties: {'usedTime': property});
+      await Amplitude.getInstance().logEvent('action_${viewName}_$actionName', eventProperties: {'usedTime': property, 'alarmCount': property2});
       return;
     }
     await Amplitude.getInstance().logEvent('action_${viewName}_$actionName');

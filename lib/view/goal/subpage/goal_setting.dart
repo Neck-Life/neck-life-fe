@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../../../theme/asset_icon.dart';
 import '../../../../theme/component/text_default.dart';
 import '../../../service/history_provider.dart';
+import '../../../service/user_provider.dart';
 
 enum GoalType {
   score,
@@ -89,7 +92,7 @@ class _GoalSettingState extends State<GoalSetting> {
           _initialValue = targetValue != null ? targetValue.toInt() : 0;
         } else {
           var targetValue = context.read<GoalProvider>().goalMap['time']['targetValue'];
-          _goalValue = targetValue != null ? targetValue.toInt() ~/ 60 : 15;
+          _goalValue = targetValue != null ? targetValue.toInt() : 900;
           _initialValue = targetValue != null ? targetValue.toInt() : 0;
         }
       });
@@ -171,18 +174,35 @@ class _GoalSettingState extends State<GoalSetting> {
     const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
-    if (accessToken != null && accessToken != '') {
-      HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
-    }
 
     var postData = {
       'order': 1,
       'type': _chosenGoalType!.typeName,
       'description': _chosenGoalType!.desc,
-      'target_value': _goalValue.toDouble()
+      'target_value': _chosenGoalType == GoalType.time ? _goalValue.toDouble()*60 : _goalValue
     };
 
     try {
+      if (accessToken == null || UserStatus.isTokenExpired(accessToken)) {
+        String? refreshToken = await storage.read(key: 'refreshToken');
+        Response res = await HistoryStatus.dio.post(
+            '$HistoryStatus.serverAddress/members/token', data: {'refreshToken': refreshToken});
+
+        if (res.statusCode! ~/ 100 == 2) {
+          accessToken = res.data['data']['accessToken'];
+          refreshToken = res.data['data']['refreshToken'];
+
+          await storage.write(key: 'accessToken', value: accessToken);
+          await storage.write(key: 'refreshToken', value: refreshToken);
+        } else {
+          throw Exception();
+        }
+      }
+
+      if (accessToken != null && accessToken != '') {
+        HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
+      }
+
       print(postData);
       Response res = await HistoryStatus.dio.post(
           '${HistoryStatus.serverAddress}/goals', data: {'goals': [postData]});
@@ -223,9 +243,6 @@ class _GoalSettingState extends State<GoalSetting> {
     const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
-    if (accessToken != null && accessToken != '') {
-      HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
-    }
 
     var postData = {
       'order': 1,
@@ -235,6 +252,27 @@ class _GoalSettingState extends State<GoalSetting> {
     };
 
     try {
+
+      if (accessToken == null || UserStatus.isTokenExpired(accessToken)) {
+        String? refreshToken = await storage.read(key: 'refreshToken');
+        Response res = await HistoryStatus.dio.post(
+            '$HistoryStatus.serverAddress/members/token', data: {'refreshToken': refreshToken});
+
+        if (res.statusCode! ~/ 100 == 2) {
+          accessToken = res.data['data']['accessToken'];
+          refreshToken = res.data['data']['refreshToken'];
+
+          await storage.write(key: 'accessToken', value: accessToken);
+          await storage.write(key: 'refreshToken', value: refreshToken);
+        } else {
+          throw Exception();
+        }
+      }
+
+      if (accessToken != null && accessToken != '') {
+        HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
+      }
+
       print(postData);
       Response res = await HistoryStatus.dio.put(
           '${HistoryStatus.serverAddress}/goals', data: {'goals': [postData]});
@@ -260,7 +298,7 @@ class _GoalSettingState extends State<GoalSetting> {
         }
         context.read<GoalProvider>().updateGoalMap(oldGoalMap);
         Navigator.of(context).pop();
-        showSnackbar('goal_view.upd_snack');
+        showSnackbar('goal_view.upd_snack'.tr());
       } else {
         throw Exception();
       }
@@ -278,12 +316,30 @@ class _GoalSettingState extends State<GoalSetting> {
     const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
-    if (accessToken != null && accessToken != '') {
-      HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
-    }
 
 
     try {
+
+      if (accessToken == null || UserStatus.isTokenExpired(accessToken)) {
+        String? refreshToken = await storage.read(key: 'refreshToken');
+        Response res = await HistoryStatus.dio.post(
+            '$HistoryStatus.serverAddress/members/token', data: {'refreshToken': refreshToken});
+
+        if (res.statusCode! ~/ 100 == 2) {
+          accessToken = res.data['data']['accessToken'];
+          refreshToken = res.data['data']['refreshToken'];
+
+          await storage.write(key: 'accessToken', value: accessToken);
+          await storage.write(key: 'refreshToken', value: refreshToken);
+        } else {
+          throw Exception();
+        }
+      }
+
+      if (accessToken != null && accessToken != '') {
+        HistoryStatus.dio.options.headers["authorization"] = "bearer $accessToken";
+      }
+
       Response res = await HistoryStatus.dio.delete(
           '${HistoryStatus.serverAddress}/goals', data: {'goalIds': [goalId]});
 
@@ -294,7 +350,7 @@ class _GoalSettingState extends State<GoalSetting> {
 
         var oldGoalMap = context.read<GoalProvider>().goalMap;
 
-        oldGoalMap[_chosenGoalType!.typeName] = {};
+        oldGoalMap[_chosenGoalType!.keyName] = {};
 
         for (var obj in res.data['data']['goals']) {
           print('loop2 $obj');
@@ -307,6 +363,7 @@ class _GoalSettingState extends State<GoalSetting> {
             };
           }
         }
+        print('um $oldGoalMap');
         context.read<GoalProvider>().updateGoalMap(oldGoalMap);
         Navigator.of(context).pop();
         showSnackbar('goal_view.del_snack'.tr());
@@ -392,7 +449,7 @@ class _GoalSettingState extends State<GoalSetting> {
                     onTap: () {
                       setState(() {
                         _chosenGoalType = GoalType.time;
-                        _goalValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 15;
+                        _goalValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 900;
                         _initialValue = goalState.goalMap['time']['targetValue'] != null ? goalState.goalMap['time']['targetValue'].toInt() : 0;
                       });
                     },
@@ -434,11 +491,13 @@ class _GoalSettingState extends State<GoalSetting> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (_goalValue > 5) {
-                            setState(() {
+                          setState(() {
+                            if (_chosenGoalType == GoalType.score && _goalValue > 5) {
                               _goalValue -= 5;
-                            });
-                          }
+                            } else if (_chosenGoalType == GoalType.time && _goalValue > 300) {
+                              _goalValue -= 300;
+                            }
+                          });
                         },
                         child: WhiteContainer(
                           width: res.percentWidth(1.5),
@@ -455,14 +514,19 @@ class _GoalSettingState extends State<GoalSetting> {
                             color: const Color(0xFFF4F4F7),
                             borderRadius: BorderRadius.circular(10)
                         ),
-                        child: TextDefault(content: '$_goalValue${_chosenGoalType == GoalType.score ? 'goal_view.sc'.tr() : 'goal_view.min'.tr()}', fontSize: 14, isBold: false, fontColor: const Color(0xFF236EF3),),
+                        child: TextDefault(content: '${_chosenGoalType == GoalType.time ? _goalValue ~/ 60 : _goalValue}${_chosenGoalType == GoalType.score ? 'goal_view.sc'.tr() : 'goal_view.min'.tr()}', fontSize: 14, isBold: false, fontColor: const Color(0xFF236EF3),),
                       ),
                       GestureDetector(
                         onTap: () {
                           if (_chosenGoalType == GoalType.score && _goalValue >= 100) return;
                           setState(() {
-                            _goalValue += 5;
+                            if (_chosenGoalType == GoalType.score) {
+                              _goalValue += 5;
+                            } else if (_chosenGoalType == GoalType.time) {
+                              _goalValue += 300;
+                            }
                           });
+                          log('sdfg');
                         },
                         child: WhiteContainer(
                           width: res.percentWidth(1.5),

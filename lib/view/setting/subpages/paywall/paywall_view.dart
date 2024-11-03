@@ -98,37 +98,37 @@ class _PaywallState extends State<Paywall> {
 
   void _showErrorPopUp() {
     showDialog(
-        context: context,
-        builder: (contextIn) {
-          return AlertDialog(
-            content: Text('setting_subpages.paywall.paywall_view.error'.tr(),
-              style: TextStyle(
-                color: const Color(0xFF434343),
-                fontSize: MediaQuery.of(context).size.width*0.05,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-              ),
+      context: context,
+      builder: (contextIn) {
+        return AlertDialog(
+          content: Text(LS.tr('setting_subpages.paywall.paywall_view.error'),
+            style: TextStyle(
+              color: const Color(0xFF434343),
+              fontSize: MediaQuery.of(context).size.width*0.05,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w600,
             ),
-            actions: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(80, 40),
-                      backgroundColor: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      shadowColor: const Color(0x19000000),
-                      side: const BorderSide(
-                          width: 1,
-                          color: Colors.black
-                      )
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('닫기')
-              )
-            ],
-          );
-        }
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(80, 40),
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                shadowColor: const Color(0x19000000),
+                side: const BorderSide(
+                    width: 1,
+                    color: Colors.black
+                )
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('닫기')
+            )
+          ],
+        );
+      }
     );
   }
 
