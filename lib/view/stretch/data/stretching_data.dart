@@ -1,5 +1,9 @@
 import '../models/stretching_action.dart';
 
+/**
+ * TODO : 다국어 지원, 아니 이게 DetectStatus.lanCode에 값이 대입되기 전에 배열이 발생되서 외국어 적용이 안됨 하
+ *
+ * */
 final List<StretchingGroup> stretchingGroups = [
   // // 0. 4방향 목 기울이기 운동 TODO: 안좋은 운동으로 소개되어 비활성화
   // StretchingGroup(
