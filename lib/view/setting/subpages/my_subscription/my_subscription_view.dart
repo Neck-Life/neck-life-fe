@@ -111,7 +111,7 @@ class _MySubscriptionState extends State<MySubscription> {
         context: context,
         builder: (contextIn) {
           return AlertDialog(
-            content: Text('setting_subpages.my_subscription.my_subscription_view.error'.tr(),
+            content: Text(LS.tr('setting_subpages.my_subscription.my_subscription_view.error'),
               style: TextStyle(
                 color: const Color(0xFF434343),
                 fontSize: MediaQuery.of(context).size.width*0.05,
@@ -319,11 +319,17 @@ class _MySubscriptionState extends State<MySubscription> {
                           _showErrorPopUp();
                           return;
                         }
-                        bool isPremium = _customerInfo!.entitlements.all["necklife"]!.isActive;
-                        if (isPremium) {
-                          return;
+                        try {
+                          print(_customerInfo);
+                          bool isPremium = _customerInfo!.entitlements.all["necklife"] != null ? _customerInfo!.entitlements.all["necklife"]!.isActive : false;
+                          if (isPremium) {
+                            return;
+                          }
+
+                          await _purchaseSupscription(userStatus);
+                        } on Exception catch(e) {
+                          _showErrorPopUp();
                         }
-                        await _purchaseSupscription(userStatus);
                       },
                       text: 'setting_subpages.my_subscription.my_subscription_view.subscription_price'.tr(),
                       backgroundColor: const Color(0xFF236EF3),

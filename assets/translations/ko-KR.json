@@ -92,15 +92,16 @@
     "posture_detection" : "자세 탐지",
     "average_posture_lose_time": "평균 {}마다 자세가 무너져요",
     "forward_neck_detection": "거북목 자세 탐지",
-    "tbd_content1": "더 다양한 나쁜 자세",
-    "tbd_content2": "탐지를 준비하고 있어요!",
+    "tbd_content1": "히스토리 탭은",
+    "tbd_content2": "로그인 후 이용할 수 있어요",
     "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
     "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요",
     "goal": "목표",
     "measuring": "탐지 진행 중",
     "measuring_title": "히스토리는 언제 업데이트되나요?",
-    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다."
+    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다.",
+    "not_detected": "해당 자세는 한 번도 탐지되지 않았어요!"
   },
 
   "history_widgets" : {
@@ -114,13 +115,13 @@
       "slouch" : "굽은 자세",
       "turtle" : "거북목",
       "back" : "뒤로 빠짐",
+      "tilt": "턱 괴기",
       "count" : "회"
     },
     "score_explain" : {
       "how_to_score" : "자세 점수는 어떻게 계산되나요?",
       "how_to_score_explain" : "자세 점수는 사용자의 자세 변화를 감지하여 계산됩니다. 자세 변화는 사용자의 기준 자세와 비교하여 측정됩니다. 자세 변화가 적을수록 높은 점수를 받습니다.",
       "understand" : "이해했어요"
-
     }
   },
 
@@ -139,7 +140,9 @@
     "detection_start_ask" : "자세 탐지를\\n시작할까요?",
     "airpods_connect_ask" : "에어팟을 연결해주세요",
     "end_today_free_time" : "오늘의 사용 제한 시간이 끝났습니다.",
-    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지"
+    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지",
+    "start_cta": "자세 모니터링을 시작해보세요!",
+    "stop_cta": "탐지를 끝내면 자세 기록이 업데이트돼요!"
   },
 
   "home_widgets" : {
@@ -205,6 +208,7 @@
     "terms_of_service" : "이용 약관",
     "privacy_policy" : "개인정보 처리방침",
     "logout" : "넥라이프 로그아웃",
+    "login": "넥라이프 로그인",
     "if_quit": "넥라이프를 탈퇴하려면 ",
     "here": "여기를",
     "click": "클릭하세요"
@@ -237,7 +241,10 @@
         "alarm_sensitive_high":"높음",
         "alarm_time":"알림 시간 기준 설정",
         "alarm_time_explain":"잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.",
-        "sound_alarm_turn_on":"소리알림 켜기"
+        "sound_alarm_turn_on":"소리 알림 켜기",
+        "sound_setting": "자세 알림 설정",
+        "volume_setting": "불륨 조절",
+        "push_setting": "자세 푸시 알림 켜기"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -299,7 +306,11 @@
     "measuring_txt": "기준 자세 측정 중",
     "btn_txt": "기준 자세 측정",
     "guide_txt" : "등과 허리, 목을 곧게 펴고, 턱을 약간 당겨주세요.",
-    "start": "준비됐어요"
+    "start": "준비됐어요",
+    "snackbar_txt": "무료 플랜에는 하루 당 시간 제한이 있어요",
+    "detect_txt": "동안 탐지할게요",
+    "direct_stop": "타이머 없이 사용할게요",
+    "today_time": "오늘의 남은 탐지 시간"
   },
 
   "today_history_view": {
@@ -365,7 +376,9 @@
     "add_snack": "목표가 추가되었어요.",
     "upd_snack": "목표가 수정되었어요.",
     "del_snack": "목표가 삭제되었어요.",
-    "err_popup": "오류가 발생했어요. 다시 시도해주세요"
+    "err_popup": "오류가 발생했어요. 다시 시도해주세요",
+    "tbd_content1": "목표 설정 기능은",
+    "tbd_content2": "로그인 후 이용할 수 있어요"
   },
   "connect_guide": {
     "guide": "에어팟을 연결해도 작동하지 않나요?",

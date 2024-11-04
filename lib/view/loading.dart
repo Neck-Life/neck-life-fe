@@ -53,7 +53,7 @@ class _LoadingState extends State<Loading> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             TextDefault(content: 'loading.history_loading'.tr(), fontSize: 20, isBold: true),
+            TextDefault(content: 'loading.history_loading'.tr(), fontSize: 20, isBold: true),
             SizedBox(height: res.percentHeight(3),),
             SizedBox(
               width: res.percentWidth(27),

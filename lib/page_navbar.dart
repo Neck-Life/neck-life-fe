@@ -49,22 +49,21 @@ class _PageNavBarState extends State<PageNavBar> {
           .checkAndUpdateToken();
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
-
+      print('login checked');
 
       if (_isFirstLaunch) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
       }
 
-      if (!isLogged) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
-      } else {
-        final sensorPermission = await Permission.sensors.status;
-        if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
-          await showSensorPermissionDialog(context);
-          AppSettings.openAppSettings();
-        }
+      if (isLogged) {
         await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
       }
+
+      // final sensorPermission = await Permission.sensors.status;
+      // if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
+      //   await showSensorPermissionDialog(context);
+      //   AppSettings.openAppSettings();
+      // }
 
       DetectStatus.lanCode = context.locale.languageCode;
     });
@@ -120,7 +119,6 @@ class _PageNavBarState extends State<PageNavBar> {
         future: userStatus.checkAndUpdateToken(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data!) {
               return Scaffold(
                 body: IndexedStack(
                   index: _index,
@@ -179,9 +177,6 @@ class _PageNavBarState extends State<PageNavBar> {
                   ),
                 ),
               );
-            } else {
-              return const LoginPage();
-            }
           }
           return const Scaffold();
           // return MainPage();

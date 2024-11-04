@@ -42,6 +42,7 @@ class Button extends StatefulWidget {
 class _ButtonState extends State<Button> {
   /// 버튼이 눌려있는지 여부
   bool isPressed = false;
+  bool executing = false;
 
 
   /// 버튼 클릭 이벤트

@@ -1,15 +1,25 @@
 import 'dart:async';
+import 'dart:ui';
+import 'package:dio/dio.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
-  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  static const String serverAddress = 'http://43.200.200.34/api/v1';
+  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  // static const String serverAddress = 'http://43.200.200.34/api/v1';
+  final Dio dio = Dio();
+  // late String currentTimeZone;
+  final String language = Platform.localeName ;
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+
 
   static bool sIsLogged = false;
   bool _isLogged = false;
@@ -37,6 +47,8 @@ class UserStatus with ChangeNotifier {
   }
 
   void init() async {
+
+
     if (_accessTokenTemp == '' || _refreshTokenTemp == '') {
       const storage = FlutterSecureStorage();
 
@@ -58,9 +70,10 @@ class UserStatus with ChangeNotifier {
     _isLogged = isLogged;
     sIsLogged = isLogged;
     notifyListeners();
+    print('setislogged $isLogged');
   }
 
-  String _decodeBase64(String str) {
+  static String _decodeBase64(String str) {
     String output = str.replaceAll('-', '+').replaceAll('_', '/');
 
     switch (output.length % 4) {
@@ -79,7 +92,7 @@ class UserStatus with ChangeNotifier {
     return utf8.decode(base64Url.decode(output));
   }
 
-  Map<dynamic, dynamic> _parseJwtPayLoad(String token) {
+  static Map<dynamic, dynamic> _parseJwtPayLoad(String token) {
     final parts = token.split('.');
     if (parts.length != 3) {
       throw Exception('invalid token');
@@ -138,7 +151,7 @@ class UserStatus with ChangeNotifier {
   }
 
   // JWT 만료 여부 확인
-  bool isTokenExpired(String token) {
+  static bool isTokenExpired(String token) {
     try {
       final parts = _parseJwtPayLoad(token);
       final exp = parts['exp'];
@@ -159,6 +172,10 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<void> getRefreshedToken() async {
+
+
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+
     if (_refreshTokenTemp == '') {
       return;
     }
@@ -166,7 +183,54 @@ class UserStatus with ChangeNotifier {
     // print(_refreshTokenTemp);
     final res = await post(
       '$serverAddress/members/token',
-      {'refreshToken': _refreshTokenTemp},
+      {'refreshToken': _refreshTokenTemp,
+        'timeZone': currentTimeZone,
+        'language' : language},
+    );
+
+    // print(res.statusCode);
+
+
+    if (res.statusCode ~/ 100 == 2) {
+      Map<String, dynamic> resData = jsonDecode(res.body);
+      _accessTokenTemp = resData['data']['accessToken'];
+      _refreshTokenTemp = resData['data']['refreshToken'];
+
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'accessToken', value: _accessTokenTemp);
+      await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
+
+      // postFcmToken(storage);
+
+      // print('토큰 재발급 완료: $_accessTokenTemp');
+    } else {
+      // print('토큰 재발급 실패');
+      _accessTokenTemp = '';
+      _refreshTokenTemp = '';
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: 'accessToken');
+      await storage.delete(key: 'refreshToken');
+      await storage.delete(key: 'email');
+
+      _isLogged = false;
+      sIsLogged = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getRefreshedTokenStatic(String refreshToken) async {
+    if (refreshToken == '') {
+      return;
+    }
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+
+    // print(_refreshTokenTemp);
+    final res = await post(
+      '$serverAddress/members/token',
+      {'refreshToken': _refreshTokenTemp,
+        'timeZone': currentTimeZone,
+        'language' : language
+      },
     );
 
     // print(res.statusCode);
@@ -277,13 +341,22 @@ class UserStatus with ChangeNotifier {
   }
 
   Future<bool> socialLogin(String idToken, String provider) async {
+    // await getTimeZone();
     // print('asdfasfsafsfs');
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+
     final res = await post(
         '$serverAddress/members',
-        {'code': idToken, 'provider': provider}
+        {'code': idToken, 'provider': provider,
+          'timeZone': currentTimeZone, 'language' : language
+        }
     );
+
+
+
+
     // print(res.statusCode);
-    // print(res.body);
+    print(res.body);
     // print(res.statusCode);
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {
@@ -294,7 +367,8 @@ class UserStatus with ChangeNotifier {
       _refreshTokenTemp = resData['data']['refreshToken'];
       _email = resData['data']['email'].toString();
       _initSubscriptionState();
-      notifyListeners();
+      // notifyListeners();
+      // print('login noti');
 
       const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: resData['data']['accessToken']);
@@ -302,9 +376,53 @@ class UserStatus with ChangeNotifier {
       await storage.write(key: 'email', value: resData['data']['email'].toString());
       await storage.write(key: 'provider', value: resData['data']['provider'].toString());
 
+
+      // await postFcmToken(storage);
+
       return true;
     }
 
     return false;
   }
+
+  // Future<void> postFcmToken(FlutterSecureStorage storage) async {
+  //   String? fcmToken =await _firebaseMessaging.getToken();
+  //
+  //   print("fcmtoken $fcmToken");
+  //   if (fcmToken != null) {
+  //     try {
+  //       // 헤더 설정
+  //       dio.options.headers = {
+  //         'Content-Type': 'application/json',
+  //       };
+  //       if (_accessTokenTemp != null && _accessTokenTemp.isNotEmpty) {
+  //         dio.options.headers['authorization'] = 'Bearer $_accessTokenTemp';
+  //       } else {
+  //         print("accessToken이 없습니다. 인증이 필요합니다.");
+  //       }
+  //
+  //       // 서버로 FCM 토큰 전송
+  //       final response = await dio.post(
+  //         '$serverAddress/members/fcm',
+  //         data: {'fcmToken': fcmToken},
+  //       );
+  //
+  //       if (response.statusCode == 200) {
+  //         print("FCM 토큰이 서버에 성공적으로 전송되었습니다.");
+  //       } else {
+  //         print("FCM 토큰 전송 실패: ${response.statusCode}");
+  //       }
+  //     } catch (e) {
+  //       print("FCM 토큰 전송 중 오류 발생: $e");
+  //     }
+  //   }
+  // }
+
+  // Future<String> getTimeZone() async {
+  //   currentTimeZone = await FlutterTimezone.getLocalTimezone();
+  //   print('Current Time Zone: $currentTimeZone');
+  //
+  //   return currentTimeZone;
+  // }
+
 }

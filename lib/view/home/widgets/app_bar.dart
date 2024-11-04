@@ -10,7 +10,7 @@ class HomeAppBar extends StatelessWidget {
     Responsive res = Responsive(context);
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.only(left: res.percentWidth(7.5)),
+      padding: EdgeInsets.only(left: res.percentWidth(7.5), top: res.percentHeight(5)),
       child: Image.asset(
         'assets/logowithname.png',
         // width: res.percentWidth(size ?? 30),
