@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
+import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/start_position/widget/animated_man.dart';
@@ -58,6 +59,7 @@ class StartPositionState extends State<StartPosition> {
         DetectStatus.initialPitch = _avgInitPitch / 3;
         detectStatus.startDetecting();
         Provider.of<GlobalTimer>(context, listen: false).startTimer();
+        Provider.of<StretchingTimer>(context, listen: false).setTimer(); // 스트레칭 타이머 동작
         widget.onStart!();
         Navigator.pop(context);
       }

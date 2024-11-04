@@ -449,7 +449,6 @@ class _HomeState extends State<Home> {
                                             _audioHandler?.play();
                                             _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
                                           },)));
-                                      stretchingTimer.setTimer();
                                     }
                                   } else {
                                     showStopDetectionSheet();

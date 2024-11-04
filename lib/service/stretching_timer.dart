@@ -2,8 +2,12 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mocksum_flutter/service/global_timer.dart';
+import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:provider/provider.dart';
 import '../util/localization_string.dart';
 import '../view/stretch/data/stretching_data.dart';
+import '../view/stretch/stretching.dart';
 import '../view/stretch/widgets/stretching_start_modal.dart';
 
 /**
@@ -88,20 +92,39 @@ class StretchingTimer extends ChangeNotifier {
     _timer?.cancel();
     if(getStretchingInterval() == null) return; //스트레칭 타이머 비활성화일때
 
+    int initialUseSec = Provider.of<GlobalTimer>(stretchingContext, listen: false).useSec;
+    late int currentUseSec;
     int? _interval = getStretchingInterval();
+
     _showPushAlarm(
         LS.tr('stretching.timer.stretching_reminder_title', [_interval!~/60]),
         LS.tr('stretching.timer.stretching_reminder_body',[_interval~/60])
     );
 
     _timer = Timer(Duration(seconds: _interval), () {
-      _showPushAlarm(
-        LS.tr('stretching.timer.stretching_reminder_title', [_interval~/60]),
-        LS.tr('stretching.timer.stretching_time_passed', [_interval~/60]),
-      );
-      showStretchingStartModal();
+      // 새로운 타이머로 일정 간격마다 useSec를 체크하여 조건이 만족될 때까지 대기
+      Timer.periodic(Duration(seconds: 1), (checkTimer) {
+        if( DetectStatus.sNowDetecting == false){ //자세탐지 종료해버릴때
+          checkTimer.cancel();
+          return;
+        }
+
+        //스트레칭 타이머가 울렸는데, 아직 interval만큼 안지났다? -> 유저가 중간에 이어폰뺐거나 껐거나 그런경우임
+        currentUseSec = Provider.of<GlobalTimer>(stretchingContext, listen: false).useSec;
+        if ((currentUseSec - initialUseSec) < _interval) return;
+
+        // 조건 만족 시 알람과 모달 호출
+        checkTimer.cancel();
+        _showPushAlarm(
+          LS.tr('stretching.timer.stretching_reminder_title', [_interval ~/ 60]),
+          LS.tr('stretching.timer.stretching_time_passed', [_interval ~/ 60]),
+        );
+        showStretchingStartModal();
+        // 조건이 만족되면 반복 타이머 중지
+      });
     });
   }
+
   void cancelTimer() {
     _timer?.cancel();
     _timer = null;
