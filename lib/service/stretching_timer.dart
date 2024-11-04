@@ -36,12 +36,19 @@ class StretchingTimer extends ChangeNotifier {
     const storage = FlutterSecureStorage();
     String? selectedIntervalIndexStorage = await storage.read(key: 'selectedIntervalIndex');
     String? selectedStretchingIndexStorage = await storage.read(key: 'selectedStretchingIndex');
+    String? completedStretchCountStorage = await storage.read(key: 'completedStretchCount');
 
     if (selectedIntervalIndexStorage != null) {
       _selectedIntervalIndex = int.parse(selectedIntervalIndexStorage);
     }
     if (selectedStretchingIndexStorage != null) {
       _selectedStretchingIndex = int.parse(selectedStretchingIndexStorage);
+    }
+    if (completedStretchCountStorage != null) {
+      completedStretchCount = int.parse(completedStretchCountStorage);
+      // print('completedStretchCount:${completedStretchCount}');
+      if(Provider.of<GlobalTimer>(stretchingContext, listen: false).useSec <10) completedStretchCount = 0; // 오늘 처음켰을때 스트레칭 카운트도 0으로 바꿈
+      // print('useSec: ${Provider.of<GlobalTimer>(stretchingContext, listen: false).useSec}');
     }
     notifyListeners(); // 모든 리스너에게 변경 사항을 알림
 
@@ -76,9 +83,12 @@ class StretchingTimer extends ChangeNotifier {
   }
 
   // 스트레칭가이드를 성공적으로 끝냈을때
-  void finishStretchingSession() {
+  void finishStretchingSession() async{
     isStretchingMode = false;
     completedStretchCount++;
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'completedStretchCount', value: completedStretchCount.toString());
+
     setTimer(); // 타이머 재설정
     notifyListeners(); // UI 업데이트 트리거
   }
