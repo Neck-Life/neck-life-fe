@@ -25,9 +25,11 @@ class StretchingAction {
 class StretchingGroup {
   final String groupName;
   final List<StretchingAction> actions;
+  final int time;
 
   StretchingGroup({
     required this.groupName,
     required this.actions,
+    required this.time
   });
 }

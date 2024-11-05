@@ -122,7 +122,7 @@ class _PageNavBarState extends State<PageNavBar> {
               return Scaffold(
                 body: IndexedStack(
                   index: _index,
-                  children: const [Home(), Stretching(), Goal(), History(), Settings()], // History(key: UniqueKey(),)
+                  children: const [Home(), History(), Stretching(), Goal(), Settings()], // History(key: UniqueKey(),)
                 ),
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -146,9 +146,9 @@ class _PageNavBarState extends State<PageNavBar> {
                       type: BottomNavigationBarType.fixed,
                       items: [
                         BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '홈' : 'Home'),
-                        BottomNavigationBarItem(icon: AssetIcon('time', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '스트레칭' : 'Stretching'),
-                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
-                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('strch', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '스트레칭' : 'Stretching'),
+                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
                         BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 4 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
                       ],
                       currentIndex: _index,

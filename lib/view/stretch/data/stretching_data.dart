@@ -1,167 +1,135 @@
 import '../models/stretching_action.dart';
 
-/**
- * TODO : 다국어 지원, 아니 이게 DetectStatus.lanCode에 값이 대입되기 전에 배열이 발생되서 외국어 적용이 안됨 하
- *
- * */
-final List<StretchingGroup> stretchingGroups = [
-  // // 0. 4방향 목 기울이기 운동 TODO: 안좋은 운동으로 소개되어 비활성화
-  // StretchingGroup(
-  //   groupName: '목 상하좌우 스트레칭',
-  //   actions: [
-  //     StretchingAction(
-  //       name: '목을 뒤로 젖히기',
-  //       isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-  //       duration: 10,
-  //       progressVariable: ProgressVariable.pitch,
-  //     ),
-  //     StretchingAction(
-  //       name: '목을 앞으로 숙이기',
-  //       isCompleted: (pitch, roll, yaw) => pitch < -0.8,
-  //       duration: 10,
-  //       progressVariable: ProgressVariable.negativePitch,
-  //     ),
-  //     StretchingAction(
-  //       name: '목을 왼쪽으로 기울이기',
-  //       isCompleted: (pitch, roll, yaw) => roll < -0.8,
-  //       duration: 10,
-  //       progressVariable: ProgressVariable.negativeRoll,
-  //     ),
-  //     StretchingAction(
-  //       name: '목을 오른쪽으로 기울이기',
-  //       isCompleted: (pitch, roll, yaw) => roll > 0.8,
-  //       duration: 10,
-  //       progressVariable: ProgressVariable.roll,
-  //     ),
-  //   ],
-  // ),
-  // 4. 목 뒤로 젖히기 운동
-  StretchingGroup(
-    groupName: '목 뒤로 젖히기 운동',
-    actions: [
-      // 첫 번째 목을 뒤로 젖히기 동작
-      StretchingAction(
-        name: '목을 뒤로 젖히기',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 7,
-        progressVariable: ProgressVariable.pitch,
-      ),
-      // 잠시 휴식 동작
-      StretchingAction(
-        name: '잠시 휴식',
-        isCompleted: (pitch, roll, yaw) => true,  // 조건 없이 일정 시간 대기
-        duration: 5,  // 원하는 휴식 시간(예: 3초)
-        progressVariable: ProgressVariable.none,  // 진행 변수를 설정하지 않음
-      ),
-      // 두 번째 목을 뒤로 젖히기 동작
-      StretchingAction(
-        name: '다시 목을 뒤로 젖히기',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 7,
-        progressVariable: ProgressVariable.pitch,
-      ),
-    ],
-  ),
+
+final strchLan = {
+  'ko': {
+    'group1': '목 뒤로 젖히기 운동',
+    'group2': '국군도수체조 : 목운동',
+    'group3': '목 좌우 돌리기 운동[beta]',
+    'stretch1': '목을 뒤로 젖히기',
+    'stretch2': '잠시 휴식',
+    'stretch3': '다시 목을 뒤로 젖히기',
+    'stretch4': '목을 앞으로 숙이기 (아래)',
+    'stretch5': '목을 왼쪽으로 돌리기 (왼쪽)',
+    'stretch6': '목을 뒤로 젖히기 (위)',
+    'stretch7': '목을 오른쪽으로 돌리기 (오른쪽)',
+    'stretch8': '왼쪽 바라보기',
+    'stretch9': '오른쪽 바라보기',
+  },
+  'en': {
+    'group1': 'Neck Backward Stretching Exercise',
+    'group2': 'Korean Military Neck Exercise',
+    'group3': 'Neck Rotation Exercise [beta]',
+    'stretch1': 'Tilt Neck Backward',
+    'stretch2': 'Short Break',
+    'stretch3': 'Tilt Neck Backward Again',
+    'stretch4': 'Tilt Neck Forward (Down)',
+    'stretch5': 'Turn Neck to Left (Left)',
+    'stretch6': 'Tilt Neck Backward (Up)',
+    'stretch7': 'Turn Neck to Right (Right)',
+    'stretch8': 'Look to the Left',
+    'stretch9': 'Look to the Right',
+  },
+  'ja': {
+    'group1': '首を後ろに反らす運動',
+    'group2': '軍の体操: 首の運動',
+    'group3': '首の左右回転運動[ベータ版]',
+    'stretch1': '首を後ろに反らす',
+    'stretch2': '短い休憩',
+    'stretch3': '再び首を後ろに反らす',
+    'stretch4': '首を前に傾ける (下)',
+    'stretch5': '首を左に回す (左)',
+    'stretch6': '首を後ろに傾ける (上)',
+    'stretch7': '首を右に回す (右)',
+    'stretch8': '左を見る',
+    'stretch9': '右を見る',
+  }
+};
 
 
-  // 3. 반시계 2회, 시계 2회 목 돌리기
-  StretchingGroup(
-    groupName: '국군도수체조 : 목운동 ',
-    actions: [
-      StretchingAction(
-        name: '목을 뒤로 젖히기',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 2,
-        progressVariable: ProgressVariable.pitch,
-      ),
-      StretchingAction(
-        name: '목을 앞으로 숙이기 (아래)',
-        isCompleted: (pitch, roll, yaw) => pitch < -0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.negativePitch,
-      ),
-      StretchingAction(
-        name: '목을 왼쪽으로 돌리기 (왼쪽)',
-        isCompleted: (pitch, roll, yaw) => roll < -0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.negativeRoll,
-      ),
-      StretchingAction(
-        name: '목을 뒤로 젖히기 (위)',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.pitch,
-      ),
-      StretchingAction(
-        name: '목을 오른쪽으로 돌리기 (오른쪽)',
-        isCompleted: (pitch, roll, yaw) => roll > 0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.roll,
-      ),
-      StretchingAction(
-        name: '목을 뒤로 젖히기',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 2,
-        progressVariable: ProgressVariable.pitch,
-      ),
-      StretchingAction(
-        name: '목을 앞으로 숙이기 (아래)',
-        isCompleted: (pitch, roll, yaw) => pitch < -0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.negativePitch,
-      ),
-      StretchingAction(
-        name: '목을 오른쪽으로 돌리기 (오른쪽)',
-        isCompleted: (pitch, roll, yaw) => roll > 0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.roll,
-      ),
-      StretchingAction(
-        name: '목을 뒤로 젖히기 (위)',
-        isCompleted: (pitch, roll, yaw) => pitch > 0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.pitch,
-      ),
-      StretchingAction(
-        name: '목을 왼쪽으로 돌리기 (왼쪽)',
-        isCompleted: (pitch, roll, yaw) => roll < -0.5,
-        duration: 0.5,
-        progressVariable: ProgressVariable.negativeRoll,
-      ),
-    ],
-  ),
+class StretchingData {
+  // late List<StretchingGroup> groups;
 
-
-
-  // 5. 목 좌우 돌리기
-  // TODO : yaw값은 절대보정이 되지않음. 스트레칭 시작시 바라보는 지점을 영점으로 맞출 필요가 있음
-  StretchingGroup(
-    groupName: '목 좌우 돌리기 운동[beta]',
-    actions: [
-      StretchingAction(
-        name: '왼쪽 바라보기',
-        isCompleted: (pitch, roll, yaw) => yaw > 1.0,
-        duration: 5,
-        progressVariable: ProgressVariable.yaw,
+  static List<StretchingGroup> init(String lanCode) {
+    return [
+      StretchingGroup(
+        time: 20,
+        groupName: strchLan[lanCode]?['group1'] ?? 'Neck Backward Stretching Exercise',
+        actions: [
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch1'] ?? 'Tilt Neck Backward',
+            isCompleted: (pitch, roll, yaw) => pitch > 0.8,
+            duration: 7,
+            progressVariable: ProgressVariable.pitch,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch2'] ?? 'Short Break',
+            isCompleted: (pitch, roll, yaw) => true,
+            duration: 5,
+            progressVariable: ProgressVariable.none,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch3'] ?? 'Tilt Neck Backward Again',
+            isCompleted: (pitch, roll, yaw) => pitch > 0.8,
+            duration: 7,
+            progressVariable: ProgressVariable.pitch,
+          ),
+        ],
       ),
-      StretchingAction(
-        name: '오른쪽 바라보기',
-        isCompleted: (pitch, roll, yaw) => yaw < -1.0,
-        duration: 5,
-        progressVariable: ProgressVariable.negativeYaw,
+      StretchingGroup(
+        time: 10,
+        groupName: strchLan[lanCode]?['group2'] ?? 'Military Physical Training: Neck Exercise',
+        actions: [
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch1'] ?? 'Tilt Neck Backward',
+            isCompleted: (pitch, roll, yaw) => pitch > 0.8,
+            duration: 2,
+            progressVariable: ProgressVariable.pitch,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch4'] ?? 'Tilt Neck Forward (Down)',
+            isCompleted: (pitch, roll, yaw) => pitch < -0.5,
+            duration: 0.5,
+            progressVariable: ProgressVariable.negativePitch,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch5'] ?? 'Turn Neck to Left (Left)',
+            isCompleted: (pitch, roll, yaw) => roll < -0.5,
+            duration: 0.5,
+            progressVariable: ProgressVariable.negativeRoll,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch6'] ?? 'Tilt Neck Backward (Up)',
+            isCompleted: (pitch, roll, yaw) => pitch > 0.5,
+            duration: 0.5,
+            progressVariable: ProgressVariable.pitch,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch7'] ?? 'Turn Neck to Right (Right)',
+            isCompleted: (pitch, roll, yaw) => roll > 0.5,
+            duration: 0.5,
+            progressVariable: ProgressVariable.roll,
+          ),
+        ],
       ),
-      StretchingAction(
-        name: '왼쪽 바라보기',
-        isCompleted: (pitch, roll, yaw) => yaw > 1.0,
-        duration: 5,
-        progressVariable: ProgressVariable.yaw,
+      StretchingGroup(
+        time: 10,
+        groupName: strchLan[lanCode]?['group3'] ?? 'Neck Left-Right Rotation Exercise [beta]',
+        actions: [
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch8'] ?? 'Look to the Left',
+            isCompleted: (pitch, roll, yaw) => yaw > 1.0,
+            duration: 5,
+            progressVariable: ProgressVariable.yaw,
+          ),
+          StretchingAction(
+            name: strchLan[lanCode]?['stretch9'] ?? 'Look to the Right',
+            isCompleted: (pitch, roll, yaw) => yaw < -1.0,
+            duration: 5,
+            progressVariable: ProgressVariable.negativeYaw,
+          ),
+        ],
       ),
-      StretchingAction(
-        name: '오른쪽 바라보기',
-        isCompleted: (pitch, roll, yaw) => yaw < -1.0,
-        duration: 5,
-        progressVariable: ProgressVariable.negativeYaw,
-      ),
-    ],
-  ),
-];
+    ];
+  }
+}

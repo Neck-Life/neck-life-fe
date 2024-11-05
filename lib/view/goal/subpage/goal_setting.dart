@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
@@ -219,7 +218,7 @@ class _GoalSettingState extends State<GoalSetting> {
             oldGoalMap[_chosenGoalType!.keyName] = {
               'order': obj['order'],
               'type': _chosenGoalType!.typeName,
-              'targetValue': _chosenGoalType == GoalType.time ? _goalValue*60 : _goalValue
+              'targetValue': _chosenGoalType == GoalType.time ? _goalValue : _goalValue
             };
           }
         }
@@ -248,7 +247,7 @@ class _GoalSettingState extends State<GoalSetting> {
       'order': 1,
       'type': _chosenGoalType!.typeName,
       'description': _chosenGoalType!.desc,
-      'target_value': _chosenGoalType == GoalType.time ? _goalValue*60 : _goalValue
+      'target_value': _chosenGoalType == GoalType.time ? _goalValue : _goalValue
     };
 
     try {

@@ -28,7 +28,7 @@ class DetectStatus with ChangeNotifier {
   static double nowPitch = 0;
   static double nowRoll = 0;
 
-  static double nowYaw = 0;
+  // static double nowYaw = 0;
   static int moveDirection = 0;
   static int tickCount = 0;
   static bool sBgSoundActive = true;

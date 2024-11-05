@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/view/stretch/models/stretching_action.dart';
 import 'package:provider/provider.dart';
 import '../util/localization_string.dart';
 import '../view/stretch/data/stretching_data.dart';
@@ -24,6 +25,8 @@ class StretchingTimer extends ChangeNotifier {
   int _selectedStretchingIndex = 0; // 초기 인덱스 -> 기본 3
   int get selectedIntervalIndex => _selectedIntervalIndex;
   int get selectedStretchingIndex => _selectedStretchingIndex;
+  List<StretchingGroup> _stretchingList = StretchingData.init('ko');
+  List<StretchingGroup> get stretchingList => _stretchingList;
 
   int completedStretchCount = 0;
   static bool isStretchingMode = false;
@@ -56,6 +59,15 @@ class StretchingTimer extends ChangeNotifier {
     // print("스트레칭인덱스 : ${_selectedIntervalIndex}, ${_selectedStretchingIndex}");
   }
 
+  void setStretchingLan(String lanCode) {
+    _stretchingList = StretchingData.init(lanCode);
+    notifyListeners();
+  }
+
+  StretchingGroup getSelectedStretching() {
+    return _stretchingList[_selectedStretchingIndex];
+  }
+
   // 인덱스를 통해 interval 값을 변경하는 메서드
   void setStretchingIntervalIndex(int index) async{
     // print("스트레칭간격 수정${index}");
@@ -72,7 +84,7 @@ class StretchingTimer extends ChangeNotifier {
   // 인덱스를 통해 스트레칭 선택 값을 변경하는 메서드
   void setStretchingTypeIndex(int index) async{
     // print("스트레칭타입 수정${index}");
-    if (index < 0 || index >= stretchingGroups.length) {
+    if (index < 0 || index >= _stretchingList.length) {
       throw ArgumentError("Stretching Type Setting Invalid index");
     }
     _selectedStretchingIndex = index;

@@ -1,5 +1,6 @@
 import 'package:audio_session/audio_session.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,6 +11,7 @@ import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
+import 'package:mocksum_flutter/util/NotificationService.dart';
 // import 'package:mocksum_flutter/util/NotificationService.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
@@ -30,9 +32,9 @@ void main() async {
   print('setPreferredOrientations setted');
   await initializeAudioSession();
   print('audio session init');
-  // await initGoogleMobileAds();
+  await initGoogleMobileAds();
   // await Firebase.initializeApp();
-
+  //
   // NotificationService notificationService = NotificationService();
   // await notificationService.initFirebaseMessaging();
 
@@ -79,6 +81,7 @@ class _MyAppState extends State<MyApp> {
         home: UpgradeAlert(
           child: const PageNavBar(),
         )
+      )
     );
   }
 }

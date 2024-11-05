@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mocksum_flutter/main.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +13,7 @@ import '../data/stretching_data.dart';
 import '../models/stretching_action.dart';
 
 class StretchingSelection extends StatefulWidget {
-  const StretchingSelection({Key? key}) : super(key: key);
+  const StretchingSelection({super.key});
 
   @override
   _StretchingSelectionState createState() => _StretchingSelectionState();
@@ -19,9 +21,22 @@ class StretchingSelection extends StatefulWidget {
 
 class _StretchingSelectionState extends State<StretchingSelection> {
   int _anchorIdx = 0;
+  List<StretchingGroup> stretchingGroups = [];
+  
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        stretchingGroups = StretchingData.init(context.locale.languageCode);
+      });
+    });
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
+    StretchingTimer stretchingTimer = context.watch();
     return Center(
       child: SizedBox(
         width: res.deviceWidth,
@@ -37,13 +52,13 @@ class _StretchingSelectionState extends State<StretchingSelection> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextDefault(
-                    content: '스트레칭종류 선택',
+                  const TextDefault(
+                    content: '스트레칭 종류 선택',
                     fontSize: 18,
                     isBold: true,
                   ),
-                  DropdownButton<StretchingGroup>(
-                    value: selectedStretchingGroup,
+                  DropdownButton<int>(
+                    value: stretchingTimer.selectedStretchingIndex,
                     icon: Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
@@ -52,18 +67,22 @@ class _StretchingSelectionState extends State<StretchingSelection> {
                       height: 2,
                       color: Colors.blueAccent,
                     ),
-                    onChanged: (StretchingGroup? newValue) {
+                    onChanged: (int? newValue) {
                       setState(() {
-                        selectedStretchingGroup = newValue!;
+                        // selectedStretchingGroup = newValue!;
+                        stretchingTimer.setStretchingTypeIndex(newValue!);
                       });
                     },
-                    items: stretchingGroups
-                        .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
-                      return DropdownMenuItem<StretchingGroup>(
-                        value: group,
-                        child: TextDefault(content: group.groupName, fontSize: 16, isBold: false),
+                    items: List.generate(stretchingGroups.length, (idx) {
+                      return DropdownMenuItem(
+                        value: idx,
+                        child: TextDefault(content: stretchingGroups[idx].groupName, fontSize: 16, isBold: false),
                       );
-                    }).toList(),
+                    }),
+                    // items: stretchingGroups
+                    //     .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
+
+                    // }).toList(),
                   ),
                 ],
               ),

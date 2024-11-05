@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:mocksum_flutter/view/stretch/subpages/stretching_list.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/stretching_selection.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/stretching_test_env.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
@@ -11,7 +12,7 @@ import '../home/widgets/app_bar.dart';
 // final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorState>();
 late BuildContext stretchingContext;
 class Stretching extends StatefulWidget {
-  const Stretching({Key? key}) : super(key: key);
+  const Stretching({super.key});
 
   @override
   _StretchingState createState() => _StretchingState();
@@ -39,7 +40,7 @@ class _StretchingState extends State<Stretching>
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
     return Scaffold(
-      appBar: PreferredSize(
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60), // 고정된 높이
         child: HomeAppBar(), // 사용자 정의 AppBar 위젯
       ),
@@ -49,17 +50,17 @@ class _StretchingState extends State<Stretching>
             controller: _tabController,
             isScrollable: true,
             // 탭 너비를 텍스트 길이에 맞게 조절
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
-            unselectedLabelStyle: TextStyle(
+            unselectedLabelStyle: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.normal,
             ),
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
-            indicator: UnderlineTabIndicator(
+            indicator: const UnderlineTabIndicator(
               borderSide: BorderSide(
                 color: Color(0xFF101010),
                 width: 3,
@@ -78,11 +79,12 @@ class _StretchingState extends State<Stretching>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
+              children: const [
                 StretchingAlarmSetting(),
                 // StretchingSelection(),
                 // RecommendedStretching(),
-                StretchingDevEnv(),
+                // StretchingDevEnv(),
+                StretchingList()
                 // FavoritesPage(),
               ],
             ),
@@ -94,6 +96,8 @@ class _StretchingState extends State<Stretching>
 }
 
 class RecommendedStretching extends StatelessWidget {
+  const RecommendedStretching({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('추천 스트레칭 페이지\nTo Be Announced'));

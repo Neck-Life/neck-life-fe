@@ -15,9 +15,11 @@ import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
 import 'package:provider/provider.dart';
 
+import '../../service/stretching_timer.dart';
 import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import '../../util/time_convert.dart';
+import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
 const NotificationDetails _details = NotificationDetails(
@@ -57,9 +59,10 @@ class _StretchingSessionState extends State<StretchingSession> {
   Timer? _timer, _updateDataTimer;
   double _elapsedTime = 0;
   bool _isActive = true;
+  StretchingGroup? selectedStretchingGroup;
 
-  String get guideText => selectedStretchingGroup.actions[currentStepIndex].name;
-  String get stretchingGroupName => selectedStretchingGroup.groupName;
+  String get guideText => selectedStretchingGroup!.actions[currentStepIndex].name;
+  String get stretchingGroupName => selectedStretchingGroup!.groupName;
 
   StretchingProgressBar stretchingProgressBar = StretchingProgressBar(key: GlobalKey(),);
 
@@ -69,11 +72,13 @@ class _StretchingSessionState extends State<StretchingSession> {
   void initState() {
     super.initState();
     _initializeTts();
+    // List stretchingList = StretchingData.init(DetectStatus.lanCode);
+    selectedStretchingGroup = Provider.of<StretchingTimer>(context, listen: false).getSelectedStretching();
     if(DetectStatus.lanCode == 'ko') {
-      _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+      _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 $guideText");
     } else {
       //영어
-      _speak("${guideText} for ${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()} seconds");
+      _speak("${guideText} for ${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()} seconds");
     }
 
 
@@ -141,12 +146,12 @@ class _StretchingSessionState extends State<StretchingSession> {
   }
 
   bool isStepCompleted(double pitch, double roll, double yaw) {
-    final currentAction = selectedStretchingGroup.actions[currentStepIndex];
+    final currentAction = selectedStretchingGroup!.actions[currentStepIndex];
     return currentAction.isCompleted(pitch, roll, yaw);
   }
 
   void checkStretchCompletion(double pitch, double roll, double yaw) {
-    final currentAction = selectedStretchingGroup.actions[currentStepIndex];
+    final currentAction = selectedStretchingGroup!.actions[currentStepIndex];
     double value=0;
     switch (currentAction.progressVariable) {
       case ProgressVariable.pitch:
@@ -190,7 +195,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void _goToNextStep() {
 
-    if (currentStepIndex < selectedStretchingGroup.actions.length - 1) {
+    if (currentStepIndex < selectedStretchingGroup!.actions.length - 1) {
       _showPushAlarm(
           LS.tr('stretching.stretching_session.good_job_next_step_title'),
           LS.tr('stretching.stretching_session.good_job_next_step_body')
@@ -198,9 +203,9 @@ class _StretchingSessionState extends State<StretchingSession> {
       setState(() {
         currentStepIndex += 1;
         if(DetectStatus.lanCode == 'ko') {
-          _speak("${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+          _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
         } else { // 영어
-          _speak("${guideText} for ${(selectedStretchingGroup.actions[currentStepIndex].duration).toInt()} seconds");
+          _speak("${guideText} for ${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()} seconds");
         }
       });
     } else {
@@ -245,7 +250,7 @@ class _StretchingSessionState extends State<StretchingSession> {
     Responsive res = Responsive(context);
     GlobalTimer globalTimer = context.watch();
 
-    final currentAction = selectedStretchingGroup.actions[currentStepIndex]; // 동작 정보 가져오기
+    final currentAction = selectedStretchingGroup!.actions[currentStepIndex]; // 동작 정보 가져오기
 
     return PopScope(
       canPop: false,

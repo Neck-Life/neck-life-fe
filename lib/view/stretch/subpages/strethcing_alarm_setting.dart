@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:mocksum_flutter/main.dart';
+import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:provider/provider.dart';
@@ -12,27 +14,30 @@ import '../data/stretching_data.dart';
 import '../models/stretching_action.dart';
 
 
-StretchingGroup selectedStretchingGroup = stretchingGroups[0]; // 상태 변수로 선언
-
-
 class StretchingAlarmSetting extends StatefulWidget {
   const StretchingAlarmSetting({super.key});
 
   @override
   State<StatefulWidget> createState() => _StretchingAlarmSettingState();
 }
+
+
 class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
   double _selectedIntervalIndex = 2;
   int _selectedStretchingIndex = 0;
+  List<StretchingGroup> stretchingGroupList = [];
+  StretchingGroup? selectedStretchingGroup; // 상태 변수로 선언
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       setState(() {
+        stretchingGroupList = StretchingData.init(context.locale.languageCode);
+        Provider.of<StretchingTimer>(context, listen: false).setStretchingLan(context.locale.languageCode);
         _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
         _selectedStretchingIndex = Provider.of<StretchingTimer>(context, listen: false).selectedStretchingIndex;
-        selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
+        selectedStretchingGroup = stretchingGroupList[_selectedStretchingIndex];
       });
     });
   }
@@ -131,11 +136,13 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                         ),
                         DropdownButton<int>(
                           isExpanded: true,
+                          borderRadius: BorderRadius.circular(15),
                           value: _selectedStretchingIndex,
-                          icon: Icon(Icons.arrow_downward),
+                          // padding: EdgeInsets.symmetric(horizontal: res.percentWidth(2)),
+                          icon: AssetIcon('arrowDown', size: res.percentWidth(1),),
                           iconSize: 24,
                           elevation: 16,
-                          style: TextStyle(color: Colors.blue),
+                          style: const TextStyle(color: Colors.blue),
                           underline: Container(
                             height: 2,
                             color: Colors.blueAccent,
@@ -143,22 +150,21 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                           onChanged: (int? newIndex) {
                             setState(() {
                               _selectedStretchingIndex = newIndex!;
-                              selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
+                              selectedStretchingGroup = stretchingTimer.stretchingList[_selectedStretchingIndex];
                               stretchingTimer.setStretchingTypeIndex(_selectedStretchingIndex);
-
                             });
                           },
-                          items: List.generate(stretchingGroups.length, (index) {
+                          items: List.generate(stretchingTimer.stretchingList.length, (index) {
                             return DropdownMenuItem<int>(
                               value: index,
                               child: TextDefault(
-                                content: stretchingGroups[index].groupName,
+                                content: stretchingTimer.stretchingList[index].groupName,
                                 fontSize: 16,
                                 isBold: false,
                               ),
                             );
                           }),
-                        ),
+                        )
 
                       ],
                     ),
@@ -173,30 +179,27 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               width: 87.5,
               padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
               radius: 20,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
-                  SvgPicture.asset('assets/icons/info.svg'),
-                  SizedBox(width: 8),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextDefault(
-                          content: LS.tr('stretching.stretching_alarm.why_stretch'),
-                          fontSize: 18,
-                          isBold: true,
-                        ),
-                        SizedBox(height: res.percentHeight(0.5)),
-                        TextDefault(
-                          content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
-                          fontSize: 14,
-                          isBold: false,
-                          fontColor: const Color(0xFF8991A0),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AssetIcon('info', size: res.percentWidth(1,)),
+                      const SizedBox(width: 8),
+                      TextDefault(
+                        content: LS.tr('stretching.stretching_alarm.why_stretch'),
+                        fontSize: 15,
+                        isBold: true,
+                      ),
+                    ],
                   ),
+                  SizedBox(height: res.percentHeight(1),),
+                  TextDefault(
+                    content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
+                    fontSize: 14,
+                    isBold: false,
+                    fontColor: const Color(0xFF8991A0),
+                  )
                 ],
               ),
             ),
