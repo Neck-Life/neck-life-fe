@@ -10,6 +10,7 @@ import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:provider/provider.dart';
 
 import '../../../service/stretching_timer.dart';
+import '../../../util/localization_string.dart';
 import '../stretching.dart';
 import '../stretching_session.dart';
 
@@ -19,7 +20,7 @@ void showStretchingStartModal() {
   BuildContext context = stretchingContext;
   final StretchingTimer stretchingTimer = context.read<StretchingTimer>();
 // 플래그 초기화
-  stretchingTimer.isStretchingMode = false;
+  StretchingTimer.isStretchingMode = false;
 
   showModalBottomSheet(
     context: context,
@@ -32,7 +33,7 @@ void showStretchingStartModal() {
     ),
   ).whenComplete(() {
     // scrim 영역 클릭으로 모달이 닫힐 때 stretchingTimer.setTimer() 호출
-    if (!stretchingTimer.isStretchingMode) {
+    if (!StretchingTimer.isStretchingMode) {
       stretchingTimer.setTimer();
     }
   });
@@ -106,14 +107,14 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '벌써 ${(stretchingTimer.getStretchingInterval()!~/60)}분이 지났어요\n스트레칭을 해볼까요?',
+                        LS.tr('stretching.start_modal.stretch_prompt', [stretchingTimer.getStretchingInterval()!~/60]),
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '탐지 시간: ${TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode)}, 스트레칭 : ${stretchingTimer.completedStretchCount}',
+                        LS.tr('stretching.start_modal.detection_time', [TimeConvert.sec2Min(globalTimer.useSec, context.locale.languageCode), stretchingTimer.completedStretchCount]),
                         style: TextStyle(
                           fontSize: 14,
                           color: const Color(0xFF236EF3),
@@ -161,7 +162,7 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        text: '안할래요 ($countdown)', // 카운트다운 값 표시
+                        text: LS.tr('stretching.start_modal.no_stretch', [countdown]),
                         backgroundColor: const Color(0xFF8991A0),
                         color: Colors.white,
                         width: res.percentWidth(38),
@@ -170,14 +171,14 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                       Button(
                         onPressed: () {
                           // 스트레칭 버튼 클릭 시 플래그 설정
-                          stretchingTimer.isStretchingMode = true;
+                          StretchingTimer.isStretchingMode = true;
                           Navigator.pop(context);
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => StretchingSession()),
                           );
                         },
-                        text: '스트레칭 시작',
+                        text: LS.tr('stretching.start_modal.start_stretching'),
                         backgroundColor: const Color(0xFF236EF3),
                         color: Colors.white,
                         width: res.percentWidth(38),

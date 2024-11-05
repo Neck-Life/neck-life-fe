@@ -1,5 +1,9 @@
 import '../models/stretching_action.dart';
 
+/**
+ * TODO : 다국어 지원, 아니 이게 DetectStatus.lanCode에 값이 대입되기 전에 배열이 발생되서 외국어 적용이 안됨 하
+ *
+ * */
 final List<StretchingGroup> stretchingGroups = [
   // // 0. 4방향 목 기울이기 운동 TODO: 안좋은 운동으로 소개되어 비활성화
   // StretchingGroup(
@@ -39,7 +43,7 @@ final List<StretchingGroup> stretchingGroups = [
       StretchingAction(
         name: '목을 뒤로 젖히기',
         isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 8,
+        duration: 7,
         progressVariable: ProgressVariable.pitch,
       ),
       // 잠시 휴식 동작
@@ -53,7 +57,7 @@ final List<StretchingGroup> stretchingGroups = [
       StretchingAction(
         name: '다시 목을 뒤로 젖히기',
         isCompleted: (pitch, roll, yaw) => pitch > 0.8,
-        duration: 8,
+        duration: 7,
         progressVariable: ProgressVariable.pitch,
       ),
     ],
@@ -130,6 +134,7 @@ final List<StretchingGroup> stretchingGroups = [
 
 
   // 5. 목 좌우 돌리기
+  // TODO : yaw값은 절대보정이 되지않음. 스트레칭 시작시 바라보는 지점을 영점으로 맞출 필요가 있음
   StretchingGroup(
     groupName: '목 좌우 돌리기 운동[beta]',
     actions: [

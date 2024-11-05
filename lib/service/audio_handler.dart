@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
@@ -200,6 +201,9 @@ class MyAudioHandler extends BaseAudioHandler {
       DetectStatus.nowPitch = _nowPitch;
       DetectStatus.nowRoll = _nowRoll;
       DetectStatus.nowYaw = _nowYaw;
+      
+      /** 스트레칭 모드일때는 거북목 탐지 안함 */
+      if(StretchingTimer.isStretchingMode) return;
 
 
       DetectStatus.nowPosition = _nowPosition;

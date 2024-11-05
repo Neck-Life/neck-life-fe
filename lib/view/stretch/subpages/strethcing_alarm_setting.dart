@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../theme/component/text_default.dart';
 import '../../../service/stretching_timer.dart';
+import '../../../util/localization_string.dart';
 import '../data/stretching_data.dart';
 import '../models/stretching_action.dart';
 
@@ -21,12 +22,19 @@ class StretchingAlarmSetting extends StatefulWidget {
   State<StatefulWidget> createState() => _StretchingAlarmSettingState();
 }
 class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
-  late double _selectedIntervalIndex;
+  double _selectedIntervalIndex = 2;
+  int _selectedStretchingIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        _selectedIntervalIndex = Provider.of<StretchingTimer>(context, listen: false).selectedIntervalIndex.toDouble();
+        _selectedStretchingIndex = Provider.of<StretchingTimer>(context, listen: false).selectedStretchingIndex;
+        selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
+      });
+    });
   }
 
   @override
@@ -49,10 +57,10 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextDefault(content: '스트레칭 알람 주기 설정', fontSize: 18, isBold: true),
+                  TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
                   SizedBox(height: res.percentHeight(0.5)),
                   TextDefault(
-                    content: '자세탐지 도중 스트레칭 알람 주기를 설정할 수 있어요',
+                    content: LS.tr('stretching.stretching_alarm.stretching_alarm_description'),
                     fontSize: 14,
                     isBold: false,
                     fontColor: const Color(0xFF8991A0),
@@ -84,10 +92,10 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextDefault(content: '10초', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '10분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '30분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                        TextDefault(content: '50분', fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_disabled'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                        TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
                       ],
                     ),
                   ),
@@ -103,48 +111,60 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/icons/Document.svg'),
-                  SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextDefault(
-                        content: '스트레칭 선택',
-                        fontSize: 18,
-                        isBold: true,
-                      ),
-                      SizedBox(height: res.percentHeight(0.5)),
-                      TextDefault(
-                        content: '선택한 스트레칭으로 가이드해 드릴게요',
-                        fontSize: 14,
-                        isBold: false,
-                        fontColor: const Color(0xFF8991A0),
-                      ),
-                      DropdownButton<StretchingGroup>(
-                        value: selectedStretchingGroup,
-                        icon: Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.blue),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.blueAccent,
+                  SizedBox(width: res.percentWidth(1)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: res.percentHeight(1)),
+                        TextDefault(
+                          content: LS.tr('stretching.stretching_alarm.stretching_selection'),
+                          fontSize: 18,
+                          isBold: true,
                         ),
-                        onChanged: (StretchingGroup? newValue) {
-                          setState(() {
-                            selectedStretchingGroup = newValue!;
-                          });
-                        },
-                        items: stretchingGroups
-                            .map<DropdownMenuItem<StretchingGroup>>((StretchingGroup group) {
-                          return DropdownMenuItem<StretchingGroup>(
-                            value: group,
-                            child: TextDefault(content: group.groupName, fontSize: 16, isBold: false),
-                          );
-                        }).toList(),
-                      ),
-                    ],
+                        SizedBox(height: res.percentHeight(0.5)),
+                        TextDefault(
+                          content: LS.tr('stretching.stretching_alarm.stretching_selection_description'),
+                          fontSize: 14,
+                          isBold: false,
+                          fontColor: const Color(0xFF8991A0),
+                        ),
+                        DropdownButton<int>(
+                          isExpanded: true,
+                          value: _selectedStretchingIndex,
+                          icon: Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.blue),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.blueAccent,
+                          ),
+                          onChanged: (int? newIndex) {
+                            setState(() {
+                              _selectedStretchingIndex = newIndex!;
+                              selectedStretchingGroup = stretchingGroups[_selectedStretchingIndex];
+                              stretchingTimer.setStretchingTypeIndex(_selectedStretchingIndex);
+
+                            });
+                          },
+                          items: List.generate(stretchingGroups.length, (index) {
+                            return DropdownMenuItem<int>(
+                              value: index,
+                              child: TextDefault(
+                                content: stretchingGroups[index].groupName,
+                                fontSize: 16,
+                                isBold: false,
+                              ),
+                            );
+                          }),
+                        ),
+
+                      ],
+                    ),
                   ),
+                  // SvgPicture.asset('assets/icons/Document.svg'),
+                  SizedBox(width: res.percentWidth(1),)
                 ],
               ),
             ),
@@ -163,13 +183,13 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextDefault(
-                          content: '스트레칭을 왜 해야하나요?',
+                          content: LS.tr('stretching.stretching_alarm.why_stretch'),
                           fontSize: 18,
                           isBold: true,
                         ),
                         SizedBox(height: res.percentHeight(0.5)),
                         TextDefault(
-                          content: '규칙적인 스트레칭은 근육 피로를 평균 60% 줄이고 혈액 순환을 30% 개선합니다.\n거북목을 예방하고 신체 유연성도 높일 수 있답니다!',
+                          content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
                           fontSize: 14,
                           isBold: false,
                           fontColor: const Color(0xFF8991A0),
