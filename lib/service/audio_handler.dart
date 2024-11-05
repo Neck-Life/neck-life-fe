@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
 import 'package:mocksum_flutter/service/history_provider.dart';
@@ -19,6 +21,7 @@ class MyAudioHandler extends BaseAudioHandler {
   StreamSubscription<DeviceMotionData>? _subscription;
   double _nowPitch = 0;
   double _nowRoll = 0;
+  double _nowYaw = 0;
   double _nowPosition = 0;
   bool _isBackward = false;
   int _minInterval = 0;
@@ -103,6 +106,7 @@ class MyAudioHandler extends BaseAudioHandler {
     _subscription = FlutterAirpods.getAirPodsDeviceMotionUpdates.listen((data) {
       _nowPitch = data.attitude.pitch.toDouble();
       _nowRoll = data.attitude.roll.toDouble();
+      _nowYaw = data.toJson()['yaw'];
       _headPositionHandler.processSensorData(data);
 
       if(DetectStatus.isLabMode) {
@@ -195,7 +199,11 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
       DetectStatus.nowPitch = _nowPitch;
-
+      DetectStatus.nowRoll = _nowRoll;
+      DetectStatus.nowYaw = _nowYaw;
+      
+      /** 스트레칭 모드일때는 거북목 탐지 안함 */
+      if(StretchingTimer.isStretchingMode) return;
 
 
       DetectStatus.nowPosition = _nowPosition;

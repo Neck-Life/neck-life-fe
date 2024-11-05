@@ -8,6 +8,7 @@ import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 // import 'package:mocksum_flutter/util/NotificationService.dart';
 import 'package:provider/provider.dart';
@@ -57,26 +58,26 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<DetectStatus>(create: (_) => DetectStatus()),
-          ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus()),
-          ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
-          ChangeNotifierProvider<GlobalTimer>(create: (_) => GlobalTimer()),
-        ],
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            title: 'NeckLife',
-            theme: ThemeData(
-                useMaterial3: true,
-                scaffoldBackgroundColor: const Color(0xFFF4F4F7),
-                bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.transparent)
-            ),
-            home: UpgradeAlert(
-              child: const PageNavBar(),
-            )
+      providers: [
+        ChangeNotifierProvider<DetectStatus>(create: (_) => DetectStatus()),
+        ChangeNotifierProvider<UserStatus>(create: (_) => UserStatus()),
+        ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
+        ChangeNotifierProvider<GlobalTimer>(create: (_) => GlobalTimer()),
+        ChangeNotifierProvider<StretchingTimer>(create: (_) => StretchingTimer()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        title: 'NeckLife',
+        theme: ThemeData(
+          useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFF4F4F7),
+          bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.transparent)
+        ),
+        home: UpgradeAlert(
+          child: const PageNavBar(),
         )
     );
   }
