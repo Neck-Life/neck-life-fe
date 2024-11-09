@@ -175,7 +175,7 @@ class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
                           Navigator.pop(context);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => StretchingSession()),
+                            MaterialPageRoute(builder: (context) => StretchingSession(shouldResetTimer: true,)),
                           );
                         },
                         text: LS.tr('stretching.start_modal.start_stretching'),

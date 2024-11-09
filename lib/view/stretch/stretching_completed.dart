@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mocksum_flutter/view/stretch/widgets/stretching_complete_modal.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/stretching_timer.dart';
 import '../../util/localization_string.dart';
 
 class StretchingCompletedScreen extends StatefulWidget {
-  const StretchingCompletedScreen({super.key});
+  final bool? shouldResetTimer;
+  const StretchingCompletedScreen({super.key, this.shouldResetTimer});
 
   @override
   _StretchingCompletedScreenState createState() => _StretchingCompletedScreenState();
@@ -27,7 +27,7 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
       // listen: false로 설정하여 Provider 접근
       final stretchingTimer = Provider.of<StretchingTimer>(context, listen: false);
       stretchingTimer.finishStretchingSession(); // 메서드 호출
-      // showStretchingCompleteModal(context);
+      if(widget.shouldResetTimer == true) stretchingTimer.setTimer();
     });
   }
 
@@ -39,9 +39,6 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
     }
     super.dispose();
   }
-/**
- * TODO : 뒤로가기 막기?
- * */
 
   @override
   Widget build(BuildContext context) {

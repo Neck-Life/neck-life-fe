@@ -45,11 +45,12 @@ Future<void> _showPushAlarm(String title, String body) async {
   );
 }
 class StretchingSession extends StatefulWidget {
+  final bool? shouldResetTimer; // 스트레칭 세션 종료,이탈시 타이머 재설정하는가?
   final StretchingGroup? preSelectedStretchingGroup;
 
   const StretchingSession({
     super.key,
-    this.preSelectedStretchingGroup
+    this.preSelectedStretchingGroup, this.shouldResetTimer
   });
 
   @override
@@ -212,11 +213,13 @@ class _StretchingSessionState extends State<StretchingSession> {
       );
       setState(() {
         currentStepIndex += 1;
-        if(DetectStatus.lanCode == 'ko') {
-          _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 $guideText");
-        } else { // 영어
-          _speak("$guideText for ${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()} seconds");
-        }
+        final duration = selectedStretchingGroup!.actions[currentStepIndex].duration;
+        final message = DetectStatus.lanCode == 'ko'
+            ? (duration < 1 ? "$guideText" : "${duration.toInt()}초간 $guideText")
+            : (duration < 1 ? "$guideText" : "$guideText for ${duration.toInt()} seconds");
+        //1초미만 동작은 시간 생략
+        _speak(message);
+
       });
     } else {
       _showPushAlarm(
@@ -239,7 +242,7 @@ class _StretchingSessionState extends State<StretchingSession> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => const StretchingCompletedScreen()),
+          builder: (context) => StretchingCompletedScreen(shouldResetTimer: widget.shouldResetTimer,)),
     );
   }
 
@@ -252,7 +255,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void _exitStretching() {
     // _toggleStretchingWidget(); // 스트레칭 비활성화
-    showStretchingExitModal(context);
+    showStretchingExitModal(context, widget.shouldResetTimer);
   }
 
   @override
