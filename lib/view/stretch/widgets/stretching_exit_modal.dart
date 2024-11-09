@@ -12,12 +12,8 @@ import 'package:provider/provider.dart';
 
 import '../../../util/localization_string.dart';
 
-/**
- * TODO : 스트레칭 완료 모달의 존재의의에 대해 의논해보기
- * */
-
 // 모달창을 띄우는 함수
-void showStretchingExitModal(BuildContext context) {
+void showStretchingExitModal(BuildContext context, bool? shouldResetTimer) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true, // 모달이 화면 크기에 맞춰 스크롤을 조정할 수 있게 설정
@@ -31,9 +27,9 @@ void showStretchingExitModal(BuildContext context) {
 }
 
 class StretchingExitModalSheet extends StatefulWidget {
-
+  final bool? shouldResetTimer;
   const StretchingExitModalSheet({
-    super.key,
+    super.key, this.shouldResetTimer,
   });
 
   @override
@@ -144,7 +140,7 @@ class _StretchingExitModalSheetState extends State<StretchingExitModalSheet> {
                       ),
                       Button(
                         onPressed: () {
-                          stretchingTimer.setTimer();
+                          if(widget.shouldResetTimer == true) stretchingTimer.setTimer();
                           StretchingTimer.isStretchingMode = false;
                           Navigator.pop(context);
                           Navigator.pop(context);

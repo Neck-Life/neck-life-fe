@@ -102,7 +102,6 @@ class StretchingTimer extends ChangeNotifier {
     const storage = FlutterSecureStorage();
     await storage.write(key: 'completedStretchCount', value: completedStretchCount.toString());
 
-    setTimer(); // 타이머 재설정
     notifyListeners(); // UI 업데이트 트리거
   }
 
@@ -113,11 +112,11 @@ class StretchingTimer extends ChangeNotifier {
 
   void setTimer() {
     _timer?.cancel();
-    if(getStretchingInterval() == null) return; //스트레칭 타이머 비활성화일때
+    int? _interval = getStretchingInterval();
+    if(_interval == null) return; //스트레칭 타이머 비활성화일때
 
     int initialUseSec = Provider.of<GlobalTimer>(stretchingContext, listen: false).useSec;
     late int currentUseSec;
-    int? _interval = getStretchingInterval();
 
     _showPushAlarm(
         LS.tr('stretching.timer.stretching_reminder_title', [_interval!~/60]),
