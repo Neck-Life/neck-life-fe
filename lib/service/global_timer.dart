@@ -79,6 +79,15 @@ class GlobalTimer with ChangeNotifier {
     }
   }
 
+  void restartTimer() {
+    if (!_isRunning) {
+      _isRunning = true;
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        updateNowTime();
+      });
+    }
+  }
+
   void stopTimer() {
     _timer?.cancel();
     _timer = null;
