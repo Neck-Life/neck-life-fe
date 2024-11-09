@@ -28,7 +28,7 @@ class _LoadingState extends State<Loading> {
       // await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');
       Navigator.push(
           context, MaterialPageRoute(builder: (
-          context) => PageNavBar(pageIdx: 2, key: UniqueKey())));
+          context) => PageNavBar(pageIdx: 1, key: UniqueKey())));
     });
     super.initState();
   }

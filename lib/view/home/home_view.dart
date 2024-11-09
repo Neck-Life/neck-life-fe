@@ -34,6 +34,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../service/stretching_timer.dart';
 import '../../theme/component/button.dart';
+import '../../util/ad_manager.dart';
 import '../start_position/start_position_view.dart';
 import '../../util/responsive.dart';
 
@@ -79,24 +80,8 @@ class _HomeState extends State<Home> {
 
     // _liveActivitiesPlugin.init(appGroupId: "group.necklifewidget");
 
-    // _ad = BannerAd(
-    //     size: AdSize.banner,
-    //     adUnitId: 'ca-app-pub-4299841579411814/6474192470', // 'ca-app-pub-4299841579411814/8948635978',
-    //     listener: BannerAdListener(
-    //         onAdLoaded: (_) {
-    //           setState(() {
-    //             _isAdLoaded = true;
-    //           });
-    //         },
-    //         onAdFailedToLoad: (ad, error) {
-    //           print(error);
-    //           ad.dispose();
-    //         }
-    //     ),
-    //     request: const AdRequest()
-    // );
-    //
-    // _ad.load();
+    _ad = AdManager().getBannerAd(true, 0);
+    _ad.load();
 
     final sub = appLinks.uriLinkStream.listen((uri) {
       print(uri);
@@ -184,10 +169,14 @@ class _HomeState extends State<Home> {
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         // _liveActivitiesPlugin.endAllActivities();
-        setState(() {
-          activityID = null;
-        });
+        // setState(() {
+        //   activityID = null;
+        // });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (
+            context) => const Loading()));
         _showPushAlarm();
       }
 
@@ -197,13 +186,16 @@ class _HomeState extends State<Home> {
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         // _liveActivitiesPlugin.endAllActivities();
-        setState(() {
-          activityID = null;
-        });
+        // setState(() {
+        //   activityID = null;
+        // });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (
+            context) => const Loading()));
         _showPushAlarm2();
       }
-
 
     });
 
@@ -221,6 +213,18 @@ class _HomeState extends State<Home> {
         if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
           Provider.of<GlobalTimer>(context, listen: false).startTimer();
         }
+      }
+    });
+
+    DetectStatus.soundSettingEventStream.listen((event) {
+      List<String> eventParse = event.split(' ');
+      print(eventParse);
+      if (eventParse[0] == 'file') {
+        _audioHandler?.changeSound(eventParse[1]);
+        print('sound changed');
+      } else if (eventParse[0] == 'volume') {
+        _audioHandler?.changeVolume(double.parse(eventParse[1]));
+        print('volume changed');
       }
     });
 
@@ -675,13 +679,13 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          // userStatus.isPremium ? const SizedBox() : Container(
-                          //   margin: EdgeInsets.only(top: res.percentHeight(1.5)),
-                          //   width: _ad.size.width.toDouble(),
-                          //   height: _ad.size.height.toDouble(),
-                          //   alignment: Alignment.center,
-                          //   child: AdWidget(ad: _ad),
-                          // ),
+                          userStatus.isPremium ? const SizedBox() : Container(
+                            margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                            width: _ad.size.width.toDouble(),
+                            height: _ad.size.height.toDouble(),
+                            alignment: Alignment.center,
+                            child: AdWidget(ad: _ad),
+                          ),
                           SizedBox(height: res.percentHeight(2),),
                           // const SurveyBanner()
                         ],

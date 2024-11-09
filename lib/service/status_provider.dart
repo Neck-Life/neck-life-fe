@@ -34,6 +34,7 @@ class DetectStatus with ChangeNotifier {
   static bool sBgSoundActive = true;
   static bool hasWroteReview = false;
   static int reviewRequestCount = 5;
+  static String sSoundFileName = 'noti.mp3';
 
   bool _nowDetecting = false;
   bool _detectAvailable = false;
@@ -49,6 +50,7 @@ class DetectStatus with ChangeNotifier {
 
   bool _useTimeLimit = true;
   int _detectionMin = 10;
+  String _soundFileName = 'noti.mp3';
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
@@ -60,11 +62,14 @@ class DetectStatus with ChangeNotifier {
   bool get pushNotiAvtive => _pushNotiAvtive;
   bool get useTimeLimit => _useTimeLimit;
   int get detectionMin => _detectionMin;
+  String get soundFileName => _soundFileName;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
   static Stream<dynamic> get detectAvailableEventStream => _detectAvailableEventController.stream;
 
+  static final _soundSettingEventController = StreamController<dynamic>.broadcast();
+  static Stream<dynamic> get soundSettingEventStream => _soundSettingEventController.stream;
 
   DetectStatus() {
     init();
@@ -72,6 +77,10 @@ class DetectStatus with ChangeNotifier {
 
   Future<void> emitDetectableEvent(dynamic event) async {
     _detectAvailableEventController.add(event);
+  }
+
+  Future<void> emitSoundEvent(dynamic event) async {
+    _soundSettingEventController.add(event);
   }
 
   void init() async {
@@ -84,6 +93,7 @@ class DetectStatus with ChangeNotifier {
     String? rawHasWroteReview = await storage.read(key: 'hasWroteReview');
     String? soundVolumeStr = await storage.read(key: 'soundVolume');
     String? pushNotiAcTiveStr = await storage.read(key: 'pushNotiActive');
+    String? soundFileNameStr = await storage.read(key: 'soundFileName');
 
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
@@ -108,6 +118,11 @@ class DetectStatus with ChangeNotifier {
     if (pushNotiAcTiveStr != null) {
       _pushNotiAvtive = pushNotiAcTiveStr == '1' ? true : false;
       sSoundVolume = _soundVolume;
+    }
+    if (soundFileNameStr != null) {
+      _soundFileName = soundFileNameStr;
+      sSoundFileName = soundFileNameStr;
+      print(soundFileNameStr);
     }
   }
 
@@ -154,6 +169,7 @@ class DetectStatus with ChangeNotifier {
   void setSoundVolume(double volume) async {
     _soundVolume = volume;
     sSoundVolume = volume;
+    emitSoundEvent('volume $volume');
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'soundVolume', value: _soundVolume.toString());
@@ -216,5 +232,14 @@ class DetectStatus with ChangeNotifier {
       _detectionMin = min;
     }
     notifyListeners();
+  }
+
+  void setSoundFileName(String filename) async {
+    _soundFileName = filename;
+    sSoundFileName = filename;
+    emitSoundEvent('file $filename');
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'soundFileName', value: filename);
   }
 }

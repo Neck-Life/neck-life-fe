@@ -20,7 +20,7 @@ final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorStat
 class StretchingTimer extends ChangeNotifier {
   Timer? _timer;
 
-  final List<int?> _intervals = [10, 600, 1800, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
+  final List<int?> _intervals = [null, 600, 1800, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
   int _selectedIntervalIndex = 2; // 초기 인덱스 -> 기본 30분
   int _selectedStretchingIndex = 0; // 초기 인덱스 -> 기본 3
   int get selectedIntervalIndex => _selectedIntervalIndex;
@@ -43,6 +43,7 @@ class StretchingTimer extends ChangeNotifier {
 
     if (selectedIntervalIndexStorage != null) {
       _selectedIntervalIndex = int.parse(selectedIntervalIndexStorage);
+      print('loadeddd $_selectedIntervalIndex');
     }
     if (selectedStretchingIndexStorage != null) {
       _selectedStretchingIndex = int.parse(selectedStretchingIndexStorage);
@@ -69,7 +70,7 @@ class StretchingTimer extends ChangeNotifier {
   }
 
   // 인덱스를 통해 interval 값을 변경하는 메서드
-  void setStretchingIntervalIndex(int index) async{
+  void setStretchingIntervalIndex(int index) async {
     // print("스트레칭간격 수정${index}");
     if (index < 0 || index >= _intervals.length) {
       throw ArgumentError("Stretching Interval Setting Invalid index");

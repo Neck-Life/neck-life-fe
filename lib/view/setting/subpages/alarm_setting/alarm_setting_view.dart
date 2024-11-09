@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/sound_setting_view.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/widgets/time_delay_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -149,6 +150,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                       fontColor: const Color(0xFF8991A0),
                     ),
                     SizedBox(height: res.percentHeight(2),),
+                    TimeDelayTile(alarmDelay: 1, chosenVal: _alarmGap, onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 5, chosenVal: _alarmGap, onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 10, chosenVal: _alarmGap,onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 15, chosenVal: _alarmGap,onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
@@ -232,6 +234,25 @@ class _AlarmSettingState extends State<AlarmSetting> {
                         },
                       ),
                     ),
+                    SizedBox(height: res.percentHeight(2),),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (
+                            context) => const SoundSetting()));
+                      },
+                      child: Container(
+                        width: res.percentWidth(80),
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.change_sound".tr(), fontSize: 16, isBold: false),
+                            SizedBox(width: res.percentWidth(2),),
+                            AssetIcon('arrowNext', size: res.percentWidth(1),)
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

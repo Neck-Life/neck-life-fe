@@ -43,37 +43,46 @@ class GoalListItem extends StatelessWidget {
       },
       child: WhiteContainer(
         padding: padding ?? EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
           children: [
-            SizedBox(
-              child: Row(
-                children: [
-                  AssetIcon(goalType.iconName, size: res.percentWidth(1), color: const Color(0xFF8991A0),),
-                  SizedBox(width: res.percentWidth(2),),
-                  TextDefault(content: goalType.desc.replaceAll('n', (goalType == GoalType.time ? targetValue/60 : targetValue).toInt().toString()), fontSize: fontSize ?? 16, isBold: false, fontColor: const Color(0xFF323238),)
-                ],
-              ),
-            ),
-            !isSet ?
-            (isInHistory ? const SizedBox() : AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF8991A0),))
-            : Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                achieveRate == 1 ? AssetIcon('check', size: res.percentWidth(1), color: const Color(0xFF236EF3),)
-                : SizedBox(
-                  width: res.percentWidth(4),
-                  height: res.percentWidth(4),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    value: achieveRate,
-                    color: const Color(0xFF236EF3),
-                    backgroundColor: const Color(0xFFF4F4F7),
+                SizedBox(
+                  child: Row(
+                    children: [
+                      AssetIcon(goalType.iconName, size: res.percentWidth(1), color: const Color(0xFF8991A0),),
+                      SizedBox(width: res.percentWidth(2),),
+                      TextDefault(content: goalType.desc.replaceAll('n', (goalType == GoalType.time ? targetValue/60 : targetValue).toInt().toString()), fontSize: fontSize ?? 16, isBold: false, fontColor: const Color(0xFF323238),)
+                    ],
                   ),
                 ),
-                SizedBox(width: res.percentWidth(2),),
-                TextDefault(content: achieveRate == 1 ? 'goal_view.complete'.tr() : '${(achieveRate*100).round()}%', fontSize: 15, isBold: false, fontColor: const Color(0xFF236EF3),)
+                !isSet ?
+                (isInHistory ? const SizedBox() : AssetIcon('arrowNext', size: res.percentWidth(1), color: const Color(0xFF8991A0),))
+                    : Row(
+                  children: [
+                    achieveRate == 1 ? AssetIcon('check', size: res.percentWidth(1), color: const Color(0xFF236EF3),)
+                        : SizedBox(
+                      width: res.percentWidth(4),
+                      height: res.percentWidth(4),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        value: achieveRate,
+                        color: const Color(0xFF236EF3),
+                        backgroundColor: const Color(0xFFF4F4F7),
+                      ),
+                    ),
+                    SizedBox(width: res.percentWidth(2),),
+                    TextDefault(content: achieveRate == 1 ? 'goal_view.complete'.tr() : '${(achieveRate*100).round()}%', fontSize: 15, isBold: false, fontColor: const Color(0xFF236EF3),)
+                  ],
+                )
               ],
-            )
+            ),
+            !isSet ? Container(
+              width: res.percentWidth(85),
+              height: res.percentHeight(2),
+              color: const Color(0xAAFFFFFF),
+            ) : const SizedBox()
           ],
         ),
       ),

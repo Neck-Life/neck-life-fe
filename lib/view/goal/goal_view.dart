@@ -15,6 +15,8 @@ import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/view/goal/subpage/widget/goal_list_item.dart';
 import 'package:provider/provider.dart';
 import '../../service/history_provider.dart';
+import '../../theme/blur_to_login.dart';
+import '../../util/ad_manager.dart';
 import '../home/widgets/app_bar.dart';
 
 
@@ -33,30 +35,13 @@ class _GoalState extends State<Goal> {
     'time': {}
   };
   late BannerAd _ad;
-  bool _isAdLoaded = false;
 
   @override
   void initState() {
     if (UserStatus.sIsLogged) {
       getGoalStatus();
     }
-    _ad = BannerAd(
-        size: AdSize.banner,
-        adUnitId: 'ca-app-pub-4299841579411814/8948635978', // 'ca-app-pub-4299841579411814/8948635978',
-        listener: BannerAdListener(
-            onAdLoaded: (_) {
-              setState(() {
-                _isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {
-              print(error);
-              ad.dispose();
-            }
-        ),
-        request: const AdRequest()
-    );
-
+    _ad = AdManager().getBannerAd(true, 2);
     _ad.load();
 
     super.initState();
@@ -174,32 +159,14 @@ class _GoalState extends State<Goal> {
                         )
                       ],
                     ),
-                    !userStatus.isLogged ? Positioned(
+                    !userStatus.isLogged ? const Positioned(
                       // left: res.percentWidth(25),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              width: res.percentWidth(90),
-                              height: res.percentHeight(17.5),
-                              color: Colors.black.withOpacity(0),
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextDefault(content: 'goal_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                  TextDefault(content: 'goal_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
+                        child: BlurToLogin(width: 90, height: 17.5)
                     ) : const SizedBox()
                   ],
                 ),
                 userStatus.isPremium ? const SizedBox() : Container(
-                  margin: EdgeInsets.only(left: res.percentWidth(3), top: res.percentHeight(1.5)),
+                  margin: EdgeInsets.only(left: (res.deviceWidth-_ad.size.width.toDouble())/2-res.percentWidth(7.5), top: res.percentHeight(1.5)),
                   width: _ad.size.width.toDouble(),
                   height: _ad.size.height.toDouble(),
                   alignment: Alignment.center,

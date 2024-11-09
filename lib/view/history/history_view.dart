@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
@@ -34,7 +35,8 @@ import 'dart:math' as math;
 
 import '../../model/pose_duration.dart';
 import '../../service/user_provider.dart';
-import '../../theme/triangle.dart';
+import '../../theme/blur_to_login.dart';
+import '../../util/ad_manager.dart';
 import '../../util/localization_string.dart';
 import '../goal/subpage/goal_setting.dart';
 import '../goal/subpage/widget/goal_list_item.dart';
@@ -97,10 +99,15 @@ class _HistoryState extends State<History> {
 
   String? imagePath;
 
+  late BannerAd _ad;
+
   final dummy = {'2024-09-26T19:03:06': 'START', '2024-09-26T19:03:20': 'DOWN', '2024-09-26T19:03:27': 'DOWNNORMAL', '2024-09-26T19:03:36': 'DOWN', '2024-09-26T19:03:50': 'DOWNNORMAL', '2024-09-26T19:04': 'DOWN', '2024-09-26T19:04:03': 'DOWNNORMAL', '2024-09-26T19:04:06': 'DOWN', '2024-09-26T19:04:15': 'DOWNNORMAL', '2024-09-26T19:04:47': 'END'};
 //  '2024-09-26T19:06:18': 'START', '2024-09-26T19:06:28': 'FORWARD', '2024-09-26T19:06:31': 'NORMAL', '2024-09-26T19:06:32': 'FORWARD', '2024-09-26T19:06:35': 'NORMAL', '2024-09-26T19:06:42': 'FORWARD', '2024-09-26T19:06:45': 'NORMAL', '2024-09-26T19:07:11': 'END'
   @override
   void initState() {
+    _ad = AdManager().getBannerAd(true, 1);
+    _ad.load();
+
     super.initState();
     debugPrint('his view init');
     debugPrint('islogged ${UserStatus.sIsLogged}');
@@ -406,7 +413,6 @@ class _HistoryState extends State<History> {
     // HistoryStatus historyStatus = context.watch();
     // if (historyStatus)
     // initScoreMap(historyStatus.scoreSeries);
-    print('his view build ${DateTime.now()}');
     return Scaffold(
       appBar:  const PreferredSize(
           preferredSize: Size.fromHeight(60),
@@ -565,6 +571,13 @@ class _HistoryState extends State<History> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        userStatus.isPremium ? const SizedBox() : Container(
+                          margin: EdgeInsets.only(left: (res.deviceWidth-_ad.size.width.toDouble())/2-res.percentWidth(7.5), top: res.percentHeight(1.5)),
+                          width: _ad.size.width.toDouble(),
+                          height: _ad.size.height.toDouble(),
+                          alignment: Alignment.center,
+                          child: AdWidget(ad: _ad),
+                        ),
                         SizedBox(height: res.percentHeight(3.5),),
                         TextDefault(
                           content: 'history_view.today'.tr(),
@@ -641,27 +654,9 @@ class _HistoryState extends State<History> {
                                         // PoseCountFrame(poseType: PoseType.tilt, count: _todayHistory['poseCountMap']['TILT'] ?? 0,)
                                       ],
                                     ),
-                                    !userStatus.isLogged ? Positioned(
+                                    !userStatus.isLogged ? const Positioned(
                                       // left: res.percentWidth(25),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                          child: Container(
-                                            width: res.percentWidth(75),
-                                            height: res.percentHeight(17.5),
-                                            color: Colors.black.withOpacity(0),
-                                            alignment: Alignment.center,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                                TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
+                                      child: BlurToLogin(width: 75, height: 17.5)
                                     ) : const SizedBox(),
                                     // Positioned(
                                     //   // left: context.locale.languageCode == 'ko' ? res.percentWidth(34) : res.percentWidth(30),
@@ -859,27 +854,9 @@ class _HistoryState extends State<History> {
                                       ) : const SizedBox()
                                     ],
                                   ),
-                                  !userStatus.isLogged ? Positioned(
+                                  !userStatus.isLogged ? const Positioned(
                                     // left: res.percentWidth(25),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                          child: Container(
-                                            width: res.percentWidth(80),
-                                            height: res.percentHeight(20),
-                                            color: Colors.black.withOpacity(0),
-                                            alignment: Alignment.center,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                                TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
+                                      child: BlurToLogin(width: 80, height: 20)
                                   ) : const SizedBox()
                                 ],
                               )
@@ -898,7 +875,7 @@ class _HistoryState extends State<History> {
                                 onTap: () {
                                   Navigator.push(
                                       context, MaterialPageRoute(builder: (
-                                      context) => const PageNavBar(pageIdx: 1,))
+                                      context) => const PageNavBar(pageIdx: 3,))
                                   );
                                 },
                                 child: Container(
@@ -938,27 +915,9 @@ class _HistoryState extends State<History> {
                                       )
                                     ],
                                   ),
-                                  !userStatus.isLogged ? Positioned(
+                                  !userStatus.isLogged ? const Positioned(
                                     // left: res.percentWidth(25),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                          child: Container(
-                                            width: res.percentWidth(75),
-                                            height: res.percentHeight(15),
-                                            color: Colors.black.withOpacity(0),
-                                            alignment: Alignment.center,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                                TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
+                                      child: BlurToLogin(width: 75, height: 15)
                                   ) : const SizedBox()
                                 ],
                               ),
@@ -1013,27 +972,9 @@ class _HistoryState extends State<History> {
                                           '2024-09-06': 95,
                                           '2024-09-07': 70,
                                         }, duration: _scoreDurationValue),
-                                        !userStatus.isLogged ? Positioned(
+                                        !userStatus.isLogged ? const Positioned(
                                           // left: res.percentWidth(25),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(5),
-                                              child: BackdropFilter(
-                                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                                child: Container(
-                                                  width: res.percentWidth(90),
-                                                  height: res.percentHeight(20),
-                                                  color: Colors.black.withOpacity(0),
-                                                  alignment: Alignment.center,
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                                                      TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            )
+                                            child: BlurToLogin(width: 90, height: 20)
                                         ) : const SizedBox()
                                       ],
                                     )

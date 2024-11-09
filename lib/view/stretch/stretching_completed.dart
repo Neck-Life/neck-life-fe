@@ -61,17 +61,17 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
                         width: 200,
                         height: 200,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         LS.tr('stretching.completed_view.good_job'),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         LS.tr('stretching.completed_view.stretching_complete'),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -80,14 +80,14 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Text(
-                  LS.tr('stretching.completed_view.stretching_info'),
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 20.0),
+              //   child: Text(
+              //     LS.tr('stretching.completed_view.stretching_info'),
+              //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              //     textAlign: TextAlign.center,
+              //   ),
+              // ),
             ],
           ),
         ),

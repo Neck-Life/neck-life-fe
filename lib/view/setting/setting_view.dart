@@ -4,7 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
+import 'package:mocksum_flutter/util/ad_manager.dart';
 import 'package:mocksum_flutter/util/open_url_helper.dart';
+import 'package:mocksum_flutter/view/setting/subpages/general_setting/general_setting_view.dart';
 import 'package:mocksum_flutter/view/setting/subpages/my_subscription/my_subscription_view.dart';
 import 'package:mocksum_flutter/theme/popup.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/alarm_setting_view.dart';
@@ -41,29 +43,12 @@ class _SettingState extends State<Settings> {
 
 
   late BannerAd _ad;
-  bool _isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
 
-    _ad = BannerAd(
-        size: AdSize.banner,
-        adUnitId: 'ca-app-pub-4299841579411814/8948635978', // 'ca-app-pub-4299841579411814/8948635978',
-        listener: BannerAdListener(
-            onAdLoaded: (_) {
-              setState(() {
-                _isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {
-              print(error);
-              ad.dispose();
-            }
-        ),
-        request: const AdRequest()
-    );
-
+    _ad = AdManager().getBannerAd(true, 3);
     _ad.load();
   }
 
@@ -380,6 +365,11 @@ class _SettingState extends State<Settings> {
               userStatus.isLogged ? MenuItem(iconStr: 'Chat', text:'setting_view.feedback'.tr(), onTap: () {
                 _showFeedbackSubmitPopUp();
               }) : const SizedBox(),
+              MenuItem(iconStr: 'setting', text:'setting_view.general'.tr(), onTap: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (
+                    context) => const GeneralSetting()));
+              }),
               Container(
                 width: res.deviceWidth,
                 height: 2,
@@ -442,12 +432,14 @@ class _SettingState extends State<Settings> {
                    TextDefault(content: ' ${'setting_view.click'.tr()}', fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                 ],
               ) : const SizedBox(),
-              userStatus.isPremium ? const SizedBox() : Container(
-                margin: EdgeInsets.only(left: res.percentWidth(10), top: res.percentHeight(1.5)),
-                width: _ad.size.width.toDouble(),
-                height: _ad.size.height.toDouble(),
-                alignment: Alignment.center,
-                child: AdWidget(ad: _ad),
+              userStatus.isPremium ? const SizedBox() : Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                  width: _ad.size.width.toDouble(),
+                  height: _ad.size.height.toDouble(),
+                  alignment: Alignment.center,
+                  child: AdWidget(ad: _ad),
+                ),
               ),
             ],
           ),

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_airpods/flutter_airpods.dart';
 import 'package:flutter_airpods/models/device_motion_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/airpods/PositionDisplay.dart';
@@ -43,6 +44,9 @@ class MyAudioHandler extends BaseAudioHandler {
 
   bool _isPlaying = false;
 
+  double _alertVolume = 0.4;
+
+
   final _bgAudioPlayer = AudioPlayer();
   bool _isNowHeadDown = false;
   bool _isNowTilt = false;
@@ -73,7 +77,11 @@ class MyAudioHandler extends BaseAudioHandler {
   int LoggingTime = 2;
 
   void _setAudioFile() async {
-    await _bgAudioPlayer.setAsset('assets/noti.mp3');
+    const storage = FlutterSecureStorage();
+    String? filename = await storage.read(key: 'soundFileName');
+    String? volume = await storage.read(key: 'soundVolume');
+    _alertVolume = double.parse(volume ?? '0.4');
+    await _bgAudioPlayer.setAsset('assets/${filename ?? 'noti.mp3'}');
     await _bgAudioPlayer.setLoopMode(LoopMode.one);
     await _bgAudioPlayer.setVolume(0);
   }
@@ -94,7 +102,7 @@ class MyAudioHandler extends BaseAudioHandler {
             _poseTiltLog['tilt'][DateTime.now().toIso8601String().split('.')[0].substring(0, 18)] = 'END';
 
             //todo
-            HistoryStatus.postMeasuredPoseData(_poseForwardLog, _posePitchLog, _poseTiltLog,_poseRawLog);
+            HistoryStatus.postMeasuredPoseData(_poseForwardLog, _posePitchLog, _poseTiltLog, _poseRawLog);
           }
           break;
         default:
@@ -256,7 +264,7 @@ class MyAudioHandler extends BaseAudioHandler {
         }
         // _posePitchLog['pitch'][DateTime.now().toIso8601String().split('.')[0].substring(0, 19)] = 'HEADDOWN';
         if (DetectStatus.sBgSoundActive) {
-          _bgAudioPlayer.setVolume(DetectStatus.sSoundVolume);
+          _bgAudioPlayer.setVolume(_alertVolume);
           Timer(const Duration(seconds: 2), () {
             _bgAudioPlayer.setVolume(0);
           });
@@ -433,6 +441,14 @@ class MyAudioHandler extends BaseAudioHandler {
     } else {
       return false;
     }
+  }
+
+  Future<void> changeSound(String filename) async {
+    await _bgAudioPlayer.setAsset('assets/${DetectStatus.sSoundFileName}');
+  }
+
+  void changeVolume(double volume) {
+    _alertVolume = volume;
   }
 
   // void _checkIsBackward() {

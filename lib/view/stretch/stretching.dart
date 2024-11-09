@@ -72,7 +72,7 @@ class _StretchingState extends State<Stretching>
               Tab(text: LS.tr('stretching.stretching_alarm.title')),
               // Tab(text: '스트레칭 선택'),
               //Tab(text: LS.tr('stretching.recommended_stretching.title')),
-              Tab(text: '테스트환경'),
+              Tab(text: LS.tr('stretching.stretching_alarm.title2')),
             ],
           ),
           SizedBox(height: res.percentWidth(1),),

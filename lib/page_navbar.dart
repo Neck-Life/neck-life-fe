@@ -158,11 +158,11 @@ class _PageNavBarState extends State<PageNavBar> {
                           if (_index == 0) {
                             _amplitudeEventManager.viewEvent('mainpage');
                           } else if (_index == 1) {
-                            _amplitudeEventManager.viewEvent('stretching');
-                          } else if (_index == 2) {
-                            _amplitudeEventManager.viewEvent('goal');
-                          } else if (_index == 3) {
                             _amplitudeEventManager.viewEvent('history');
+                          } else if (_index == 2) {
+                            _amplitudeEventManager.viewEvent('stretching');
+                          } else if (_index == 3) {
+                            _amplitudeEventManager.viewEvent('goal');
                           } else if (_index == 4) {
                             _amplitudeEventManager.viewEvent('setting');
                           }

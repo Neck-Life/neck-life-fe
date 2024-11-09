@@ -178,7 +178,7 @@ class _GoalSettingState extends State<GoalSetting> {
       'order': 1,
       'type': _chosenGoalType!.typeName,
       'description': _chosenGoalType!.desc,
-      'target_value': _chosenGoalType == GoalType.time ? _goalValue.toDouble()*60 : _goalValue
+      'target_value': _chosenGoalType == GoalType.time ? _goalValue.toDouble() : _goalValue
     };
 
     try {
@@ -291,7 +291,7 @@ class _GoalSettingState extends State<GoalSetting> {
             oldGoalMap[_chosenGoalType!.keyName] = {
               'order': obj['order'],
               'type': _chosenGoalType!.typeName,
-              'targetValue': _chosenGoalType == GoalType.time ? _goalValue*60 : _goalValue
+              'targetValue': _chosenGoalType == GoalType.time ? _goalValue : _goalValue
             };
           }
         }

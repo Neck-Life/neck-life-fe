@@ -71,49 +71,49 @@ class HistoryStatus {
       print(e);
 
       //  todo 데이터 형식 바뀜  pitch
-      String? dataNotPostedPitch = await storage.read(key: 'dataNotPostedPitch');
-      dataNotPostedPitch ??= '[]';
-
-
-      List<dynamic> dataNotPostedPitchList = json.decode(dataNotPostedPitch);
-      dataNotPostedPitchList.add(pitchLog['pitch']);
-      // print(dataNotPostedList);
-      await storage.write(key: 'dataNotPostedPitch', value: json.encode(dataNotPostedPitchList));
-
-
-      //forward
-      String? dataNotPostedForward = await storage.read(key: 'dataNotPostedForward');
-      dataNotPostedForward ??= '[]';
-
-
-
-      List<dynamic> dataNotPostedForwardList = json.decode(dataNotPostedForward);
-      dataNotPostedForwardList.add(forwardLog['forward']);
-      // print(dataNotPostedList);
-      await storage.write(key: 'dataNotPostedForward', value: json.encode(dataNotPostedForwardList));
-
-
-      //tilt
-      String? dataNotPostedTilt = await storage.read(key: 'dataNotPostedTilt');
-      dataNotPostedTilt ??= '[]';
-
-
-
-      List<dynamic> dataNotPostedTiltList = json.decode(dataNotPostedTilt);
-      dataNotPostedTiltList.add(tiltLog['tilt']);
-      // print(dataNotPostedList);
-      await storage.write(key: 'dataNotPostedTilt', value: json.encode(dataNotPostedTiltList));
-
-      //raw
-      String? dataNotPostedRaw = await storage.read(key: 'dataNotPostedRaw');
-      dataNotPostedRaw ??= '[]';
-
-
-
-      List<dynamic> dataNotPostedRawList = json.decode(dataNotPostedRaw);
-      dataNotPostedRawList.add(rawData);
-      // print(dataNotPostedList);
-      await storage.write(key: 'dataNotPostedRaw', value: json.encode(dataNotPostedRawList));
+      // String? dataNotPostedPitch = await storage.read(key: 'dataNotPostedPitch');
+      // dataNotPostedPitch ??= '[]';
+      //
+      //
+      // List<dynamic> dataNotPostedPitchList = json.decode(dataNotPostedPitch);
+      // dataNotPostedPitchList.add(pitchLog['pitch']);
+      // // print(dataNotPostedList);
+      // await storage.write(key: 'dataNotPostedPitch', value: json.encode(dataNotPostedPitchList));
+      //
+      //
+      // //forward
+      // String? dataNotPostedForward = await storage.read(key: 'dataNotPostedForward');
+      // dataNotPostedForward ??= '[]';
+      //
+      //
+      //
+      // List<dynamic> dataNotPostedForwardList = json.decode(dataNotPostedForward);
+      // dataNotPostedForwardList.add(forwardLog['forward']);
+      // // print(dataNotPostedList);
+      // await storage.write(key: 'dataNotPostedForward', value: json.encode(dataNotPostedForwardList));
+      //
+      //
+      // //tilt
+      // String? dataNotPostedTilt = await storage.read(key: 'dataNotPostedTilt');
+      // dataNotPostedTilt ??= '[]';
+      //
+      //
+      //
+      // List<dynamic> dataNotPostedTiltList = json.decode(dataNotPostedTilt);
+      // dataNotPostedTiltList.add(tiltLog['tilt']);
+      // // print(dataNotPostedList);
+      // await storage.write(key: 'dataNotPostedTilt', value: json.encode(dataNotPostedTiltList));
+      //
+      // //raw
+      // String? dataNotPostedRaw = await storage.read(key: 'dataNotPostedRaw');
+      // dataNotPostedRaw ??= '[]';
+      //
+      //
+      //
+      // List<dynamic> dataNotPostedRawList = json.decode(dataNotPostedRaw);
+      // dataNotPostedRawList.add(rawData);
+      // // print(dataNotPostedList);
+      // await storage.write(key: 'dataNotPostedRaw', value: json.encode(dataNotPostedRawList));
 
 
 

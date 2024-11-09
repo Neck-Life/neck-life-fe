@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../util/responsive.dart';
 import '../models/stretching_action.dart';
+import '../stretching_session.dart';
 
 
 class StretchingList extends StatefulWidget {
@@ -38,12 +39,19 @@ class _StretchingListState extends State<StretchingList> {
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
-    return Container(
-      child: Column(
-        children: _stretchingList.map((group) {
-          return WhiteContainer(
+    return Column(
+      children: _stretchingList.map((group) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => StretchingSession(preSelectedStretchingGroup: group,)),
+            );
+          },
+          child: WhiteContainer(
             padding: EdgeInsets.symmetric(horizontal: res.percentWidth(4), vertical: res.percentHeight(2)),
-            margin: EdgeInsets.only(top: res.percentHeight(2)),
+            margin: EdgeInsets.only(top: res.percentHeight(1.5)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,9 +60,9 @@ class _StretchingListState extends State<StretchingList> {
                 TextDefault(content: '${group.time}${context.locale.languageCode == 'ko' ? '초' : ' seconds'}', fontSize: 13, isBold: false)
               ],
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

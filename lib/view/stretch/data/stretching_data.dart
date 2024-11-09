@@ -4,7 +4,7 @@ import '../models/stretching_action.dart';
 final strchLan = {
   'ko': {
     'group1': '목 뒤로 젖히기 운동',
-    'group2': '국군도수체조 : 목운동',
+    'group2': '국군도수체조 : 목운동[beta]',
     'group3': '목 좌우 돌리기 운동[beta]',
     'stretch1': '목을 뒤로 젖히기',
     'stretch2': '잠시 휴식',
@@ -18,7 +18,7 @@ final strchLan = {
   },
   'en': {
     'group1': 'Neck Backward Stretching Exercise',
-    'group2': 'Korean Military Neck Exercise',
+    'group2': 'Korean Military Neck Exercise [beta]',
     'group3': 'Neck Rotation Exercise [beta]',
     'stretch1': 'Tilt Neck Backward',
     'stretch2': 'Short Break',
@@ -57,6 +57,7 @@ class StretchingData {
         groupName: strchLan[lanCode]?['group1'] ?? 'Neck Backward Stretching Exercise',
         actions: [
           StretchingAction(
+            animationAvailable: true,
             name: strchLan[lanCode]?['stretch1'] ?? 'Tilt Neck Backward',
             isCompleted: (pitch, roll, yaw) => pitch > 0.8,
             duration: 7,
@@ -69,6 +70,7 @@ class StretchingData {
             progressVariable: ProgressVariable.none,
           ),
           StretchingAction(
+            animationAvailable: true,
             name: strchLan[lanCode]?['stretch3'] ?? 'Tilt Neck Backward Again',
             isCompleted: (pitch, roll, yaw) => pitch > 0.8,
             duration: 7,

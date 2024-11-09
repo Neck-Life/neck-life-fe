@@ -211,7 +211,13 @@
     "login": "넥라이프 로그인",
     "if_quit": "넥라이프를 탈퇴하려면 ",
     "here": "여기를",
-    "click": "클릭하세요"
+    "click": "클릭하세요",
+
+    "general": "일반",
+    "lang": "언어 설정",
+    "lang_exp": "선호하는 언어를 선택할 수 있어요",
+    "lang_noti": "* 언어를 바꾼 후에는 앱을 종료 후 재실행해주세요"
+
   },
   "setting_widgets": {
     "feedback_popup": {
@@ -244,7 +250,13 @@
         "sound_alarm_turn_on":"소리 알림 켜기",
         "sound_setting": "자세 알림 설정",
         "volume_setting": "불륨 조절",
-        "push_setting": "자세 푸시 알림 켜기"
+        "push_setting": "자세 푸시 알림 켜기",
+        "change_sound": "알림 소리 변경",
+        "change_sound_setting": "자세 알림 소리 설정",
+        "change_desc": "나쁜 자세를 취했을 때의 알림 소리를 바꿀 수 있어요.",
+        "change_noti": "* 알림 소리는 탐지 중이 아닐 때만 변경할 수 있어요.",
+        "default": "기본",
+        "sound": "소리"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -390,14 +402,16 @@
     "model_desc": "본 앱에서 사용하는 센서는 에어팟 프로, 에어팟 맥스, 에어팟 3, 4세대에만 탑재되어있습니다. 따라서 해당 모델 이외의 기기로는 작동하지 않습니다.",
     "conn_txt": "2. 에어팟이 다른 기기에 연결되어있지 않은지 확인해주세요.",
     "conn_desc": "에어팟이 다른 스마트폰이나 노트북 등의 기기에 동시에 연결되어있다면 본 앱이 작동하지 않을 수 있습니다. 본 앱을 실행중인 기기에서 음악 등을 재생하여 에어팟 연결을 가져오거나, 다른 기기와의 연결을 끊어주세요.",
-    "last": "만약 위 경우에 해당하지 않음에도 불구하고 앱이 작동하지 않는다면, 앱의 설정 탭의 '문의/피드백 보내기'를 사용해주시거나 dksdbtjd1@gmail.com로 메일을 보내주시면 최대한 빠르게 수정하겠습니다."
+    "last": "만약 위 경우에 해당하지 않음에도 불구하고 앱이 작동하지 않는다면, 앱의 설정 탭의 '문의/피드백 보내기'를 사용해주시거나 somart.necklife@gmail.com로 메일을 보내주시면 최대한 빠르게 수정하겠습니다."
   },
 
   "stretching": {
     "stretching_alarm": {
-      "title": "스트레칭 알람",
+      "title": "설정",
+      "title2": "스트레칭 세트",
       "stretching_alarm_setting": "스트레칭 알람 주기 설정",
       "stretching_alarm_description": "자세탐지 도중 스트레칭 알람 주기를 설정할 수 있어요",
+      "use_reminder": "스트레칭 리마인더 사용",
       "stretching_interval_disabled": "비활성",
       "stretching_interval_10s": "10초",
       "stretching_interval_10m": "10분",

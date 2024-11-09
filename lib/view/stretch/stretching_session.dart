@@ -6,10 +6,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/Stretching_animate_man.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/blurred_man.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_exit_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
@@ -42,11 +45,15 @@ Future<void> _showPushAlarm(String title, String body) async {
   );
 }
 class StretchingSession extends StatefulWidget {
+  final StretchingGroup? preSelectedStretchingGroup;
 
-  StretchingSession({super.key});
+  const StretchingSession({
+    super.key,
+    this.preSelectedStretchingGroup
+  });
 
   @override
-  _StretchingSessionState createState() => _StretchingSessionState();
+  State<StatefulWidget> createState() => _StretchingSessionState();
 }
 
 class _StretchingSessionState extends State<StretchingSession> {
@@ -68,12 +75,15 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   bool isStretchingProcess = false;
 
+  final amplitudeManager = AmplitudeEventManager();
+
   @override
   void initState() {
     super.initState();
+    amplitudeManager.actionEvent('stretching', 'doStretching');
     _initializeTts();
     // List stretchingList = StretchingData.init(DetectStatus.lanCode);
-    selectedStretchingGroup = Provider.of<StretchingTimer>(context, listen: false).getSelectedStretching();
+    selectedStretchingGroup = widget.preSelectedStretchingGroup ?? Provider.of<StretchingTimer>(context, listen: false).getSelectedStretching();
     if(DetectStatus.lanCode == 'ko') {
       _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 $guideText");
     } else {
@@ -83,7 +93,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
 
     // 1초마다 상태를 확인하고 강제로 setState()를 호출해 UI를 갱신
-    _updateDataTimer = Timer.periodic(Duration(milliseconds: 50), (_) {
+    _updateDataTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
       setState(() {
         pitch = DetectStatus.nowPitch;
         roll = DetectStatus.nowRoll;
@@ -203,9 +213,9 @@ class _StretchingSessionState extends State<StretchingSession> {
       setState(() {
         currentStepIndex += 1;
         if(DetectStatus.lanCode == 'ko') {
-          _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 ${guideText}");
+          _speak("${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()}초간 $guideText");
         } else { // 영어
-          _speak("${guideText} for ${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()} seconds");
+          _speak("$guideText for ${(selectedStretchingGroup!.actions[currentStepIndex].duration).toInt()} seconds");
         }
       });
     } else {
@@ -266,12 +276,13 @@ class _StretchingSessionState extends State<StretchingSession> {
             ),
             Container(
                 width: res.percentWidth(90),
-                height: res.percentWidth(85),
+                // height: res.percentWidth(85),
                 margin: const EdgeInsets.only(top: 20),
                 decoration: BoxDecoration(
                   color: const Color(0xFFD8E2F9),
                   borderRadius: BorderRadius.circular(25),
                 ),
+                padding: EdgeInsets.only(bottom: res.percentHeight(4)),
                 child: Column(
                   children: [
                     Container(
@@ -280,7 +291,7 @@ class _StretchingSessionState extends State<StretchingSession> {
                         child: Text(
                           // "10초간 고개를\n하늘을 향해 젖혀주세요",
                           guideText,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 24, // 폰트 크기
                             fontWeight: FontWeight.bold, // 굵게 설정
                             height: 1.2, // 줄 간격 설정
@@ -292,14 +303,15 @@ class _StretchingSessionState extends State<StretchingSession> {
                     SizedBox(
                       height: res.percentHeight(2.5),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const NeckPitch(),
-                        SizedBox(width: res.percentWidth(5)),
-                        const NeckRoll(),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     const NeckPitch(),
+                    //     SizedBox(width: res.percentWidth(5)),
+                    //     const NeckRoll(),
+                    //   ],
+                    // ),
+                    currentAction.animationAvailable != null && currentAction.animationAvailable == true ? const StretchingAnimateMan() : (currentAction.progressVariable == ProgressVariable.none ? const BlurredMan(isBlurred: false,) : const BlurredMan(isBlurred: true,)),
                     SizedBox(
                       height: res.percentHeight(2),
                     ),
@@ -322,7 +334,7 @@ class _StretchingSessionState extends State<StretchingSession> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextDefault(
-                              content: "${TimeConvert.sec2TimeFormat(globalTimer.useSec)}",
+                              content: TimeConvert.sec2TimeFormat(globalTimer.useSec),
                               fontSize: 16,
                               isBold: true,
                               fontColor: const Color(0xFF236EF3),
