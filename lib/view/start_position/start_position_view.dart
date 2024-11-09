@@ -17,6 +17,7 @@ import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:wheel_picker/wheel_picker.dart';
 
 
 class StartPosition extends StatefulWidget {
@@ -82,6 +83,36 @@ class StartPositionState extends State<StartPosition> {
         }
         Navigator.pop(context);
       }
+    });
+  }
+
+  void _showMinWheelPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: false,
+      builder: (context) {
+        Responsive res = Responsive(context);
+        return Container(
+          width: res.deviceWidth,
+          height: 300,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4F4F7),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: WheelPicker(
+            itemCount: ((3600-Provider.of<GlobalTimer>(context, listen: false).useSec)/60).ceil(),
+            builder: (context, index) => TextDefault(content: '${index+1}${context.locale.languageCode == 'ko' ? '분' : "'"}', fontSize: 20, isBold: false, fontColor: const Color(0xFFB0B8C6),),
+            // selectedIndexColor: Colors.orange,
+            looping: false,
+            onIndexChanged: (idx) {
+              setState(() {
+                _detectionMin = idx+1;
+              });
+            },
+            selectedIndexColor: Colors.black
+          ),
+        );
     });
   }
 
@@ -168,26 +199,31 @@ class StartPositionState extends State<StartPosition> {
                                   mainAxisAlignment: context.locale.languageCode == 'ko' ? MainAxisAlignment.start : MainAxisAlignment.end,
                                   textDirection: context.locale.languageCode == 'ko' ? null : ui.TextDirection.rtl,
                                   children: [
-                                    TimeDisplay(
-                                      minute: _detectionMin,
-                                      plus: () {
-                                        if (!userStatus.isPremium && _detectionMin + 5 > ((3600-globalTimer.useSec)/60).ceil()) {
-                                          setState(() {
-                                            _detectionMin = ((3600-globalTimer.useSec)/60).ceil();
-                                          });
-                                          showSnackbar('start_position_view.snackbar_txt'.tr());
-                                        } else {
-                                          setState(() {
-                                            _detectionMin += 5;
-                                          });
-                                        }
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showMinWheelPicker();
                                       },
-                                      minus: () {
-                                        if (_detectionMin <= 5) return;
-                                        setState(() {
-                                          _detectionMin -= 5;
-                                        });
-                                      },
+                                      child: TimeDisplay(
+                                        minute: _detectionMin,
+                                        plus: () {
+                                          if (!userStatus.isPremium && _detectionMin + 5 > ((3600-globalTimer.useSec)/60).ceil()) {
+                                            setState(() {
+                                              _detectionMin = ((3600-globalTimer.useSec)/60).ceil();
+                                            });
+                                            showSnackbar('start_position_view.snackbar_txt'.tr());
+                                          } else {
+                                            setState(() {
+                                              _detectionMin += 5;
+                                            });
+                                          }
+                                        },
+                                        minus: () {
+                                          if (_detectionMin <= 5) return;
+                                          setState(() {
+                                            _detectionMin -= 5;
+                                          });
+                                        },
+                                      ),
                                     ),
                                     SizedBox(width: res.percentWidth(2),),
                                     TextDefault(content: 'start_position_view.detect_txt'.tr(), fontSize: 18, isBold: true),

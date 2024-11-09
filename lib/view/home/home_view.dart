@@ -13,9 +13,11 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
+import 'package:mocksum_flutter/view/home/banner/survey_banner.dart';
 import 'package:mocksum_flutter/view/home/subpage/connect_guide/connect_guide.dart';
 import 'package:mocksum_flutter/view/home/widgets/airpod_modal.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
+import 'package:mocksum_flutter/view/home/widgets/banner_carousel.dart';
 import 'package:mocksum_flutter/view/home/widgets/bottomsheet.dart';
 import 'package:mocksum_flutter/view/home/widgets/neck.dart';
 import 'package:mocksum_flutter/view/home/widgets/start_button.dart';
@@ -211,7 +213,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         if (Provider.of<DetectStatus>(context, listen: false).nowDetecting) {
-          Provider.of<GlobalTimer>(context, listen: false).startTimer();
+          Provider.of<GlobalTimer>(context, listen: false).restartTimer();
         }
       }
     });
@@ -469,9 +471,9 @@ class _HomeState extends State<Home> {
     StretchingTimer stretchingTimer = context.watch();
 
     return Scaffold(
-        appBar: const PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: HomeAppBar()
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: userStatus.isLogged ? const BannerCarousel() : const HomeAppBar()
         ),
         body: SafeArea(
             child: SingleChildScrollView(

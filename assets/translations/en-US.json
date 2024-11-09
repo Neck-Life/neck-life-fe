@@ -439,5 +439,16 @@
       "slightly_more_tilt": "Could you tilt your head a bit more?",
       "time_elapsed": "{} sec / {} sec"
     }
+  },
+  "survey": {
+    "title": "Posture Detection Survey",
+    "txt1": "Please rate the perceived accuracy of the posture detection feature.",
+    "desc1": "Rate it between 1 (lowest) and 10 (highest). The more accurate the feature feels, the higher the score.",
+    "min": "Inaccurate",
+    "max": "Accurate",
+    "ex_txt": "If there were situations where detection was inaccurate, please describe them.",
+    "popup": "Thank you for participating in the survey. Your feedback will be valuable for the app's improvement.",
+    "send": "Submit",
+    "banner_txt": "Please share your feedback on posture detection!"
   }
 }
