@@ -24,6 +24,7 @@ class _StretchingCompletedScreenState extends State<StretchingCompletedScreen> {
     // 3초 후에 이전 화면으로 돌아가는 타이머 설정
     _timer = Timer(const Duration(seconds: 3), () {
       Navigator.pop(context);
+      Navigator.pop(context); //스트레칭창, 완료창 2개 닫아야함
       // listen: false로 설정하여 Provider 접근
       final stretchingTimer = Provider.of<StretchingTimer>(context, listen: false);
       stretchingTimer.finishStretchingSession(); // 메서드 호출
