@@ -30,7 +30,7 @@ class _StretchingAnimateManState extends State<StretchingAnimateMan> with Single
           break;
         case AnimationStatus.completed:
           Future.delayed(const Duration(milliseconds: 1500), () {
-            _controller.value = 0;
+            if(mounted) _controller.value = 0;
           });
           break;
         default:
