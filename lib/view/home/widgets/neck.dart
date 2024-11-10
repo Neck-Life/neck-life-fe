@@ -26,7 +26,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   int _prevTickCount = 0;
   int _sameValueCnt = 0;
   bool _detectAvailable = false;
-  final List<double> _turtleThreshold = [0.5, 0.4, 0.3];
+  final List<double> _turtleThreshold = [0.4, 0.3, 0.2];
 
 
   // temporary code for ui test

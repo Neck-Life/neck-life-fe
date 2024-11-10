@@ -16,6 +16,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
   List<double> positions = [0.0];
   List<double> pastY = [0.0]; //가속도Y 히스토리
   List<double> pitchs = [0.0]; //가속도Y 히스토리
+  List<double> yaws = [0.0]; //가속도Y 히스토리
   // List<double> pastZ = [0.0]; //가속도Z 히스토리
   static const double threshold = 0.015; //변위 최댓값 설정
   bool isRotated = false;
@@ -222,13 +223,15 @@ class AirpodsCalMovingAvgZupt extends Filter{
     if(position > threshold) position = threshold;
     else if(position < 0) position = 0.0;
     stablePosition = position;
-
+    //
     // print("position : ${stablePosition}");
     // print("veloticy : ${velocity}");
 
 
     // print(data.attitude.yaw.toDouble());
-    if ((DetectStatus.initialYaw - data.attitude.yaw.toDouble()).abs() > 0.6) {
+    if ((DetectStatus.initialYaw - data.attitude.yaw.toDouble()).abs() > 0.5) {
+
+
       position = 0;
       velocity = 0;
       // print("머리가 돌아갔어요");
@@ -237,17 +240,32 @@ class AirpodsCalMovingAvgZupt extends Filter{
     // print("머리가 ");
     // print(position);
     pitchs.add( (data.attitude.pitch.toDouble()- last_pitch).abs());
+    yaws.add( (data.attitude.yaw.toDouble()- last_yaw).abs());
+
 
     int size = 30;
     if(pitchs.length > size) pitchs.removeAt(0);
 
+    if(yaws.length > 3) yaws.removeAt(0);
+
     double pitchSum= pitchs.reduce((a,b)=>a+b)/size;
+    double yawSum= yaws.reduce((a,b)=>a+b)/3;
+
+    // print(yawSum);
+
+    if(yawSum > 0.03) {
+      // print("고개돌림 없애기");
+
+      position = 0;
+      velocity = 0;
 
 
+    }
+    // print(pitchSum);
+    if(pitchSum > 0.02){
+      // print("고개끄덕임 없애기");
 
-    if(pitchSum > 0.018){
-      // print(pitchSum);
-      // print(velocity);
+
       position = 0;
       velocity = 0;
     }
