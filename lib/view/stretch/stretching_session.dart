@@ -81,6 +81,8 @@ class _StretchingSessionState extends State<StretchingSession> {
   @override
   void initState() {
     super.initState();
+    StretchingTimer.isStretchingMode = true;
+
     amplitudeManager.actionEvent('stretching', 'doStretching');
     _initializeTts();
     // List stretchingList = StretchingData.init(DetectStatus.lanCode);
@@ -96,10 +98,11 @@ class _StretchingSessionState extends State<StretchingSession> {
     // 1초마다 상태를 확인하고 강제로 setState()를 호출해 UI를 갱신
     _updateDataTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
       setState(() {
-        pitch = DetectStatus.nowPitch;
-        roll = DetectStatus.nowRoll;
-        yaw = DetectStatus.nowYaw;
+        pitch = DetectStatus.nowPitch - DetectStatus.initialPitch;
+        roll = DetectStatus.nowRoll - DetectStatus.initialRoll;
+        yaw = DetectStatus.nowYaw - DetectStatus.initialYaw;
         checkStretchCompletion(pitch, roll, yaw);
+        // print([pitch, roll, yaw]);
       });
     });
   }
