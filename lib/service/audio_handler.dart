@@ -31,7 +31,7 @@ class MyAudioHandler extends BaseAudioHandler {
   int _turtleNeckStartedTimeStamp = 0;
   int _turtleNeckStartedTimeStamp2 = 0;
   int _turtleNeckStartedTimeStamp3 = 0;
-  final List<double> _slouchTiltThreshold = [0.5, 0.4, 0.3];
+  final List<double> _slouchTiltThreshold = [0.4, 0.3, 0.2];
   final List<double> _forwardNeckThreshold = [0.2, 0.15, 0.1];
   final PositionDisplay _headPositionHandler = PositionDisplay();
   Map<String, dynamic> _poseForwardLog = {"forward": {}};
@@ -382,11 +382,6 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
 
-
-
-
-
-
       if (_minInterval > 0) {
         _minInterval -= 1;
       }
@@ -394,6 +389,12 @@ class MyAudioHandler extends BaseAudioHandler {
       if (_minInterval2 > 0) {
         _minInterval2 -= 1;
       }
+
+      if (_minInterval3 > 0) {
+        _minInterval3 -= 1;
+      }
+
+
 
 
       // print(_nowRoll);
@@ -419,7 +420,17 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsHeadDown() {
+
+    print(DetectStatus.initialPitch - _nowPitch);
+
+    print("?? ${_slouchTiltThreshold[DetectStatus.sSensitivity]}");
     if (DetectStatus.initialPitch - _nowPitch > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
+
+
+
+
+      print('head down');
+
       return true;
     } else {
       return false;
@@ -427,7 +438,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   bool _checkIsTilt() {
-    if ((DetectStatus.initialRoll - _nowRoll).abs() > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
+    if ((DetectStatus.initialRoll - _nowRoll).abs() > 0.35) {
       return true;
     } else {
       return false;

@@ -61,7 +61,7 @@ class StartPositionState extends State<StartPosition> {
       setState(() {
         _lastTime--;
       });
-      if (_lastTime <= 3) {
+      if (_lastTime <= 2) {
         _avgInitPitch += DetectStatus.nowPitch;
         _avgInitRoll += DetectStatus.nowRoll;
         _avgInitYaw += DetectStatus.nowYaw;
