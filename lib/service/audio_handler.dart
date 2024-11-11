@@ -117,12 +117,13 @@ class MyAudioHandler extends BaseAudioHandler {
       _nowYaw = data.toJson()['yaw'];
       _headPositionHandler.processSensorData(data);
 
-      if(DetectStatus.isLabMode) {
-        _nowPosition = _headPositionHandler.getPosition(0.5);
-      }else{
-        _nowPosition = 0;
-      }
+      // if(DetectStatus.isLabMode) {
+      //   _nowPosition = _headPositionHandler.getPosition(0.5);
+      // }else{
+      //   _nowPosition = 0;
+      // }
 
+      _nowPosition = _headPositionHandler.getPosition(0.5);
       _isBackward = _headPositionHandler.isBackward();
       // _checkIsBackward();
 
@@ -421,15 +422,15 @@ class MyAudioHandler extends BaseAudioHandler {
 
   bool _checkIsHeadDown() {
 
-    print(DetectStatus.initialPitch - _nowPitch);
+    // print(DetectStatus.initialPitch - _nowPitch);
 
-    print("?? ${_slouchTiltThreshold[DetectStatus.sSensitivity]}");
+    // print("?? ${_slouchTiltThreshold[DetectStatus.sSensitivity]}");
     if (DetectStatus.initialPitch - _nowPitch > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
 
 
 
 
-      print('head down');
+      // print('head down');
 
       return true;
     } else {

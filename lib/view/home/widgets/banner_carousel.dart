@@ -11,14 +11,14 @@ class BannerCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
     return Container(
-      padding: const EdgeInsets.only(top: 60),
+      padding: const EdgeInsets.only(top: 20),
       width: 320,
       child: CarouselSlider(
           items: const [
             SurveyBanner()
           ],
           options: CarouselOptions(
-            height: 40,
+            height: 50,
             enableInfiniteScroll: true,
             // autoPlay: true,
             autoPlayInterval: const Duration(seconds: 5),

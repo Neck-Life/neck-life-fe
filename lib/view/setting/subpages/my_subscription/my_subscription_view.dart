@@ -187,7 +187,7 @@ class _MySubscriptionState extends State<MySubscription> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(width: res.percentWidth(5),),
-                  Image.asset('assets/cliped_logo.png', width: res.percentWidth(15)),
+                  Image.asset('assets/logo_circular.png', width: res.percentWidth(12.5)),
                   SizedBox(width: res.percentWidth(3),),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

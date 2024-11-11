@@ -10,11 +10,14 @@ import 'component/text_default.dart';
 class BlurToLogin extends StatelessWidget {
   final double width;
   final double height;
+  final String? tab;
+
 
   const BlurToLogin({
     super.key,
     required this.width,
-    required this.height
+    required this.height,
+    this.tab
   });
 
 
@@ -40,8 +43,8 @@ class BlurToLogin extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextDefault(content: 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
-                TextDefault(content: 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
+                TextDefault(content: tab == 'goal' ? 'goal_view.tbd_content1'.tr() : 'history_view.tbd_content1'.tr(), fontSize: 14, isBold: true),
+                TextDefault(content: tab == 'goal' ? 'goal_view.tbd_content2'.tr() : 'history_view.tbd_content2'.tr(), fontSize: 14, isBold: true),
               ],
             ),
           ),

@@ -33,10 +33,14 @@ void main() async {
   await initializeAudioSession();
   print('audio session init');
   await initGoogleMobileAds();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
 
-  NotificationService notificationService = NotificationService();
-  await notificationService.initFirebaseMessaging();
+    NotificationService notificationService = NotificationService();
+    await notificationService.initFirebaseMessaging();
+  } catch (e) {
+    print(e);
+  }
 
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en', 'US'), Locale('ko', 'KR')],

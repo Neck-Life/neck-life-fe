@@ -43,7 +43,7 @@ class StretchingTimer extends ChangeNotifier {
 
     if (selectedIntervalIndexStorage != null) {
       _selectedIntervalIndex = int.parse(selectedIntervalIndexStorage);
-      print('loadeddd $_selectedIntervalIndex');
+      // print('loadeddd $_selectedIntervalIndex');
     }
     if (selectedStretchingIndexStorage != null) {
       _selectedStretchingIndex = int.parse(selectedStretchingIndexStorage);

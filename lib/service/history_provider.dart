@@ -161,12 +161,12 @@ class HistoryStatus {
     }
   }
 
-  static Future<bool> sendFeedback(String content) async {
+  static Future<bool> sendFeedback(String content, String? email) async {
     try {
       print('feedback $content');
       Response res = await dio.post(
           '$serverAddress/members/inquiry',
-          data: {"title": "문의", "content": content}
+          data: {"title": email ?? 'none', "content": content}
       );
       print('feedback start');
       print(res.data);

@@ -223,7 +223,8 @@
     "feedback_popup": {
       "feedback_and_inquiry": "문의 또는 피드백을 전달해주세요",
       "cancel_feedback":"그만할래요",
-      "send_feedback": "피드백 보내기"
+      "send_feedback": "피드백 보내기",
+      "email": "개발자의 답장을 원하시는 경우 여기에 이메일을 적어주세요."
     },
     "menu_item" : {
       "my_subscription" : "내 구독",
@@ -390,7 +391,9 @@
     "del_snack": "목표가 삭제되었어요.",
     "err_popup": "오류가 발생했어요. 다시 시도해주세요",
     "tbd_content1": "목표 설정 기능은",
-    "tbd_content2": "로그인 후 이용할 수 있어요"
+    "tbd_content2": "로그인 후 이용할 수 있어요",
+    "streak_title": "언제 출석이 인정되나요?",
+    "streak_explain": "한 번 이상 탐지 시작 및 종료하면 출석으로 인정됩니다."
   },
   "connect_guide": {
     "guide": "에어팟을 연결해도 작동하지 않나요?",

@@ -470,232 +470,234 @@ class _HomeState extends State<Home> {
     GlobalTimer globalTimer = context.watch();
     StretchingTimer stretchingTimer = context.watch();
 
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: userStatus.isLogged ? const BannerCarousel() : const HomeAppBar()
-        ),
-        body: SafeArea(
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SizedBox(
-                  width: res.deviceWidth,
-                  // decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
-                  child: Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: res.percentHeight(2),),
-                          GestureDetector(
-                            onTap: () {
-                              // if (!detectStatus.detectAvailable) {
-                              //   switch (OpenSettingsPlus.shared) {
-                              //     case OpenSettingsPlusIOS settings: settings.bluetooth();
-                              //     default: throw Exception('Platform not supported');
-                              //   }
-                              // }
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (
-                                  context) => const ConnectGuide()));
-                            },
-                            child: SizedBox(
-                                width: res.percentWidth(85),
-                                height: res.percentWidth(85)*0.3,
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                        child: Row(
-                                          children: [
-                                            const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
-                                            const SizedBox(width: 5,),
-                                            TextDefault(
-                                              content: 'connect_guide.guide'.tr(),
-                                              fontSize: 13,
-                                              isBold: false,
-                                              fontColor: const Color(0xFF236EF3),
-                                            ),
-                                          ],
-                                        )
-                                    ),
-                                    Positioned(
-                                      // left: responsive.percentWidth(7.5),
-                                      top: res.percentWidth(6),
-                                      child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
-                                    ),
-                                    Positioned(
-                                      left: res.percentWidth(23),
-                                      top: res.percentWidth(9),
-                                      child: TextDefault(
-                                        content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
-                                        fontSize: 18,
-                                        isBold: true,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: res.percentWidth(23),
-                                      top: res.percentWidth(9)+25,
-                                      child: TextDefault(
-                                        content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
-                                        fontSize: 14,
-                                        isBold: false,
-                                        fontColor: const Color(0xFF236EF3),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                            ),
-                          ),
-                          Container(
-                              width: res.percentWidth(90),
-                              height: res.percentWidth(97),
-                              margin: const EdgeInsets.only(top: 20),
-                              decoration: BoxDecoration(
-                                color: !detectStatus.isNowTurtle ? const Color(0xFFD8E2F9) : const Color(0xFFF25959),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
+    return SafeArea(
+      child: Scaffold(
+          appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(60),
+              child: BannerCarousel()
+          ),
+          body: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SizedBox(
+                width: res.deviceWidth,
+                // decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
+                child: Center(
+                    child: Column(
+                      children: [
+                        // SizedBox(height: res.percentHeight(2),),
+                        // userStatus.isLogged ? const BannerCarousel() : const HomeAppBar(),
+                        SizedBox(height: res.percentHeight(2),),
+                        GestureDetector(
+                          onTap: () {
+                            // if (!detectStatus.detectAvailable) {
+                            //   switch (OpenSettingsPlus.shared) {
+                            //     case OpenSettingsPlusIOS settings: settings.bluetooth();
+                            //     default: throw Exception('Platform not supported');
+                            //   }
+                            // }
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (
+                                context) => const ConnectGuide()));
+                          },
+                          child: SizedBox(
+                              width: res.percentWidth(85),
+                              height: res.percentWidth(85)*0.3,
+                              child: Stack(
                                 children: [
-                                  Container(
-                                    width: res.percentWidth(85),
-                                    padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
+                                  Positioned(
+                                      child: Row(
+                                        children: [
+                                          const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
+                                          const SizedBox(width: 5,),
+                                          TextDefault(
+                                            content: 'connect_guide.guide'.tr(),
+                                            fontSize: 13,
+                                            isBold: false,
+                                            fontColor: const Color(0xFF236EF3),
+                                          ),
+                                        ],
+                                      )
+                                  ),
+                                  Positioned(
+                                    // left: responsive.percentWidth(7.5),
+                                    top: res.percentWidth(6),
+                                    child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
+                                  ),
+                                  Positioned(
+                                    left: res.percentWidth(23),
+                                    top: res.percentWidth(9),
                                     child: TextDefault(
-                                      content: detectStatus.nowDetecting ? LS.tr('home_view.detection_doing') : LS.tr('home_view.detection_start_ask'),
-                                      fontSize: 27,
+                                      content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
+                                      fontSize: 18,
                                       isBold: true,
-                                      height: 1.2,
                                     ),
                                   ),
-                                  SizedBox(height: res.percentHeight(2.5),),
-                                  const Neck(),
-                                  SizedBox(height: res.percentHeight(2),),
-                                  Stack(
-                                    children: [
-                                      StartButton(
-                                          onPressed: () async {
-                                            print('asdf');
-                                            if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
-                                              showSnackbar(LS.tr('home_view.airpods_connect_ask'));
-                                            } else if (!detectStatus.nowDetecting) {
-                                              if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
-                                                showSnackbar(LS.tr('home_view.end_today_free_time'));
-                                              } else {
-                                                Navigator.push(context, MaterialPageRoute(
-                                                    builder: (
-                                                        context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
-                                                      _audioHandler?.play();
-                                                      _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
-
-                                                      String? refreshToken = await storage.read(key: 'refreshToken');
-                                                      if (refreshToken != null) {
-                                                        Response resForToken = await HistoryStatus
-                                                            .dio.post(
-                                                            '${HistoryStatus.serverAddress}/members/token',
-                                                            data: {
-                                                              'refreshToken': refreshToken
-                                                            });
-                                                        if (resForToken.statusCode! ~/
-                                                            100 == 2) {
-                                                          String accessTokenNew = resForToken
-                                                              .data['data']['accessToken'] ??
-                                                              '';
-                                                          String refreshTokenNew = resForToken
-                                                              .data['data']['refreshToken'] ??
-                                                              '';
-
-                                                          if (accessTokenNew != '') {
-                                                            HistoryStatus.dio.options
-                                                                .headers["authorization"] =
-                                                            "bearer $accessTokenNew";
-                                                            await storage.write(
-                                                                key: 'accessToken',
-                                                                value: accessTokenNew);
-                                                            await storage.write(
-                                                                key: 'refreshToken',
-                                                                value: refreshTokenNew);
-                                                          }
-                                                        }
-                                                      }
-                                                      // final id = await _liveActivitiesPlugin.createActivity(
-                                                      //   DynamicIslandStopwatchDataModel(
-                                                      //     elapsedSeconds: 0,
-                                                      //     useTimeLimit: useTimeLimit,
-                                                      //     detectionMin: detectionMin
-                                                      //   ).toMap()
-                                                      // );
-                                                      // setState(() {
-                                                      //   activityID = id;
-                                                      // });
-                                                    })));
-                                              }
-                                            } else {
-                                              showStopDetectionSheet();
-                                            }
-                                          },
-                                          isDisabled: !detectStatus.detectAvailable,
-                                          isRunning: detectStatus.nowDetecting,
-                                          useTime: !detectStatus.useTimeLimit ?
-                                                    '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}' :
-                                                    TimeConvert.sec2TimeFormat(detectStatus.detectionMin*60 - (globalTimer.useSec-globalTimer.secOnStart))
-                                      ),
-                                      // const StartButtonMsg(message: 'Press Start for bad posture alert!'),
-                                      if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
-                                        StartButtonMsg(message: 'home_view.start_cta'.tr())
-                                      else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
-                                        StartButtonMsg(message: 'home_view.stop_cta'.tr())
-                                    ],
+                                  Positioned(
+                                    left: res.percentWidth(23),
+                                    top: res.percentWidth(9)+25,
+                                    child: TextDefault(
+                                      content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
+                                      fontSize: 14,
+                                      isBold: false,
+                                      fontColor: const Color(0xFF236EF3),
+                                    ),
                                   ),
                                 ],
                               )
                           ),
-                          SizedBox(height: res.percentHeight(2)),
-                          WhiteContainer(
-                            width: 90,
-                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3), vertical: res.percentHeight(1)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                        Container(
+                            width: res.percentWidth(90),
+                            height: res.percentWidth(97),
+                            margin: const EdgeInsets.only(top: 20),
+                            decoration: BoxDecoration(
+                              color: !detectStatus.isNowTurtle ? const Color(0xFFD8E2F9) : const Color(0xFFF25959),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Column(
                               children: [
-                                Row(
+                                Container(
+                                  width: res.percentWidth(85),
+                                  padding: EdgeInsets.only(top: res.percentWidth(7.5), left: res.percentWidth(7.5)),
+                                  child: TextDefault(
+                                    content: detectStatus.nowDetecting ? LS.tr('home_view.detection_doing') : LS.tr('home_view.detection_start_ask'),
+                                    fontSize: 27,
+                                    isBold: true,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                SizedBox(height: res.percentHeight(2.5),),
+                                const Neck(),
+                                SizedBox(height: res.percentHeight(2),),
+                                Stack(
                                   children: [
-                                    Row(
-                                      children: [
-                                        const AssetIcon('maximize', size: 6,),
-                                        const SizedBox(width: 5,),
-                                        TextDefault(
-                                          content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
-                                          fontSize: 14,
-                                          isBold: false,
-                                        )
-                                      ],
+                                    StartButton(
+                                        onPressed: () async {
+                                          print('asdf');
+                                          if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
+                                            showSnackbar(LS.tr('home_view.airpods_connect_ask'));
+                                          } else if (!detectStatus.nowDetecting) {
+                                            if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
+                                              showSnackbar(LS.tr('home_view.end_today_free_time'));
+                                            } else {
+                                              Navigator.push(context, MaterialPageRoute(
+                                                  builder: (
+                                                      context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
+                                                    _audioHandler?.play();
+                                                    _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+      
+                                                    String? refreshToken = await storage.read(key: 'refreshToken');
+                                                    if (refreshToken != null) {
+                                                      Response resForToken = await HistoryStatus
+                                                          .dio.post(
+                                                          '${HistoryStatus.serverAddress}/members/token',
+                                                          data: {
+                                                            'refreshToken': refreshToken
+                                                          });
+                                                      if (resForToken.statusCode! ~/
+                                                          100 == 2) {
+                                                        String accessTokenNew = resForToken
+                                                            .data['data']['accessToken'] ??
+                                                            '';
+                                                        String refreshTokenNew = resForToken
+                                                            .data['data']['refreshToken'] ??
+                                                            '';
+      
+                                                        if (accessTokenNew != '') {
+                                                          HistoryStatus.dio.options
+                                                              .headers["authorization"] =
+                                                          "bearer $accessTokenNew";
+                                                          await storage.write(
+                                                              key: 'accessToken',
+                                                              value: accessTokenNew);
+                                                          await storage.write(
+                                                              key: 'refreshToken',
+                                                              value: refreshTokenNew);
+                                                        }
+                                                      }
+                                                    }
+                                                    // final id = await _liveActivitiesPlugin.createActivity(
+                                                    //   DynamicIslandStopwatchDataModel(
+                                                    //     elapsedSeconds: 0,
+                                                    //     useTimeLimit: useTimeLimit,
+                                                    //     detectionMin: detectionMin
+                                                    //   ).toMap()
+                                                    // );
+                                                    // setState(() {
+                                                    //   activityID = id;
+                                                    // });
+                                                  })));
+                                            }
+                                          } else {
+                                            showStopDetectionSheet();
+                                          }
+                                        },
+                                        isDisabled: !detectStatus.detectAvailable,
+                                        isRunning: detectStatus.nowDetecting,
+                                        useTime: !detectStatus.useTimeLimit ?
+                                                  '${TimeConvert.sec2TimeFormat(globalTimer.useSec)}${userStatus.isPremium ? '' : '/1:00:00'}' :
+                                                  TimeConvert.sec2TimeFormat(detectStatus.detectionMin*60 - (globalTimer.useSec-globalTimer.secOnStart))
                                     ),
+                                    // const StartButtonMsg(message: 'Press Start for bad posture alert!'),
+                                    if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
+                                      StartButtonMsg(message: 'home_view.start_cta'.tr())
+                                    else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
+                                      StartButtonMsg(message: 'home_view.stop_cta'.tr())
                                   ],
                                 ),
-                                CupertinoSwitch(
-                                  value: _isLabMode,
-                                  activeColor: CupertinoColors.activeBlue,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      _isLabMode = value;
-                                      DetectStatus.isLabMode = value;
-                                    });
-                                  },
-                                )
                               ],
-                            ),
-                          ),
-                          userStatus.isPremium ? const SizedBox() : Container(
-                            margin: EdgeInsets.only(top: res.percentHeight(1.5)),
-                            width: _ad.size.width.toDouble(),
-                            height: _ad.size.height.toDouble(),
-                            alignment: Alignment.center,
-                            child: AdWidget(ad: _ad),
-                          ),
-                          SizedBox(height: res.percentHeight(2),),
-                          // const SurveyBanner()
-                        ],
-                      )
-                  ),
-                )
-            )
+                            )
+                        ),
+                        SizedBox(height: res.percentHeight(2)),
+                        // WhiteContainer(
+                        //   width: 90,
+                        //   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3), vertical: res.percentHeight(1)),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Row(
+                        //         children: [
+                        //           Row(
+                        //             children: [
+                        //               const AssetIcon('maximize', size: 6,),
+                        //               const SizedBox(width: 5,),
+                        //               TextDefault(
+                        //                 content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
+                        //                 fontSize: 14,
+                        //                 isBold: false,
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       CupertinoSwitch(
+                        //         value: _isLabMode,
+                        //         activeColor: CupertinoColors.activeBlue,
+                        //         onChanged: (bool value) {
+                        //           setState(() {
+                        //             _isLabMode = value;
+                        //             DetectStatus.isLabMode = value;
+                        //           });
+                        //         },
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                        userStatus.isPremium ? const SizedBox() : Container(
+                          margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                          width: _ad.size.width.toDouble(),
+                          height: _ad.size.height.toDouble(),
+                          alignment: Alignment.center,
+                          child: AdWidget(ad: _ad),
+                        ),
+                        SizedBox(height: res.percentHeight(2),),
+                        // const SurveyBanner()
+                      ],
+                    )
+                ),
+              )
+          ),
         ),
-      );
+    );
   }
 }

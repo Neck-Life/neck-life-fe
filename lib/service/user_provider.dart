@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 import 'package:dio/dio.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class UserStatus with ChangeNotifier {
@@ -18,6 +20,7 @@ class UserStatus with ChangeNotifier {
   // late String currentTimeZone;
   final String language = Platform.localeName ;
   // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final _amplitudeManager = AmplitudeEventManager();
 
 
 
@@ -55,6 +58,8 @@ class UserStatus with ChangeNotifier {
       String? accessToken = await storage.read(key: 'accessToken');
       String? refreshToken = await storage.read(key: 'refreshToken');
       String? email = await storage.read(key: 'email');
+
+      // log(accessToken!);
 
       _accessTokenTemp = accessToken ?? '';
       _refreshTokenTemp = refreshToken ?? '';
@@ -356,7 +361,7 @@ class UserStatus with ChangeNotifier {
 
 
     // print(res.statusCode);
-    print(res.body);
+    // print(res.body);
     // print(res.statusCode);
     Map<String, dynamic> resData = jsonDecode(res.body);
     if (res.statusCode ~/ 100 == 2) {
@@ -366,6 +371,7 @@ class UserStatus with ChangeNotifier {
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];
       _email = resData['data']['email'].toString();
+      _amplitudeManager.setUserID(_email);
       _initSubscriptionState();
       // notifyListeners();
       // print('login noti');

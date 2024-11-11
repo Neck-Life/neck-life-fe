@@ -29,6 +29,7 @@ class FeedbackPopUp extends StatefulWidget {
 class _FeedbackPopupState extends State<FeedbackPopUp> {
 
   final _feedbackEditController = TextEditingController();
+  final _emailEditController = TextEditingController();
   bool _hasText = false;
 
 
@@ -39,7 +40,7 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
     return SingleChildScrollView(
       child: Container(
         width: res.deviceWidth,
-        height: 370,
+        height: 420,
         // margin: EdgeInsets.only(bottom: res.percentHeight(5)),
         // padding: MediaQuery.of(context).viewInsets,
         decoration: BoxDecoration(
@@ -58,9 +59,33 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
                       content: 'setting_widgets.feedback_popup.feedback_and_inquiry'.tr(),
                       fontSize: 20,
                       isBold: true,
-                      fontColor: Color(0xFF323238)
+                      fontColor: const Color(0xFF323238)
                   ),
                   SizedBox(height: res.percentHeight(1),),
+                  TextField(
+                    style: const TextStyle(fontSize: 12),
+                    maxLines: 1,
+                    // keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                      hintText: 'setting_widgets.feedback_popup.email'.tr(),
+                        border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E5EB),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E5EB),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(15)
+                        )
+                    ),
+                    controller: _emailEditController,
+                  ),
+                  SizedBox(height: res.percentHeight(2),),
                   Padding(
                     padding: EdgeInsets.all(res.percentWidth(1)),
                     child: TextField(
@@ -133,7 +158,7 @@ class _FeedbackPopupState extends State<FeedbackPopUp> {
                   Button(
                     onPressed: () async {
                       if (_feedbackEditController.text == '') return;
-                      bool success = await HistoryStatus.sendFeedback(_feedbackEditController.text);
+                      bool success = await HistoryStatus.sendFeedback(_feedbackEditController.text, _emailEditController.text);
                       if (success) {
                         widget.onSuccess();
                       } else {

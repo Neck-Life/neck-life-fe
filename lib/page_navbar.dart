@@ -55,8 +55,11 @@ class _PageNavBarState extends State<PageNavBar> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
       }
 
+      // if (isLogged) {
+      await _amplitudeEventManager.initAmplitude();
+      // }
       if (isLogged) {
-        await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
+        await _amplitudeEventManager.setUserID(Provider.of<UserStatus>(context, listen: false).email);
       }
 
       // final sensorPermission = await Permission.sensors.status;
@@ -168,9 +171,17 @@ class _PageNavBarState extends State<PageNavBar> {
                           }
                         });
 
-                        if (newIndex == 0) {
-                          bool isPremium = await userStatus.getUserIsPremium();
-                          userStatus.setIsPremium(isPremium);
+                        try {
+                          if (newIndex == 0) {
+                            print('clicked');
+                            if (userStatus.isLogged) {
+                              bool isPremium = await userStatus
+                                  .getUserIsPremium();
+                              userStatus.setIsPremium(isPremium);
+                            }
+                          }
+                        } catch (e) {
+                          print(e);
                         }
                       },
                     ),

@@ -43,7 +43,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1055838194336-oobg73q1mtdons2sf5f1l8k13macdv7f</string>
+				<string>com.googleusercontent.apps.1055838194336-57eef506usqiufk5l4oruj9u77h17cp6</string>
 			</array>
 		</dict>
 	</array>
@@ -52,7 +52,7 @@
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-8228957074402081~8353384382</string>
 	<key>GIDClientID</key>
-	<string>1055838194336-oobg73q1mtdons2sf5f1l8k13macdv7f.apps.googleusercontent.com</string>
+	<string>1055838194336-57eef506usqiufk5l4oruj9u77h17cp6.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>

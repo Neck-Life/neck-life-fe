@@ -46,6 +46,8 @@ import '../home/widgets/app_bar.dart';
 const String appGroupId = 'group.necklifewidget';
 const String iOSWidgetName = 'NeckLifeWidget';
 
+Widget? todayHistoryPage = null;
+
 class History extends StatefulWidget {
   const History({super.key});
 
@@ -109,8 +111,6 @@ class _HistoryState extends State<History> {
     _ad.load();
 
     super.initState();
-    debugPrint('his view init');
-    debugPrint('islogged ${UserStatus.sIsLogged}');
     if (UserStatus.sIsLogged) {
       debugPrint('logged and called');
       HomeWidget.setAppGroupId(appGroupId);
@@ -188,20 +188,23 @@ class _HistoryState extends State<History> {
               .toString()
               .padLeft(2, '0')}'] = cnt++;
         }
+        print(historyData);
         setState(() {
           _historyData = historyData;
-          print('asdf $_historyData');
           _data2idx = date2idx;
           String dateStr = '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}';
           if (date2idx.containsKey(dateStr)) {
             // print('return');
             _todayHistory = historyData['daily'][date2idx[dateStr]];
+            // print('today $_todayHistory');
           } else {
             // print('asdf');
             _todayHistory = {'poseCountMap': {}, 'daily' : []};
           }
           _listChosenType = _todayHistory[PoseType.slouch.poseFilter] == null ? (_todayHistory[PoseType.turtle.poseFilter] == null ? (_todayHistory[PoseType.tilt.poseFilter] == null ? PoseType.slouch : PoseType.tilt) : PoseType.turtle) : PoseType.slouch;
         });
+
+        todayHistoryPage = TodayHistory(fullHistoryData: historyData, date2idx: date2idx);
 
 
           updateWidgetScore(_todayHistory['point'] ?? 0,
@@ -277,7 +280,6 @@ class _HistoryState extends State<History> {
     _normalDurationSum = 0;
     _normalDurationCount = 0;
     _chosonDurationIdx = -1;
-    print('dummy2 $historyMap');
     if (historyMap == null) return;
 
     List<PoseDuration> poseDurationList = [];
@@ -572,7 +574,7 @@ class _HistoryState extends State<History> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         userStatus.isPremium ? const SizedBox() : Container(
-                          margin: EdgeInsets.only(left: (res.deviceWidth-_ad.size.width.toDouble())/2-res.percentWidth(7.5), top: res.percentHeight(1.5)),
+                          margin: EdgeInsets.only(left: max((res.deviceWidth-_ad.size.width.toDouble())/2-res.percentWidth(7.5), 0), top: res.percentHeight(1.5)),
                           width: _ad.size.width.toDouble(),
                           height: _ad.size.height.toDouble(),
                           alignment: Alignment.center,

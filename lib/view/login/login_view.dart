@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   static const List<String> scopes = <String>[
     'email',
   ];
+
+  final _amplitudeManager = AmplitudeEventManager();
 
   bool _loginProcessStarted = false;
 

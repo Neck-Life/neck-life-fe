@@ -18,6 +18,7 @@ import 'package:mocksum_flutter/view/today_history/widgets/pose_list_item.dart';
 import '../../theme/component/button.dart';
 import '../../theme/popup.dart';
 import '../../util/localization_string.dart';
+import '../history/widgets/duration_list_filter.dart';
 
 
 class TodayHistory extends StatefulWidget {
@@ -75,8 +76,7 @@ class _TodayHistoryState extends State<TodayHistory> {
     final historyData = monthDataMap.containsKey(_chosenDate+1) ? monthDataMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     // print('th $historyData');
     historyDateKeyMap[_month] = monthDataMap;
-    print('fuck $historyData');
-    print('${_chosenType.poseIdentifier}NORMAL');
+    // print('${_chosenType.poseIdentifier}NORMAL');
     setState(() {
       _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'] == null ? 0 : historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'].toInt();
       _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
@@ -378,19 +378,33 @@ class _TodayHistoryState extends State<TodayHistory> {
                               fontColor: const Color(0xFF115FE9),
                             ),
                           ],
-                        )
+                        ),
+                        SizedBox(height: res.percentHeight(1),),
+                        SizedBox(
+                          width: res.percentWidth(85),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [PoseType.slouch, PoseType.turtle, PoseType.tilt].map((value) {
+                              return DurationListFilter(type: value, chosen: value == _chosenType, onClick: () {
+                                setState(() {
+                                  _chosenType = value;
+                                });
+                              });
+                            }).toList(),
+                          ),
+                        ),
                       ],
                     ),
-                    PoseDropdown(onChanged: (PoseType type) {
-                      setState(() {
-                        _chosenType = type;
-                      });
-                      final historyData = _historyDateKeyMap[_month].containsKey(_chosenDate+1) ? _historyDateKeyMap[_month][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
-                      _filterPoseMap(historyData);
-                      setState(() {
-                        _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'];
-                      });
-                    }, chosenValue: _chosenType,)
+                    // PoseDropdown(onChanged: (PoseType type) {
+                    //   setState(() {
+                    //     _chosenType = type;
+                    //   });
+                    //   final historyData = _historyDateKeyMap[_month].containsKey(_chosenDate+1) ? _historyDateKeyMap[_month][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+                    //   _filterPoseMap(historyData);
+                    //   setState(() {
+                    //     _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'];
+                    //   });
+                    // }, chosenValue: _chosenType,)
                   ],
                 ),
                 SizedBox(height: res.percentHeight(3),),

@@ -216,7 +216,8 @@
     "feedback_popup": {
       "feedback_and_inquiry": "Send feedback or inquiry",
       "send_feedback": "Send Feedback",
-      "cancel_feedback": "Cancel"
+      "cancel_feedback": "Cancel",
+      "email": "If you'd like a reply, you may provide email here."
     },
     "menu_item": {
       "my_subscription": "My Subscription",
@@ -369,7 +370,9 @@
     "del_snack": "The goal has been deleted.",
     "err_popup": "An error occurred. Please try again.",
     "tbd_content1": "Goal setting is available",
-    "tbd_content2": "after logging in"
+    "tbd_content2": "after logging in",
+    "streak_title": "When is attendance recognized?",
+    "streak_explain": "Starting and stopping detection at least once counts as attendance."
   },
   "connect_guide": {
     "guide": "Is it not working after connecting AirPods?",

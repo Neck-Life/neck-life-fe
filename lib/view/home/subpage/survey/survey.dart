@@ -24,7 +24,7 @@ class Survey extends StatefulWidget {
 
 class _SurveyState extends State<Survey> {
 
-  double _saticfaction = 5;
+  double _saticfaction = 10;
   final _editController = TextEditingController();
 
   final sheetId = '1QGJPIxu-wdwWsqQgjC4xjUgfjfIDG-v6kPyr1zuSFKQ';
@@ -161,9 +161,9 @@ class _SurveyState extends State<Survey> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            TextDefault(content: "survey.min".tr(), fontSize: 13, isBold: false, fontColor: _saticfaction == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
+                            TextDefault(content: "survey.min".tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),),
                             // TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.alarm_sensitive_middle".tr(), fontSize: 13, isBold: false, fontColor: _saticfaction == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),),
-                            TextDefault(content: "survey.max".tr(), fontSize: 13, isBold: false, fontColor: _saticfaction == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0),)
+                            TextDefault(content: "survey.max".tr(), fontSize: 13, isBold: false, fontColor: const Color(0xFF8991A0),)
                           ],
                         ),
                       ),
@@ -213,8 +213,7 @@ class _SurveyState extends State<Survey> {
                   onPressed: () async {
                     try {
                       if (_worksheet != null) {
-                        await insert(userStatus.email);
-                        print('fuck');
+                        await insert(userStatus.email ?? '');
                         _openSuccessPopUp();
                       } else {
                         throw Exception();

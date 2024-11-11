@@ -3,18 +3,22 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AmplitudeEventManager {
 
-  Future<void> initAmplitude(String? userId) async {
+  Future<void> initAmplitude() async {
     final Amplitude analytics = Amplitude.getInstance();
 
     // Initialize SDK
     String amplitudeKey = dotenv.get('AMPLITUDE_KEY');
     // print('amp $amplitude_key');
     analytics.init(amplitudeKey);
-    if (userId != null) {
-      analytics.setUserId(userId);
-    }
+
     // Log an event
     analytics.logEvent('startup');
+  }
+
+  Future<void> setUserID(String? userid) async {
+    if (userid != null) {
+      await Amplitude.getInstance().setUserId(userid);
+    }
   }
 
 

@@ -32,7 +32,6 @@ class GoalListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
-    print(targetValue);
 
     return GestureDetector(
       onTap: () {

@@ -4,9 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
@@ -21,6 +23,7 @@ import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart
 import 'package:provider/provider.dart';
 
 import '../../service/stretching_timer.dart';
+import '../../util/ad_manager.dart';
 import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 import '../../util/time_convert.dart';
@@ -85,10 +88,15 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   final amplitudeManager = AmplitudeEventManager();
 
+  late BannerAd _ad;
+
   @override
   void initState() {
     super.initState();
     StretchingTimer.isStretchingMode = true;
+
+    _ad = AdManager().getBannerAd(true, 3);
+    _ad.load();
 
     ()async{ //오디오 초기화
       await _bgAudioPlayer.setAsset('assets/noti.mp3');
@@ -286,6 +294,7 @@ class _StretchingSessionState extends State<StretchingSession> {
   Widget build(BuildContext context) {
     Responsive res = Responsive(context);
     GlobalTimer globalTimer = context.watch();
+    UserStatus userStatus = context.watch();
 
     final currentAction = selectedStretchingGroup!.actions[currentStepIndex]; // 동작 정보 가져오기
 
@@ -294,103 +303,112 @@ class _StretchingSessionState extends State<StretchingSession> {
       child: Scaffold(
         appBar: const PreferredSize(
             preferredSize: Size.fromHeight(60), child: HomeAppBar()),
-        body: Center(
-            child: Column(
-          children: [
-            StretchingTitleWidget(
-                // text: "스트레칭 시간입니다."
-                text: stretchingGroupName
-            ),
-            Container(
-                width: res.percentWidth(90),
-                // height: res.percentWidth(85),
-                margin: const EdgeInsets.only(top: 20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD8E2F9),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                padding: EdgeInsets.only(bottom: res.percentHeight(4)),
-                child: Column(
-                  children: [
-                    Container(
-                        width: res.percentWidth(70),
-                        padding: EdgeInsets.only(top: res.percentWidth(7.5)),
-                        child: Text(
-                          // "10초간 고개를\n하늘을 향해 젖혀주세요",
-                          guideText,
-                          style: const TextStyle(
-                            fontSize: 24, // 폰트 크기
-                            fontWeight: FontWeight.bold, // 굵게 설정
-                            height: 1.2, // 줄 간격 설정
-                          ),
-                          textAlign: TextAlign.center,
-                          // 정렬은 필요에 따라 설정 (중앙 정렬로 설정)
-                          softWrap: true,
-                        )),
-                    SizedBox(
-                      height: res.percentHeight(2.5),
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     const NeckPitch(),
-                    //     SizedBox(width: res.percentWidth(5)),
-                    //     const NeckRoll(),
-                    //   ],
-                    // ),
-                    currentAction.animationAvailable != null && currentAction.animationAvailable == true ? const StretchingAnimateMan() : (currentAction.progressVariable == ProgressVariable.none ? const BlurredMan(isBlurred: false,) : const BlurredMan(isBlurred: true,)),
-                    SizedBox(
-                      height: res.percentHeight(2),
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        // print("exit터치 감지");
-                        _exitStretching();
-                      },
-                      child: Container(
-                        width: res.percentWidth(80),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(
-                            vertical: res.percentHeight(2),
-                            horizontal: res.percentWidth(5)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextDefault(
-                              content: TimeConvert.sec2TimeFormat(globalTimer.useSec),
-                              fontSize: 16,
-                              isBold: true,
-                              fontColor: const Color(0xFF236EF3),
+        body: SingleChildScrollView(
+          child: Center(
+              child: Column(
+            children: [
+              StretchingTitleWidget(
+                  // text: "스트레칭 시간입니다."
+                  text: stretchingGroupName
+              ),
+              Container(
+                  width: res.percentWidth(90),
+                  // height: res.percentWidth(85),
+                  margin: const EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD8E2F9),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  padding: EdgeInsets.only(bottom: res.percentHeight(4)),
+                  child: Column(
+                    children: [
+                      Container(
+                          width: res.percentWidth(70),
+                          padding: EdgeInsets.only(top: res.percentWidth(7.5)),
+                          child: Text(
+                            // "10초간 고개를\n하늘을 향해 젖혀주세요",
+                            guideText,
+                            style: const TextStyle(
+                              fontSize: 24, // 폰트 크기
+                              fontWeight: FontWeight.bold, // 굵게 설정
+                              height: 1.2, // 줄 간격 설정
                             ),
-                            TextDefault(
-                              content: LS.tr('stretching.stretching_session.skip_stretching'),
-                              fontSize: 16,
-                              isBold: false,
-                              fontColor: Colors.black,
-                            )
-                          ],
+                            textAlign: TextAlign.center,
+                            // 정렬은 필요에 따라 설정 (중앙 정렬로 설정)
+                            softWrap: true,
+                          )),
+                      SizedBox(
+                        height: res.percentHeight(2.5),
+                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     const NeckPitch(),
+                      //     SizedBox(width: res.percentWidth(5)),
+                      //     const NeckRoll(),
+                      //   ],
+                      // ),
+                      currentAction.animationAvailable != null && currentAction.animationAvailable == true ? const StretchingAnimateMan() : (currentAction.progressVariable == ProgressVariable.none ? const BlurredMan(isBlurred: false,) : const BlurredMan(isBlurred: true,)),
+                      SizedBox(
+                        height: res.percentHeight(2),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          // print("exit터치 감지");
+                          _exitStretching();
+                        },
+                        child: Container(
+                          width: res.percentWidth(80),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(
+                              vertical: res.percentHeight(2),
+                              horizontal: res.percentWidth(5)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextDefault(
+                                content: TimeConvert.sec2TimeFormat(globalTimer.useSec),
+                                fontSize: 16,
+                                isBold: true,
+                                fontColor: const Color(0xFF236EF3),
+                              ),
+                              TextDefault(
+                                content: LS.tr('stretching.stretching_session.skip_stretching'),
+                                fontSize: 16,
+                                isBold: false,
+                                fontColor: Colors.black,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )),
-            SizedBox(height: res.percentHeight(5)),
-            stretchingProgressBar,
-            SizedBox(height: res.percentHeight(1)),
-            //yaw데이터 리셋 버튼
-            if(isUsedYaw) Padding(
-              padding: EdgeInsets.only(right: Responsive(context).percentWidth(5)), // 오른쪽 여백 설정
-              child: Align(
-                alignment: Alignment.centerRight, // 오른쪽 정렬
-                child: SensorDataAdjustWidget(),
+                    ],
+                  )),
+              SizedBox(height: res.percentHeight(3)),
+              stretchingProgressBar,
+              SizedBox(height: res.percentHeight(1)),
+              //yaw데이터 리셋 버튼
+              if(isUsedYaw) Padding(
+                padding: EdgeInsets.only(right: Responsive(context).percentWidth(5)), // 오른쪽 여백 설정
+                child: Align(
+                  alignment: Alignment.centerRight, // 오른쪽 정렬
+                  child: SensorDataAdjustWidget(),
+                ),
               ),
-            )
-          ],
-        )),
+              userStatus.isPremium ? const SizedBox() : Container(
+                margin: EdgeInsets.only(top: res.percentHeight(1.5)),
+                width: _ad.size.width.toDouble(),
+                height: _ad.size.height.toDouble(),
+                alignment: Alignment.center,
+                child: AdWidget(ad: _ad),
+              ),
+            ],
+          )),
+        ),
       ),
     );
   }
