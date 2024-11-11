@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
@@ -13,6 +14,7 @@ import 'package:mocksum_flutter/view/stretch/stretching_completed.dart';
 import 'package:mocksum_flutter/view/stretch/subpages/strethcing_alarm_setting.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/Stretching_animate_man.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/blurred_man.dart';
+import 'package:mocksum_flutter/view/stretch/widgets/sensorData_adjust_widget.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_exit_modal.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_neck.dart';
 import 'package:mocksum_flutter/view/stretch/widgets/stretching_progressBar.dart';
@@ -25,12 +27,13 @@ import '../../util/time_convert.dart';
 import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
+final _bgAudioPlayer = AudioPlayer();
 const NotificationDetails _details = NotificationDetails(
     android: AndroidNotificationDetails('temp1', 'asdf'),
     iOS: DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
-      presentSound: true,
+      presentSound: false, //TTS음성 씹혀서, false
     )
 );
 
@@ -38,6 +41,9 @@ Future<void> _showPushAlarm(String title, String body) async {
   FlutterLocalNotificationsPlugin localNotification =
   FlutterLocalNotificationsPlugin();
   // await localNotification.cancel(11); //목 돌리기 운동처럼 동작시간이 짧으면 알림이 씹힘 ㅠ
+  _bgAudioPlayer.seek(Duration.zero);
+  _bgAudioPlayer.play();
+
   await localNotification.show(11, // 푸쉬알림고유ID
       title,
       body,
@@ -62,6 +68,7 @@ class _StretchingSessionState extends State<StretchingSession> {
   double pitch = DetectStatus.nowPitch;
   double roll = DetectStatus.nowRoll;
   double yaw = DetectStatus.nowYaw;
+  bool isUsedYaw = false; //yaw데이터 재조정 플래그 : yaw값 쓰는 스트레칭일때만 버튼 보이도록 함
 
   int currentStepIndex = 0;
   Timer? _timer, _updateDataTimer;
@@ -81,6 +88,13 @@ class _StretchingSessionState extends State<StretchingSession> {
   @override
   void initState() {
     super.initState();
+    StretchingTimer.isStretchingMode = true;
+
+    ()async{ //오디오 초기화
+      await _bgAudioPlayer.setAsset('assets/noti.mp3');
+      await _bgAudioPlayer.setVolume(1);
+    }();
+
     amplitudeManager.actionEvent('stretching', 'doStretching');
     _initializeTts();
     // List stretchingList = StretchingData.init(DetectStatus.lanCode);
@@ -96,10 +110,11 @@ class _StretchingSessionState extends State<StretchingSession> {
     // 1초마다 상태를 확인하고 강제로 setState()를 호출해 UI를 갱신
     _updateDataTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
       setState(() {
-        pitch = DetectStatus.nowPitch;
-        roll = DetectStatus.nowRoll;
-        yaw = DetectStatus.nowYaw;
+        pitch = DetectStatus.nowPitch - DetectStatus.initialPitch;
+        roll = DetectStatus.nowRoll - DetectStatus.initialRoll;
+        yaw = DetectStatus.nowYaw - DetectStatus.initialYaw;
         checkStretchCompletion(pitch, roll, yaw);
+        // print([pitch, roll, yaw]);
       });
     });
   }
@@ -107,7 +122,8 @@ class _StretchingSessionState extends State<StretchingSession> {
   @override
   void dispose() {
     _updateDataTimer?.cancel();
-
+    _flutterTts.stop();
+    _bgAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -136,7 +152,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void startTimer(double duration) {
     _timer = Timer.periodic(const Duration(milliseconds: 050), (timer) {
-      if(isStretchingProcess){
+      if(mounted && isStretchingProcess){
         setState(() {
           _elapsedTime += 0.050;
           // print('타이머!');
@@ -163,6 +179,14 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void checkStretchCompletion(double pitch, double roll, double yaw) {
     final currentAction = selectedStretchingGroup!.actions[currentStepIndex];
+    //yaw쓰는 동작일때는 센서값 보정 기회를 줘야함
+    if (currentAction.progressVariable == ProgressVariable.yaw ||
+        currentAction.progressVariable == ProgressVariable.negativeYaw) {
+      isUsedYaw = true;
+    } else {
+      isUsedYaw = false;
+    }
+
     double value=0;
     switch (currentAction.progressVariable) {
       case ProgressVariable.pitch:
@@ -239,7 +263,7 @@ class _StretchingSessionState extends State<StretchingSession> {
 
   void _showCompletionDialog() {
     _toggleStretchingWidget(); // 스트레칭 비활성화
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => StretchingCompletedScreen(shouldResetTimer: widget.shouldResetTimer,)),
@@ -356,6 +380,15 @@ class _StretchingSessionState extends State<StretchingSession> {
                 )),
             SizedBox(height: res.percentHeight(5)),
             stretchingProgressBar,
+            SizedBox(height: res.percentHeight(1)),
+            //yaw데이터 리셋 버튼
+            if(isUsedYaw) Padding(
+              padding: EdgeInsets.only(right: Responsive(context).percentWidth(5)), // 오른쪽 여백 설정
+              child: Align(
+                alignment: Alignment.centerRight, // 오른쪽 정렬
+                child: SensorDataAdjustWidget(),
+              ),
+            )
           ],
         )),
       ),

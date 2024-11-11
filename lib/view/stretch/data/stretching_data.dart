@@ -74,7 +74,6 @@ class StretchingData {
             progressVariable: ProgressVariable.pitch,
           ),
           StretchingAction(
-            animationAvailable: true,
             name: strchLan[lanCode]?['stretch2'] ?? 'Short Break',
             isCompleted: (pitch, roll, yaw) => true,
             duration: 5,
