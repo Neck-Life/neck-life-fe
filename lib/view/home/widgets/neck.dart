@@ -76,7 +76,7 @@ class NeckState extends State<Neck> with SingleTickerProviderStateMixin {
   }
 
   bool _isNowTurtle() {
-    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition >= 0.2) {
+    if (DetectStatus.initialPitch - _pitch > _turtleThreshold[DetectStatus.sSensitivity] || DetectStatus.nowPosition >= 0.12) {
       return true;
     } else {
       return false;
