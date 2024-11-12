@@ -230,7 +230,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
 
     // print(data.attitude.yaw.toDouble());
-    if ((DetectStatus.initialYaw - data.attitude.yaw.toDouble()).abs() > 0.4) {
+    if ((DetectStatus.initialYaw - data.attitude.yaw.toDouble()).abs() > 0.3) {
 
 
       position = 0;
@@ -247,14 +247,14 @@ class AirpodsCalMovingAvgZupt extends Filter{
     int size = 30;
     if(pitchs.length > size) pitchs.removeAt(0);
 
-    if(yaws.length > 3) yaws.removeAt(0);
+    if(yaws.length > 10) yaws.removeAt(0);
 
     double pitchSum= pitchs.reduce((a,b)=>a+b)/size;
-    double yawSum= yaws.reduce((a,b)=>a+b)/3;
+    double yawSum= yaws.reduce((a,b)=>a+b)/10;
 
     // print(yawSum);
 
-    if(yawSum > 0.03) {
+    if(yawSum > 0.015) {
       // print("고개돌림 없애기");
 
       position = 0;
@@ -263,13 +263,21 @@ class AirpodsCalMovingAvgZupt extends Filter{
 
     }
     // print(pitchSum);
-    if(pitchSum > 0.02){
+    if(pitchSum > 0.013){
       // print("고개끄덕임 없애기");
 
 
       position = 0;
       velocity = 0;
     }
+
+    if(yawSum + pitchSum > 0.018) {
+      print("고개끄덕임 없애기");
+      position = 0;
+      velocity = 0;
+
+    }
+
     // for(int i = 0; i < pitchs.length/2; i++){
     //   pitchSum1 += pitchs[i];
     // }
