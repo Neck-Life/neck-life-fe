@@ -397,7 +397,9 @@
       "stretching_interval_disabled": "Off",
       "stretching_interval_10s": "10s",
       "stretching_interval_10m": "10m",
+      "stretching_interval_20m": "20m",
       "stretching_interval_30m": "30m",
+      "stretching_interval_40m": "40m",
       "stretching_interval_50m": "50m",
       "stretching_selection": "Choose Stretch Type",
       "stretching_selection_description": "Select your preferred stretch, and we’ll guide you through it.",
@@ -417,11 +419,13 @@
       "stretch_prompt": "{} minutes have passed.\\nReady to stretch?",
       "detection_time": "Detection Time: {}, Stretches: {}",
       "no_stretch": "Not now ({})",
-      "start_stretching": "Stretch"
+      "start_stretching": "Stretch",
+      "start_stretching_with_airpods": "Stretch after connecting AirPods"
     },
     "exit_modal": {
       "stretch_exit_prompt": "Stop stretching?",
       "detection_time_info": "Detection Time: {}, Stretches: {}",
+
       "continue_stretching": "Continue",
       "stop_stretching": "Stop"
     },
