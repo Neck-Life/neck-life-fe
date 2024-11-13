@@ -159,10 +159,17 @@ class _StretchingSessionState extends State<StretchingSession> {
   }
 
   void startTimer(double duration) {
+    int _lastSecond = 0;
     _timer = Timer.periodic(const Duration(milliseconds: 050), (timer) {
       if(mounted && isStretchingProcess){
         setState(() {
           _elapsedTime += 0.050;
+          int _currentSecond = _elapsedTime.floor();
+          if(_currentSecond >=2 && _currentSecond > _lastSecond){
+            _lastSecond = _currentSecond;
+            // print([_currentSecond, _lastSecond]);
+            _speak('${_elapsedTime.floor()}'); //매초마다 나레이션
+          }
           // print('타이머!');
         });
       }
