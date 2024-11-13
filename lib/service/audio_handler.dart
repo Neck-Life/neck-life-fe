@@ -422,9 +422,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   bool _checkIsHeadDown() {
 
-    // print(DetectStatus.initialPitch - _nowPitch);
 
-    // print("?? ${_slouchTiltThreshold[DetectStatus.sSensitivity]}");
     if (DetectStatus.initialPitch - _nowPitch > _slouchTiltThreshold[DetectStatus.sSensitivity]) {
 
 
@@ -448,7 +446,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
 
   bool _checkIsForward() {
-    if (DetectStatus.nowPosition > 0.2) {
+    if (DetectStatus.nowPosition > 0.12) {
       return true;
     } else {
       return false;
