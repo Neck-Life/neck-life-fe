@@ -9,10 +9,13 @@ import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../theme/component/text_default.dart';
+import '../../../service/status_provider.dart';
 import '../../../service/stretching_timer.dart';
+import '../../../theme/component/button.dart';
 import '../../../util/localization_string.dart';
 import '../data/stretching_data.dart';
 import '../models/stretching_action.dart';
+import '../stretching_session.dart';
 
 
 class StretchingAlarmSetting extends StatefulWidget {
@@ -82,7 +85,7 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: res.percentHeight(2)),
+            SizedBox(height: res.percentHeight(1)),
             WhiteContainer(
               width: 87.5,
               padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(3.5)),
@@ -116,7 +119,7 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                           onChanged: (bool value) {
                             setState(() {
                               _stretchingSetted = value;
-                              stretchingTimer.setStretchingIntervalIndex(value ? 2 : 0);
+                              stretchingTimer.setStretchingIntervalIndex(value ? 1 : 0);
                               _selectedIntervalIndex = value ? 1 : 0;
                               // StretchingTimer.isStretchingMode = false;
                             });
@@ -140,8 +143,8 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                             ),
                             child: Slider(
                               value: _selectedIntervalIndex-1 < 0 ? 0 : _selectedIntervalIndex-1,
-                              max: 2,
-                              divisions: 2,
+                              max: 4,
+                              divisions: 4,
                               onChanged: (double? value) {
                                 setState(() {
                                   _selectedIntervalIndex = value!+1;
@@ -158,8 +161,10 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                               children: [
                                 // TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_disabled'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
                                 TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_20m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_40m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 4 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 5 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
                               ],
                             ),
                           ),
@@ -242,6 +247,33 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
                 ],
               ),
             ),
+            SizedBox(height: res.percentHeight(1)),
+            !Provider.of<DetectStatus>(context, listen: true).detectAvailable ?
+            Button(
+              onPressed: () {
+                // 스트레칭 버튼 클릭 시 플래그 설정
+                StretchingTimer.isStretchingMode = true;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => StretchingSession()),
+                );
+              },
+              text: LS.tr('stretching.start_modal.start_stretching'),
+              backgroundColor: const Color(0xFF236EF3),
+              color: Colors.white,
+              width: res.percentWidth(87.5),
+              padding: res.percentWidth(4.0),
+            )
+            : Button(
+              onPressed: () {},
+              // text: LS.tr('stretching.start_modal.start_stretching'),
+              text: LS.tr('stretching.start_modal.start_stretching_with_airpods'),
+              backgroundColor: const Color(0xFFCFCFD8),
+              color: Colors.white,
+              width: res.percentWidth(87.5),
+              padding: res.percentWidth(4.0),
+            )
+            ,
             SizedBox(height: res.percentHeight(2)),
             WhiteContainer(
               width: 87.5,

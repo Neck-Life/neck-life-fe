@@ -415,7 +415,9 @@
       "stretching_interval_disabled": "비활성",
       "stretching_interval_10s": "10초",
       "stretching_interval_10m": "10분",
+      "stretching_interval_20m": "20분",
       "stretching_interval_30m": "30분",
+      "stretching_interval_40m": "40분",
       "stretching_interval_50m": "50분",
       "stretching_selection": "스트레칭 선택",
       "stretching_selection_description": "선택한 스트레칭으로 가이드해 드릴게요",
@@ -436,7 +438,8 @@
       "stretch_prompt": "벌써 {}분이 지났어요\\n스트레칭을 해볼까요?",
       "detection_time": "탐지 시간: {}, 스트레칭 : {}",
       "no_stretch": "안할래요 ({})",
-      "start_stretching": "스트레칭 시작"
+      "start_stretching": "스트레칭 시작",
+      "start_stretching_with_airpods": "에어팟 연결 후 스트레칭 시작"
     },
     "exit_modal": {
       "stretch_exit_prompt": "스트레칭을 그만할까요?",

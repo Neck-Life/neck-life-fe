@@ -20,8 +20,8 @@ final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorStat
 class StretchingTimer extends ChangeNotifier {
   Timer? _timer;
 
-  final List<int?> _intervals = [null, 600, 1800, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
-  int _selectedIntervalIndex = 2; // 초기 인덱스 -> 기본 30분
+  final List<int?> _intervals = [null, 600, 1200, 1800, 2400, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
+  int _selectedIntervalIndex = 1; // 초기 인덱스 -> 기본 30분
   int _selectedStretchingIndex = 0; // 초기 인덱스 -> 기본 3
   int get selectedIntervalIndex => _selectedIntervalIndex;
   int get selectedStretchingIndex => _selectedStretchingIndex;
