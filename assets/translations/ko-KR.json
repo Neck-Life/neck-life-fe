@@ -431,7 +431,7 @@
     "timer": {
       "stretching_reminder_title": "네키: 스트레칭 알리미",
       "stretching_reminder_body": "{}분 후에 네키가 스트레칭 알림을 보내드릴게요!",
-      "stretching_time_passed": "벌써 {}분이 지났어요!\n네키랑 같이 스트레칭 해볼까요?"
+      "stretching_time_passed": "벌써 {}분이 지났어요!\\n네키랑 같이 스트레칭 해볼까요?\\n[여기 눌러 시작하세요!]"
     },
 
     "start_modal": {

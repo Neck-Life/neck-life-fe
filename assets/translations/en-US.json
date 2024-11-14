@@ -410,7 +410,7 @@
     "timer": {
       "stretching_reminder_title": "Necki: Your Stretch Assistant",
       "stretching_reminder_body": "Necki will remind you to stretch in {} minutes!",
-      "stretching_time_passed": "{} minutes have passed!\\nLet’s take a stretch break with Necki!"
+      "stretching_time_passed": "{} minutes have passed!\\nLet’s take a stretch break with Necki!\\n[Click Here]"
     },
     "start_modal": {
       "stretch_prompt": "{} minutes have passed.\\nReady to stretch?",
