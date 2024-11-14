@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mocksum_flutter/main.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
@@ -93,7 +94,14 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
+                  Row(
+                    children: [
+                      SvgPicture.asset('assets/icons/time.svg'),
+                      SizedBox(width: res.percentWidth(0.5),),
+                      TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
+
+                    ],
+                  ),
                   SizedBox(height: res.percentHeight(0.5)),
                   TextDefault(
                     content: LS.tr('stretching.stretching_alarm.stretching_alarm_description'),
@@ -248,7 +256,7 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               ),
             ),
             SizedBox(height: res.percentHeight(1)),
-            !Provider.of<DetectStatus>(context, listen: true).detectAvailable ?
+            Provider.of<DetectStatus>(context, listen: true).detectAvailable ?
             Button(
               onPressed: () {
                 // 스트레칭 버튼 클릭 시 플래그 설정

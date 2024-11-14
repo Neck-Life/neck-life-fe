@@ -388,8 +388,8 @@
     "stretching_alarm": {
       "title": "Setting",
       "title2": "Stretching Sets",
-      "stretching_alarm_setting": "Set Reminder Interval",
-      "stretching_alarm_description": "Set how often you’d like to be reminded to stretch during posture detection.",
+      "stretching_alarm_setting": "Stretching Reminder",
+      "stretching_alarm_description": "We'll remind you to stretch at your chosen interval during posture detection.",
       "use_reminder": "Use Stretching Reminder",
       "stretching_interval_disabled": "Off",
       "stretching_interval_10s": "10s",
