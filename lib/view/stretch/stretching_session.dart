@@ -30,7 +30,7 @@ import '../../util/time_convert.dart';
 import 'data/stretching_data.dart';
 import 'models/stretching_action.dart';
 
-final _bgAudioPlayer = AudioPlayer();
+late AudioPlayer _bgAudioPlayer;
 const NotificationDetails _details = NotificationDetails(
     android: AndroidNotificationDetails('temp1', 'asdf'),
     iOS: DarwinNotificationDetails(
@@ -44,8 +44,8 @@ Future<void> _showPushAlarm(String title, String body) async {
   FlutterLocalNotificationsPlugin localNotification =
   FlutterLocalNotificationsPlugin();
   // await localNotification.cancel(11); //목 돌리기 운동처럼 동작시간이 짧으면 알림이 씹힘 ㅠ
-  _bgAudioPlayer.seek(Duration.zero);
-  _bgAudioPlayer.play();
+  await _bgAudioPlayer.seek(Duration.zero);
+  await _bgAudioPlayer.play();
 
   await localNotification.show(11, // 푸쉬알림고유ID
       title,
@@ -99,6 +99,7 @@ class _StretchingSessionState extends State<StretchingSession> {
     _ad.load();
 
     ()async{ //오디오 초기화
+      _bgAudioPlayer = AudioPlayer();
       await _bgAudioPlayer.setAsset('assets/noti.mp3');
       await _bgAudioPlayer.setVolume(1);
     }();

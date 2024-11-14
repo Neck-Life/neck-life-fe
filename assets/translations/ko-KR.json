@@ -412,8 +412,8 @@
     "stretching_alarm": {
       "title": "설정",
       "title2": "스트레칭 세트",
-      "stretching_alarm_setting": "스트레칭 알람 주기 설정",
-      "stretching_alarm_description": "자세탐지 도중 스트레칭 알람 주기를 설정할 수 있어요",
+      "stretching_alarm_setting": "스트레칭 리마인더",
+      "stretching_alarm_description": "자세 탐지 중 설정한 시간마다 스트레칭을 알려드려요",
       "use_reminder": "스트레칭 리마인더 사용",
       "stretching_interval_disabled": "비활성",
       "stretching_interval_10s": "10초",
@@ -434,7 +434,7 @@
     "timer": {
       "stretching_reminder_title": "네키: 스트레칭 알리미",
       "stretching_reminder_body": "{}분 후에 네키가 스트레칭 알림을 보내드릴게요!",
-      "stretching_time_passed": "벌써 {}분이 지났어요!\n네키랑 같이 스트레칭 해볼까요?"
+      "stretching_time_passed": "벌써 {}분이 지났어요!\\n네키랑 같이 스트레칭 해볼까요?\\n[여기 눌러 시작하세요!]"
     },
 
     "start_modal": {
