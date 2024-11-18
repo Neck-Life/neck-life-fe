@@ -168,8 +168,6 @@ class _HomeState extends State<Home> {
       // }
       // print(useSec);
       if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
-        Provider.of<DetectStatus>(context, listen: false).endDetecting();
-        _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         // _liveActivitiesPlugin.endAllActivities();
@@ -178,15 +176,18 @@ class _HomeState extends State<Home> {
         // });
         Navigator.push(
             context, MaterialPageRoute(builder: (
-            context) => const Loading()));
+            context) => Loading(
+          callback: () async{
+            await Provider.of<DetectStatus>(context, listen: false).endDetecting();
+            await _audioHandler?.pause();
+          },
+        )));
         _showPushAlarm();
       }
 
       if (Provider.of<DetectStatus>(context, listen: false).useTimeLimit &&
           useSec - Provider.of<GlobalTimer>(context, listen: false).secOnStart >= Provider.of<DetectStatus>(context, listen: false).detectionMin*60) {
 
-        Provider.of<DetectStatus>(context, listen: false).endDetecting();
-        _audioHandler?.pause();
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         // _liveActivitiesPlugin.endAllActivities();
@@ -195,7 +196,12 @@ class _HomeState extends State<Home> {
         // });
         Navigator.push(
             context, MaterialPageRoute(builder: (
-            context) => const Loading()));
+            context) =>  Loading(
+          callback: () async{
+            await Provider.of<DetectStatus>(context, listen: false).endDetecting();
+            await _audioHandler?.pause();
+          },
+        )));
         _showPushAlarm2();
       }
 

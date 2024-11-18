@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
@@ -7,10 +9,12 @@ import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:provider/provider.dart';
 
+import '../service/global_timer.dart';
 import '../service/history_provider.dart';
 
 class Loading extends StatefulWidget {
-  const Loading({super.key});
+  final Function? callback;
+  const Loading({super.key,  this.callback});
 
   @override
   State<StatefulWidget> createState() => _LoadingState();
@@ -23,6 +27,10 @@ class _LoadingState extends State<Loading> {
 
   @override
   void initState() {
+    const storage = FlutterSecureStorage();
+    storage.write(key: 'useSec', value: '${Provider.of<GlobalTimer>(context, listen: false).useSec}');
+    SchedulerBinding.instance.addPostFrameCallback( (_) {widget.callback?.call();} ); // 이거 안하면, 빌드중 상태변경 시도해서 에러뜸
+
     Future.delayed(const Duration(seconds: 2), () async {
       // await Provider.of<HistoryStatus>(context, listen: false).updateHistoryData(DateTime.now().year.toString(), DateTime.now().month.toString().padLeft(2, '0'));
       // await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');
