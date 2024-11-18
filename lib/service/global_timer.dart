@@ -65,7 +65,7 @@ class GlobalTimer with ChangeNotifier {
     }
     notifyListeners();
     emitTimeEvent(_useSec);
-    await storage.write(key: 'useSec', value: '$_useSec');
+    // await storage.write(key: 'useSec', value: '$_useSec');
   }
 
   void startTimer() {
