@@ -33,6 +33,7 @@ import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
+import '../../main.dart';
 import '../../model/pose_duration.dart';
 import '../../service/user_provider.dart';
 import '../../theme/blur_to_login.dart';
@@ -163,7 +164,7 @@ class _HistoryState extends State<History> {
   }
 
   Future<void> getHistoryData(int year, int month) async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     // print('gethis');
     try {
       String? accessToken = await storage.read(key: 'accessToken');
@@ -243,7 +244,7 @@ class _HistoryState extends State<History> {
 
   Future<void> getScoreSeriesV2(String duration) async {
     // print('getsore');
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     try {
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken != null && accessToken != '') {

@@ -34,6 +34,7 @@ import 'package:mocksum_flutter/util/localization_string.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:live_activities/live_activities.dart';
 
+import '../../main.dart';
 import '../../service/stretching_timer.dart';
 import '../../theme/component/button.dart';
 import '../../util/ad_manager.dart';
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
 
   final appLinks = AppLinks();
 
-  static const storage = FlutterSecureStorage();
+  // static const storage = FlutterSecureStorage();
   static MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
@@ -170,18 +171,14 @@ class _HomeState extends State<Home> {
       if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
         //   activityID = null;
         // });
         Navigator.push(
-            context, MaterialPageRoute(builder: (
-            context) => Loading(
-          callback: () async{
-            await Provider.of<DetectStatus>(context, listen: false).endDetecting();
-            await _audioHandler?.pause();
-          },
-        )));
+            context, MaterialPageRoute(builder: (context) => Loading()));
         _showPushAlarm();
       }
 
@@ -190,18 +187,14 @@ class _HomeState extends State<Home> {
 
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
         //   activityID = null;
         // });
         Navigator.push(
-            context, MaterialPageRoute(builder: (
-            context) =>  Loading(
-          callback: () async{
-            await Provider.of<DetectStatus>(context, listen: false).endDetecting();
-            await _audioHandler?.pause();
-          },
-        )));
+            context, MaterialPageRoute(builder: (context) => Loading()));
         _showPushAlarm2();
       }
 

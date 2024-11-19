@@ -6,15 +6,12 @@ import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/view/stretch/models/stretching_action.dart';
 import 'package:provider/provider.dart';
+import '../main.dart';
 import '../util/localization_string.dart';
 import '../view/stretch/data/stretching_data.dart';
 import '../view/stretch/stretching.dart';
 import '../view/stretch/widgets/stretching_start_modal.dart';
 
-/**
- * TODO: interval[] 단위: second vs minutes 결정하기 (현재는 10초로 테스트하는중)
- * TODO: 오늘 스트레칭한 횟수 반영 (서버 연동 고려)
- * */
 final GlobalKey<NavigatorState> stretchingNavigatorKey = GlobalKey<NavigatorState>();
 
 class StretchingTimer extends ChangeNotifier {
@@ -36,7 +33,7 @@ class StretchingTimer extends ChangeNotifier {
   }
   //스토리지에 스트레칭 알림 설정 저장
   void init() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? selectedIntervalIndexStorage = await storage.read(key: 'selectedIntervalIndex');
     String? selectedStretchingIndexStorage = await storage.read(key: 'selectedStretchingIndex');
     String? completedStretchCountStorage = await storage.read(key: 'completedStretchCount');
@@ -78,7 +75,7 @@ class StretchingTimer extends ChangeNotifier {
     _selectedIntervalIndex = index;
     notifyListeners(); // 모든 리스너에게 변경 사항을 알림
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'selectedIntervalIndex', value: _selectedIntervalIndex.toString());
   }
 
@@ -91,7 +88,7 @@ class StretchingTimer extends ChangeNotifier {
     _selectedStretchingIndex = index;
     notifyListeners(); // 모든 리스너에게 변경 사항을 알림
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'selectedStretchingIndex', value: _selectedStretchingIndex.toString());
   }
 
@@ -99,7 +96,7 @@ class StretchingTimer extends ChangeNotifier {
   void finishStretchingSession() async{
     isStretchingMode = false;
     completedStretchCount++;
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'completedStretchCount', value: completedStretchCount.toString());
 
     notifyListeners(); // UI 업데이트 트리거

@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 
+import '../main.dart';
 
 class HistoryStatus {
   static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
@@ -18,7 +19,7 @@ class HistoryStatus {
 
 
   static Future<void> postMeasuredPoseData(dynamic pitchLog,dynamic forwardLog,dynamic tiltLog, dynamic rawData  ) async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
 
     print('postMeasuredPoseData');
     String? accessToken = await storage.read(key: 'accessToken');
@@ -122,7 +123,7 @@ class HistoryStatus {
   }
 
   static Future<void> postDataNotPosted() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
 
     // print('post not posted');
     String? accessToken = await storage.read(key: 'accessToken');

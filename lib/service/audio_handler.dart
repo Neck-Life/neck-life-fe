@@ -14,6 +14,7 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../main.dart';
 import 'global_timer.dart';
 
 
@@ -77,7 +78,7 @@ class MyAudioHandler extends BaseAudioHandler {
   int LoggingTime = 2;
 
   void _setAudioFile() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? filename = await storage.read(key: 'soundFileName');
     String? volume = await storage.read(key: 'soundVolume');
     _alertVolume = double.parse(volume ?? '0.4');

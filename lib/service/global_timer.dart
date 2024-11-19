@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../main.dart';
 
 class GlobalTimer with ChangeNotifier {
 
@@ -17,14 +18,14 @@ class GlobalTimer with ChangeNotifier {
 
   int get useSec => _useSec;
   int get secOnStart => _secOnStart;
-
+  bool get isRunning => _isRunning;
   GlobalTimer() {
     init();
   }
 
   void init() async {
     // print('timer init');
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? lastDate = await storage.read(key: 'lastDate');
     String? useSecStr = await storage.read(key: 'useSec');
     DateTime now = DateTime.now();
@@ -53,7 +54,7 @@ class GlobalTimer with ChangeNotifier {
   }
 
   void updateNowTime() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     DateTime now = DateTime.now();
 
     if (_lastDate != '${now.year}-${now.month}-${now.day}') {
@@ -65,7 +66,29 @@ class GlobalTimer with ChangeNotifier {
     }
     notifyListeners();
     emitTimeEvent(_useSec);
-    // await storage.write(key: 'useSec', value: '$_useSec');
+    // try{
+    //   String? existingData =  await storage.read(key: 'useSec');
+    //   // 기존 값이 있으면 새로운 설정으로 덮어쓰기를 진행
+    //   print('1 $existingData');
+    //   if (existingData != null) {
+    //     await storage.delete(key: 'useSec');  // 기존 데이터를 삭제
+    //     await newStorage.write(key: 'useSec', value: existingData);  // 새로운 옵션으로 다시 저장
+    //   }
+    //   else{
+    //     await newStorage.write(key: 'useSec', value: '$_useSec');  // 새로운 옵션으로 다시 저장
+    //   }
+    //   // await storage.write(key: 'useSec', value: '$_useSec');
+    //   //   accessibility: KeychainAccessibility.first_unlock_this_device,
+    //   //   synchronizable: true,
+    //   // ));
+    // }catch(err){
+    //   print(err);
+    //   await newStorage.delete(key: 'useSec', iOptions: const IOSOptions());
+    //   await newStorage.write(key: 'useSec', value: '$_useSec');
+    // }
+    // TODO: 10초 or 30초 간격으로 IO처리 하도록 개선하기
+    await storage.write(key: 'useSec', value: '$_useSec');
+    // print('2 ${await storage.read(key: 'useSec')}');
   }
 
   void startTimer() {
