@@ -272,7 +272,7 @@ class AirpodsCalMovingAvgZupt extends Filter{
     }
 
     if(yawSum + pitchSum > 0.018) {
-      print("고개끄덕임 없애기");
+      // print("고개끄덕임 없애기");
       position = 0;
       velocity = 0;
 

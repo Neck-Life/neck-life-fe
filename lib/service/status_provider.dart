@@ -17,6 +17,7 @@ class DetectStatus with ChangeNotifier {
   static int sAlarmGap = 5;
   static double sSoundVolume = 0.4;
   static bool sPushNotiAvtive = true;
+  static bool sUseHorizontalMove = true;
 
   static bool isLabMode = true;
 
@@ -51,6 +52,7 @@ class DetectStatus with ChangeNotifier {
   bool _useTimeLimit = true;
   int _detectionMin = 10;
   String _soundFileName = 'noti.mp3';
+  bool _useHorizontalMove = true;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
@@ -63,6 +65,7 @@ class DetectStatus with ChangeNotifier {
   bool get useTimeLimit => _useTimeLimit;
   int get detectionMin => _detectionMin;
   String get soundFileName => _soundFileName;
+  bool get useHorizontalMove => _useHorizontalMove;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
@@ -94,6 +97,7 @@ class DetectStatus with ChangeNotifier {
     String? soundVolumeStr = await storage.read(key: 'soundVolume');
     String? pushNotiAcTiveStr = await storage.read(key: 'pushNotiActive');
     String? soundFileNameStr = await storage.read(key: 'soundFileName');
+    String? useHorizontalMoveStr = await storage.read(key: 'useHorizontalMove');
 
     if (sensitivitySetting != null) {
       _sensitivity = int.parse(sensitivitySetting);
@@ -122,7 +126,10 @@ class DetectStatus with ChangeNotifier {
     if (soundFileNameStr != null) {
       _soundFileName = soundFileNameStr;
       sSoundFileName = soundFileNameStr;
-      print(soundFileNameStr);
+    }
+    if (useHorizontalMoveStr != null) {
+      _useHorizontalMove = useHorizontalMoveStr == '1';
+      sUseHorizontalMove = _useHorizontalMove;
     }
   }
 
@@ -181,6 +188,14 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     const storage = FlutterSecureStorage();
     await storage.write(key: 'pushNotiActive', value: value ? "1" : "0");
+  }
+
+  void setUseHorizontalMove(bool value) async {
+    _useHorizontalMove = value;
+    sUseHorizontalMove = value;
+    notifyListeners();
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'useHorizontalMove', value: value ? '1' : '0');
   }
 
   void setAlarmGap(int alarmGapVal) async {

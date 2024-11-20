@@ -322,7 +322,7 @@ class _SettingState extends State<Settings> {
               GestureDetector(
                 onDoubleTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('1.2.3+1'),
+                    content: Text('1.3.2+4'),
                     duration: Duration(seconds: 1),
                   ));
                 },

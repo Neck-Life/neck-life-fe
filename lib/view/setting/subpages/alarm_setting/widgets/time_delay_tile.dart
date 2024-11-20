@@ -24,8 +24,9 @@ class TimeDelayTile extends StatelessWidget {
       onTap: () {
         onChange(alarmDelay);
       },
-      child: SizedBox(
+      child: Container(
         height: res.percentHeight(6),
+        color: Colors.transparent,
         child: Row(
           children: [
             Container(

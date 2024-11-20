@@ -186,11 +186,12 @@ class UserStatus with ChangeNotifier {
     }
 
     // print(_refreshTokenTemp);
+
     final res = await post(
       '$serverAddress/members/token',
       {'refreshToken': _refreshTokenTemp,
         'timeZone': currentTimeZone,
-        'language' : language},
+        'language' : Platform.localeName},
     );
 
     // print(res.statusCode);
@@ -223,49 +224,6 @@ class UserStatus with ChangeNotifier {
     }
   }
 
-  Future<void> getRefreshedTokenStatic(String refreshToken) async {
-    if (refreshToken == '') {
-      return;
-    }
-    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-
-    // print(_refreshTokenTemp);
-    final res = await post(
-      '$serverAddress/members/token',
-      {'refreshToken': _refreshTokenTemp,
-        'timeZone': currentTimeZone,
-        'language' : language
-      },
-    );
-
-    // print(res.statusCode);
-
-
-    if (res.statusCode ~/ 100 == 2) {
-      Map<String, dynamic> resData = jsonDecode(res.body);
-      _accessTokenTemp = resData['data']['accessToken'];
-      _refreshTokenTemp = resData['data']['refreshToken'];
-
-      const storage = FlutterSecureStorage();
-      await storage.write(key: 'accessToken', value: _accessTokenTemp);
-      await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
-
-      // print('토큰 재발급 완료: $_accessTokenTemp');
-    } else {
-      // print('토큰 재발급 실패');
-      _accessTokenTemp = '';
-      _refreshTokenTemp = '';
-      const storage = FlutterSecureStorage();
-      await storage.delete(key: 'accessToken');
-      await storage.delete(key: 'refreshToken');
-      await storage.delete(key: 'email');
-
-      _isLogged = false;
-      sIsLogged = false;
-      notifyListeners();
-
-    }
-  }
 
   Future<void> handleLogout(BuildContext context) async {
     _accessTokenTemp = '';
@@ -350,10 +308,11 @@ class UserStatus with ChangeNotifier {
     // print('asdfasfsafsfs');
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
 
+    log('$currentTimeZone $language');
     final res = await post(
         '$serverAddress/members',
         {'code': idToken, 'provider': provider,
-          'timeZone': currentTimeZone, 'language' : language
+          'timeZone': currentTimeZone, 'language' : Platform.localeName
         }
     );
 
