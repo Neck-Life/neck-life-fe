@@ -173,6 +173,7 @@ class _HomeState extends State<Home> {
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
+        _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
         //   activityID = null;
@@ -189,6 +190,7 @@ class _HomeState extends State<Home> {
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
         _audioHandler?.pause();
+        _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
         //   activityID = null;
