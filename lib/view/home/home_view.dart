@@ -179,7 +179,7 @@ class _HomeState extends State<Home> {
         //   activityID = null;
         // });
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Loading()));
+            context, MaterialPageRoute(builder: (context) => const Loading()));
         _showPushAlarm();
       }
 
@@ -196,7 +196,7 @@ class _HomeState extends State<Home> {
         //   activityID = null;
         // });
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Loading()));
+            context, MaterialPageRoute(builder: (context) => const Loading()));
         _showPushAlarm2();
       }
 
