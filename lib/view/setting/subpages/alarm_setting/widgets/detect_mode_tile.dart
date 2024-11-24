@@ -44,9 +44,9 @@ class DetectModeTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextDefault(content: useHorizontalMove ? 'setting_subpages.alarm_setting.alarm_setting_view.horizon_o1'.tr() : 'setting_subpages.alarm_setting.alarm_setting_view.horizon_o2', fontSize: 16, isBold: false,),
+                  TextDefault(content: useHorizontalMove ? 'setting_subpages.alarm_setting.alarm_setting_view.horizon_o1'.tr() : 'setting_subpages.alarm_setting.alarm_setting_view.horizon_o2'.tr(), fontSize: 16, isBold: false,),
                   TextDefault(
-                    content: useHorizontalMove ? 'setting_subpages.alarm_setting.alarm_setting_view.recommend1' : 'setting_subpages.alarm_setting.alarm_setting_view.recommend2',
+                    content: useHorizontalMove ? 'setting_subpages.alarm_setting.alarm_setting_view.recommend1'.tr() : 'setting_subpages.alarm_setting.alarm_setting_view.recommend2'.tr(),
                     fontSize: 13,
                     isBold: false,
                     fontColor: const Color(0xFF8991A0),
