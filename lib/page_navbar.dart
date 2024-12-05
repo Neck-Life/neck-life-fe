@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/setting/setting_view.dart';
 import 'package:app_settings/app_settings.dart';
+import 'main.dart';
 
 class PageNavBar extends StatefulWidget {
   final int? pageIdx;
@@ -103,10 +104,16 @@ class _PageNavBarState extends State<PageNavBar> {
 
 
   Future<void> _updateIsFirstLaunch() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? first = await storage.read(key: 'first');
     if (first == null) {
       _isFirstLaunch = true;
+      /**
+       * 기존 기본옵션으로 저장된 스토리지키들 전부 삭제
+       * 동일키 다른옵션으로 저장되어있으면 충돌되는 이슈 존재
+       * written by ryu
+       **/
+      await storage.deleteAll(iOptions: const IOSOptions());
       await storage.write(key: 'first', value: '1');
     }
     // _isFirstLaunch = true;

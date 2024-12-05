@@ -21,6 +21,7 @@ import 'package:mocksum_flutter/view/setting/widgets/two_btn_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
+import '../../main.dart';
 import '../../util/localization_string.dart';
 import '../../util/responsive.dart';
 
@@ -215,7 +216,7 @@ class _SettingState extends State<Settings> {
                             print(deleteReason);
                             bool success = await userStatus2.deleteAccount(deleteReason);
                             if (success) {
-                              const storage = FlutterSecureStorage();
+                              // const storage = FlutterSecureStorage();
                               storage.deleteAll();
                               userStatus2.cleanAll();
                               // Provider.of<HistoryStatus>(context, listen: false).clearAll();

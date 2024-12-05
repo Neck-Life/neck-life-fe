@@ -2,10 +2,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../main.dart';
+/**
+ * TODO: 첫 로그인시 재호출 필요 -> accessToken이 없기때문에 첫 로드시에는 씹히게 됨
+ * */
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final Dio dio = Dio();
-  final storage = FlutterSecureStorage(); // Flutter Secure Storage 인스턴스 생성
+  // final storage = FlutterSecureStorage(); // Flutter Secure Storage 인스턴스 생성
 
 
   // static const String serverAddress = 'http://43.200.200.34/api/v1';

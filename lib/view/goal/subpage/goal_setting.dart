@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../theme/asset_icon.dart';
 import '../../../../theme/component/text_default.dart';
+import '../../../main.dart';
 import '../../../service/history_provider.dart';
 import '../../../service/user_provider.dart';
 
@@ -170,7 +171,7 @@ class _GoalSettingState extends State<GoalSetting> {
       return;
     }
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
 
@@ -239,7 +240,7 @@ class _GoalSettingState extends State<GoalSetting> {
       return;
     }
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
 
@@ -312,7 +313,7 @@ class _GoalSettingState extends State<GoalSetting> {
       return;
     }
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
 
     String? accessToken = await storage.read(key: 'accessToken');
 

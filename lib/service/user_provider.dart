@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import '../main.dart';
 
 class UserStatus with ChangeNotifier {
   static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
@@ -53,7 +54,7 @@ class UserStatus with ChangeNotifier {
 
 
     if (_accessTokenTemp == '' || _refreshTokenTemp == '') {
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
 
       String? accessToken = await storage.read(key: 'accessToken');
       String? refreshToken = await storage.read(key: 'refreshToken');
@@ -115,7 +116,7 @@ class UserStatus with ChangeNotifier {
 
   // AccessToken과 RefreshToken을 확인하여 처리하는 함수
   Future<bool> checkAndUpdateToken() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? accessToken = await storage.read(key: 'accessToken');
     String? refreshToken = await storage.read(key: 'refreshToken');
 
@@ -144,7 +145,7 @@ class UserStatus with ChangeNotifier {
 
       _accessTokenTemp = '';
       _refreshTokenTemp = '';
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.delete(key: 'accessToken');
       await storage.delete(key: 'refreshToken');
       await storage.delete(key: 'email');
@@ -201,7 +202,7 @@ class UserStatus with ChangeNotifier {
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];
 
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: _accessTokenTemp);
       await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
 
@@ -212,7 +213,7 @@ class UserStatus with ChangeNotifier {
       // print('토큰 재발급 실패');
       _accessTokenTemp = '';
       _refreshTokenTemp = '';
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.delete(key: 'accessToken');
       await storage.delete(key: 'refreshToken');
       await storage.delete(key: 'email');
@@ -246,7 +247,7 @@ class UserStatus with ChangeNotifier {
       _accessTokenTemp = resData['data']['accessToken'];
       _refreshTokenTemp = resData['data']['refreshToken'];
 
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: _accessTokenTemp);
       await storage.write(key: 'refreshToken', value: _refreshTokenTemp);
 
@@ -255,7 +256,7 @@ class UserStatus with ChangeNotifier {
       // print('토큰 재발급 실패');
       _accessTokenTemp = '';
       _refreshTokenTemp = '';
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.delete(key: 'accessToken');
       await storage.delete(key: 'refreshToken');
       await storage.delete(key: 'email');
@@ -271,7 +272,7 @@ class UserStatus with ChangeNotifier {
     _accessTokenTemp = '';
     _refreshTokenTemp = '';
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.delete(key: 'accessToken');
     await storage.delete(key: 'refreshToken');
     await storage.delete(key: 'email');
@@ -314,7 +315,7 @@ class UserStatus with ChangeNotifier {
     _isPremium = false;
     _email = '';
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     // await storage.deleteAll();
     await storage.delete(key: 'accessToken');
     await storage.delete(key: 'refreshToken');
@@ -376,7 +377,7 @@ class UserStatus with ChangeNotifier {
       // notifyListeners();
       // print('login noti');
 
-      const storage = FlutterSecureStorage();
+      // const storage = FlutterSecureStorage();
       await storage.write(key: 'accessToken', value: resData['data']['accessToken']);
       await storage.write(key: 'refreshToken', value: resData['data']['refreshToken']);
       await storage.write(key: 'email', value: resData['data']['email'].toString());

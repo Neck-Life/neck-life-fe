@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../main.dart';
 import '../util/amplitude.dart';
 
 class DetectStatus with ChangeNotifier {
@@ -86,7 +87,7 @@ class DetectStatus with ChangeNotifier {
   void init() async {
     // _nowDetecting = true;
     // _detectAvailable = true;
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? sensitivitySetting = await storage.read(key: 'sensitivity');
     String? alarmSetting = await storage.read(key: 'alarm');
     String? bgSoundSetting = await storage.read(key: 'isBgActive');
@@ -131,7 +132,7 @@ class DetectStatus with ChangeNotifier {
     sNowDetecting = true;
     notifyListeners();
     log('noti-startDetecting');
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '1');
   }
 
@@ -141,7 +142,7 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
     log('noti-endDetecting');
 
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'nowRunning', value: '0');
   }
 
@@ -162,7 +163,7 @@ class DetectStatus with ChangeNotifier {
     _sensitivity = sensitivityVal.toInt();
     sSensitivity = _sensitivity;
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'sensitivity', value: _sensitivity.toString());
   }
 
@@ -171,7 +172,7 @@ class DetectStatus with ChangeNotifier {
     sSoundVolume = volume;
     emitSoundEvent('volume $volume');
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'soundVolume', value: _soundVolume.toString());
   }
 
@@ -179,7 +180,7 @@ class DetectStatus with ChangeNotifier {
     _pushNotiAvtive = value;
     sPushNotiAvtive = value;
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'pushNotiActive', value: value ? "1" : "0");
   }
 
@@ -187,7 +188,7 @@ class DetectStatus with ChangeNotifier {
     _alarmGap = alarmGapVal;
     sAlarmGap = alarmGapVal;
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'alarm', value: alarmGapVal.toString());
   }
 
@@ -195,7 +196,7 @@ class DetectStatus with ChangeNotifier {
     _bgSoungActive = isActive;
     sBgSoundActive = _bgSoungActive;
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
   }
 
@@ -205,7 +206,7 @@ class DetectStatus with ChangeNotifier {
     if (!hasWrote) {
       reviewRequestCount = 30;
     }
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'hasWroteReview', value: hasWrote ? '1' : '0');
   }
 
@@ -239,7 +240,7 @@ class DetectStatus with ChangeNotifier {
     sSoundFileName = filename;
     emitSoundEvent('file $filename');
     notifyListeners();
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     await storage.write(key: 'soundFileName', value: filename);
   }
 }
