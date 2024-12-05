@@ -102,7 +102,7 @@ class StartPositionState extends State<StartPosition> {
           ),
           child: WheelPicker(
             itemCount: ((3600-Provider.of<GlobalTimer>(context, listen: false).useSec)/60).ceil(),
-            builder: (context, index) => TextDefault(content: '${index+1}${context.locale.languageCode == 'ko' ? '분' : "'"}', fontSize: 20, isBold: false, fontColor: const Color(0xFFB0B8C6),),
+            builder: (context, index) => TextDefault(content: '${index+1}${context.locale.languageCode == 'ko' ? '분' : "'"}', fontSize: 25, isBold: true, fontColor: const Color(0xFFB0B8C6),),
             // selectedIndexColor: Colors.orange,
             looping: false,
             onIndexChanged: (idx) {
@@ -110,6 +110,13 @@ class StartPositionState extends State<StartPosition> {
                 _detectionMin = idx+1;
               });
             },
+            style: WheelPickerStyle(
+                itemExtent: res.fontSize(30),
+                squeeze: 0.75,
+                diameterRatio: .8,
+                // surroundingOpacity: .25,
+                magnification: 1.2,
+            ),
             selectedIndexColor: Colors.black
           ),
         );

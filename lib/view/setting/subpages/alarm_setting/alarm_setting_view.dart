@@ -5,6 +5,7 @@ import 'package:mocksum_flutter/theme/component/white_container.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/sound_setting_view.dart';
+import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/widgets/detect_mode_tile.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/widgets/time_delay_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +27,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
   bool _bgSoundActive = false;
   bool _pushNotiActive = true;
   double _volume = 0.4;
+  bool _useHorizontalMove = true;
 
   @override
   void initState() {
@@ -37,6 +39,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
         _bgSoundActive = Provider.of<DetectStatus>(context, listen: false).bgSoundActive;
         _volume = Provider.of<DetectStatus>(context, listen: false).soundVolume;
         _pushNotiActive = Provider.of<DetectStatus>(context, listen: false).pushNotiAvtive;
+        _useHorizontalMove = Provider.of<DetectStatus>(context, listen: false).useHorizontalMove;
       });
     });
   }
@@ -47,6 +50,13 @@ class _AlarmSettingState extends State<AlarmSetting> {
       _alarmGap = value!;
     });
     detectStatus.setAlarmGap(_alarmGap);
+  }
+
+  void changeUseHorizontalMove(bool value, DetectStatus detectStatus) {
+    setState(() {
+      _useHorizontalMove = value;
+    });
+    detectStatus.setUseHorizontalMove(_useHorizontalMove);
   }
 
   @override
@@ -82,6 +92,29 @@ class _AlarmSettingState extends State<AlarmSetting> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: res.percentHeight(2)),
+              WhiteContainer(
+                // margin: EdgeInsets.only(left: res.percentWidth(5)),
+                width: 87.5,
+                padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
+                radius: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextDefault(content: 'setting_subpages.alarm_setting.alarm_setting_view.horizon_check'.tr(), fontSize: 18, isBold: true),
+                    SizedBox(height: res.percentHeight(0.5),),
+                    TextDefault(
+                      content: 'setting_subpages.alarm_setting.alarm_setting_view.horizon_desc'.tr(),
+                      fontSize: 13,
+                      isBold: false,
+                      fontColor: const Color(0xFF8991A0),
+                    ),
+                    SizedBox(height: res.percentHeight(2),),
+                    DetectModeTile(useHorizontalMove: false, onChange: (bool value) => changeUseHorizontalMove(value, detectStatus), chosenVal: _useHorizontalMove),
+                    DetectModeTile(useHorizontalMove: true, onChange: (bool value) => changeUseHorizontalMove(value, detectStatus), chosenVal: _useHorizontalMove),
+                  ],
+                ),
+              ),
+              SizedBox(height: res.percentHeight(2),),
               WhiteContainer(
                 // margin: EdgeInsets.only(left: res.percentWidth(5)),
                 width: 87.5,

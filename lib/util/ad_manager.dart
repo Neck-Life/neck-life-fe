@@ -25,7 +25,7 @@ class AdManager {
     String bannerID = dotenv.get('BANNER_ID${id+1}');
     return BannerAd(
         size: AdSize.banner,
-        adUnitId: bannerID, //isTest ? testAdId :
+        adUnitId: isTest ? testAdId : bannerID, //
         listener: BannerAdListener(
             onAdLoaded: (_) {
               log('loaded');

@@ -23,7 +23,6 @@ class NotificationService {
     // FCM 토큰 가져오기
     String? fcmToken = await _firebaseMessaging.getToken();
 
-
     if (fcmToken != null) {
       print("FCM Token: $fcmToken");
       await sendTokenToServer(fcmToken); // 서버로 FCM 토큰 전송
@@ -70,7 +69,7 @@ class NotificationService {
 
       // 서버로 FCM 토큰 전송
       final response = await dio.post(
-        'https://$serverAddress/members/fcm',
+        '$serverAddress/members/fcm',
         data: {'fcmToken': fcmToken},
       );
 

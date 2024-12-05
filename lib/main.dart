@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +15,7 @@ import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/service/stretching_timer.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
 import 'package:mocksum_flutter/util/NotificationService.dart';
+import 'package:mocksum_flutter/view/home/home_view.dart';
 // import 'package:mocksum_flutter/util/NotificationService.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
@@ -103,11 +106,50 @@ Future<void> initializeAudioSession() async {
   final AudioSession audioSession = await AudioSession.instance;
   await audioSession.configure(const AudioSessionConfiguration(
     avAudioSessionCategory: AVAudioSessionCategory.playback,
-    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers, // check
+    avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.mixWithOthers,
+    // avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.independent,
     androidAudioAttributes: AndroidAudioAttributes(
       contentType: AndroidAudioContentType.music,
       usage: AndroidAudioUsage.media,
     ),
     androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
   ));
+
+
+  audioSession.becomingNoisyEventStream.listen((_) async {
+    print('airpods unplugged ${HomeState.audioHandler != null ? HomeState.audioHandler!.isPlaying : 'um'}');
+    if (HomeState.audioHandler != null && HomeState.audioHandler!.isPlaying) {
+      await HomeState.audioHandler!.resume();
+    }
+  });
+  // audioSession.interruptionEventStream.listen((event) {
+  //   if (event.begin) {
+  //     print('begin');
+  //     switch (event.type) {
+  //       case AudioInterruptionType.duck:
+  //       // Another app started playing audio and we should duck.
+  //         break;
+
+  //       case AudioInterruptionType.pause:
+  //       case AudioInterruptionType.unknown:
+  //       // Another app started playing audio and we should pause.
+  //         log('audio session paused');
+  //         break;
+  //     }
+  //   } else {
+  //     switch (event.type) {
+  //       case AudioInterruptionType.duck:
+  //       // The interruption ended and we should unduck.
+  //       print('unduck');
+  //         break;
+  //       case AudioInterruptionType.pause:
+  //       // The interruption ended and we should resume.
+  //       print('resume!!');
+  //       case AudioInterruptionType.unknown:
+  //         print('end unknown');
+  //       // The interruption ended but we should not resume.
+  //         break;
+  //     }
+  //   }
+  // });
 }

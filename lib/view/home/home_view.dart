@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
@@ -44,10 +46,10 @@ import '../../util/responsive.dart';
 class Home extends StatefulWidget {
   const Home({super.key});
   @override
-  State<StatefulWidget> createState() => _HomeState();
+  State<StatefulWidget> createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
+class HomeState extends State<Home> with WidgetsBindingObserver {
 
   final appLinks = AppLinks();
 
@@ -71,9 +73,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     // print('sadf');
+    WidgetsBinding.instance.addObserver(this);
     final now = DateTime.now();
     _initLocalNotification();
-    if (_audioHandler == null) {
+    if (audioHandler == null) {
       _setAudioHandler();
     }
     _amplitudeEventManager.viewEvent('mainpage');
@@ -100,7 +103,7 @@ class _HomeState extends State<Home> {
             Navigator.push(context, MaterialPageRoute(
                 builder: (
                     context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
-                  _audioHandler?.play();
+                  audioHandler?.play();
                   _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
 
                   String? refreshToken = await storage.read(key: 'refreshToken');
@@ -185,7 +188,6 @@ class _HomeState extends State<Home> {
 
       if (Provider.of<DetectStatus>(context, listen: false).useTimeLimit &&
           useSec - Provider.of<GlobalTimer>(context, listen: false).secOnStart >= Provider.of<DetectStatus>(context, listen: false).detectionMin*60) {
-
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
@@ -223,15 +225,38 @@ class _HomeState extends State<Home> {
       List<String> eventParse = event.split(' ');
       print(eventParse);
       if (eventParse[0] == 'file') {
-        _audioHandler?.changeSound(eventParse[1]);
+        audioHandler?.changeSound(eventParse[1]);
         print('sound changed');
       } else if (eventParse[0] == 'volume') {
-        _audioHandler?.changeVolume(double.parse(eventParse[1]));
+        audioHandler?.changeVolume(double.parse(eventParse[1]));
         print('volume changed');
       }
     });
 
     // _decideShowReviewPopup();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state){
+      case AppLifecycleState.resumed:
+        print('resume');
+        break;
+      case AppLifecycleState.inactive:
+        print('inactive');
+        break;
+      case AppLifecycleState.detached:
+        print('deteched');
+        break;
+      case AppLifecycleState.paused:
+        print('paused');
+        audioHandler!.resume();
+        break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
+    }
+
   }
 
   Future<void> _decideShowReviewPopup() async {
@@ -309,7 +334,7 @@ class _HomeState extends State<Home> {
 
   void _setAudioHandler() async {
     // print('sadfasdf');
-    _audioHandler ??= await AudioService.init(
+    audioHandler ??= await AudioService.init(
         builder: () => MyAudioHandler(),
         config: const AudioServiceConfig(
           androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
@@ -344,7 +369,7 @@ class _HomeState extends State<Home> {
         return StopDetectionSheet(onStop: () async {
           await Provider.of<DetectStatus>(context, listen: false).endDetecting();
           print('end detection2');
-          await _audioHandler?.pause();
+          await audioHandler?.pause();
           print('end detection');
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
@@ -456,9 +481,11 @@ class _HomeState extends State<Home> {
     }
   }
 
+
   @override
   void dispose() {
     _ad.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     // _liveActivitiesPlugin.dispose();
     super.dispose();
   }
@@ -584,7 +611,7 @@ class _HomeState extends State<Home> {
                                               Navigator.push(context, MaterialPageRoute(
                                                   builder: (
                                                       context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
-                                                    _audioHandler?.play();
+                                                    audioHandler?.play();
                                                     _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
       
                                                     String? refreshToken = await storage.read(key: 'refreshToken');
