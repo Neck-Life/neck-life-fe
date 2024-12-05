@@ -20,8 +20,8 @@ void showStretchingExitModal(BuildContext context, bool? shouldResetTimer) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
     ),
-    builder: (context) => const FractionallySizedBox(
-      child: StretchingExitModalSheet(),
+    builder: (context) => FractionallySizedBox(
+      child: StretchingExitModalSheet(shouldResetTimer: shouldResetTimer,),
     ),
   );
 }

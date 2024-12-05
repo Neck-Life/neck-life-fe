@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/service/global_timer.dart';
@@ -20,6 +21,10 @@ import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
 
+const storage = FlutterSecureStorage(iOptions: IOSOptions(
+  accessibility: KeychainAccessibility.first_unlock,
+  synchronizable: true,
+));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

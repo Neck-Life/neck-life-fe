@@ -15,6 +15,7 @@ import 'package:mocksum_flutter/view/history/widgets/pose_dropdown.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/date_tile.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/pose_list_item.dart';
 
+import '../../main.dart';
 import '../../theme/component/button.dart';
 import '../../theme/popup.dart';
 import '../../util/localization_string.dart';
@@ -94,7 +95,7 @@ class _TodayHistoryState extends State<TodayHistory> {
   }
 
   Future<void> getPrevMonthData() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     int newYear = _month > 1 ? _year : _year-1;
     int newMonth = _month > 1 ? _month-1 : 12;
     try {
