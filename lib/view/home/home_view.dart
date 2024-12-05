@@ -36,6 +36,7 @@ import 'package:mocksum_flutter/util/localization_string.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:live_activities/live_activities.dart';
 
+import '../../main.dart';
 import '../../service/stretching_timer.dart';
 import '../../theme/component/button.dart';
 import '../../util/ad_manager.dart';
@@ -52,8 +53,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
 
   final appLinks = AppLinks();
 
-  static const storage = FlutterSecureStorage();
-  static MyAudioHandler? audioHandler;
+  // static const storage = FlutterSecureStorage();
+  static MyAudioHandler? _audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
   // final DynamicIslandManager diManager = DynamicIslandManager(channelKey: 'NECKLIFEDI');
@@ -171,41 +172,34 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       // }
       // print(useSec);
       if (!Provider.of<UserStatus>(context, listen: false).isPremium && useSec >= 3600) {
-        () async {
-          Provider.of<DetectStatus>(context, listen: false).endDetecting();
-          await audioHandler?.pause();
-          Provider.of<GlobalTimer>(context, listen: false).stopTimer();
-          Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
-          _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
-          // _liveActivitiesPlugin.endAllActivities();
-          // setState(() {
-          //   activityID = null;
-          // });
-          Navigator.push(
-          context, MaterialPageRoute(builder: (
-          context) => const Loading()));
-          _showPushAlarm();
-        }();
+        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
+        _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
+        // _liveActivitiesPlugin.endAllActivities();
+        // setState(() {
+        //   activityID = null;
+        // });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Loading()));
+        _showPushAlarm();
       }
 
       if (Provider.of<DetectStatus>(context, listen: false).useTimeLimit &&
           useSec - Provider.of<GlobalTimer>(context, listen: false).secOnStart >= Provider.of<DetectStatus>(context, listen: false).detectionMin*60) {
-
-      () async {
-          Provider.of<DetectStatus>(context, listen: false).endDetecting();
-          audioHandler?.pause();
-          Provider.of<GlobalTimer>(context, listen: false).stopTimer();
-          Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
-          _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
-          // _liveActivitiesPlugin.endAllActivities();
-          // setState(() {
-          //   activityID = null;
-          // });
-          Navigator.push(
-          context, MaterialPageRoute(builder: (
-          context) => const Loading()));
-          _showPushAlarm2();
-        }();
+        Provider.of<GlobalTimer>(context, listen: false).stopTimer();
+        Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
+        Provider.of<DetectStatus>(context, listen: false).endDetecting();
+        _audioHandler?.pause();
+        _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
+        // _liveActivitiesPlugin.endAllActivities();
+        // setState(() {
+        //   activityID = null;
+        // });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Loading()));
+        _showPushAlarm2();
       }
 
     });

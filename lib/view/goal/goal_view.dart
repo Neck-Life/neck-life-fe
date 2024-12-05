@@ -18,6 +18,7 @@ import 'package:mocksum_flutter/view/goal/subpage/widget/goal_list_item.dart';
 import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/today_history/today_history_view.dart';
 import 'package:provider/provider.dart';
+import '../../main.dart';
 import '../../service/history_provider.dart';
 import '../../theme/blur_to_login.dart';
 import '../../util/ad_manager.dart';
@@ -33,7 +34,7 @@ class Goal extends StatefulWidget {
 }
 
 class _GoalState extends State<Goal> {
-  static const storage = FlutterSecureStorage();
+  // static const storage = FlutterSecureStorage();
 
   Map<String, dynamic> _goalMap = {
     'score': {},

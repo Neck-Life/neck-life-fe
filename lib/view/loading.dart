@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mocksum_flutter/page_navbar.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
@@ -7,6 +8,7 @@ import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:provider/provider.dart';
 
+import '../service/global_timer.dart';
 import '../service/history_provider.dart';
 
 class Loading extends StatefulWidget {
@@ -23,6 +25,7 @@ class _LoadingState extends State<Loading> {
 
   @override
   void initState() {
+
     Future.delayed(const Duration(seconds: 2), () async {
       // await Provider.of<HistoryStatus>(context, listen: false).updateHistoryData(DateTime.now().year.toString(), DateTime.now().month.toString().padLeft(2, '0'));
       // await Provider.of<HistoryStatus>(context, listen: false).getScoreSeriesV2('MONTH6');

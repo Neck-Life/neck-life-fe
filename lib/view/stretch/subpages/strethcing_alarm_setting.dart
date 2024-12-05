@@ -54,7 +54,7 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
   }
 
   Future<void> getStretchingInfoFromStorage() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? selectedIntervalIndexStorage = await storage.read(key: 'selectedIntervalIndex');
     String? selectedStretchingIndexStorage = await storage.read(key: 'selectedStretchingIndex');
 
