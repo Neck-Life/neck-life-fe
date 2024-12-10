@@ -180,7 +180,6 @@ class _PageNavBarState extends State<PageNavBar> {
 
                         try {
                           if (newIndex == 0) {
-                            print('clicked');
                             if (userStatus.isLogged) {
                               bool isPremium = await userStatus
                                   .getUserIsPremium();

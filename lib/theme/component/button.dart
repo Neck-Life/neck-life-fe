@@ -19,6 +19,7 @@ class Button extends StatefulWidget {
     this.isBorder,
     this.padding,
     this.borderColor,
+    this.horizontalPadding,
     bool? isInactive,
   }) : isInactive = isInactive ?? false;
 
@@ -34,6 +35,7 @@ class Button extends StatefulWidget {
   final bool? isBorder;
   final double? padding;
   final Color? borderColor;
+  final double? horizontalPadding;
 
   @override
   State<Button> createState() => _ButtonState();
@@ -65,21 +67,23 @@ class _ButtonState extends State<Button> {
           widget.onPressed();
         }
       },
-      onTapDown: (details) => onPressed(true),
+      onTapDown: (details) {
+        onPressed(true);
+      },
       onTapCancel: () => onPressed(false),
 
       /// Container
       child: Container(
         width: widget.width,
         decoration: BoxDecoration(
-          color: widget.backgroundColor,
+          color: isPressed && widget.backgroundColor != null ? widget.backgroundColor?.withOpacity(0.7) : widget.backgroundColor,
           borderRadius: BorderRadius.circular(13),
           border: widget.isBorder == true ? Border.all(
             width: 1,
             color: widget.borderColor ?? const Color(0xFF323238)
           ) : null,
         ),
-        padding: EdgeInsets.symmetric(vertical: widget.padding!, horizontal: res.percentWidth(5)),
+        padding: EdgeInsets.symmetric(vertical: widget.padding!, horizontal: widget.horizontalPadding ?? res.percentWidth(5)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: widget.icon != null ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
@@ -102,7 +106,7 @@ class _ButtonState extends State<Button> {
                 content: widget.text!,
                 fontSize: 16,
                 isBold: true,
-                fontColor: widget.color,
+                fontColor: isPressed && widget.color != null ? widget.color?.withOpacity(0.7) : widget.color,
               ),
 
             if (widget.icon != null)

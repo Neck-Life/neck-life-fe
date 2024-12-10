@@ -16,6 +16,7 @@ import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/view/history/widgets/duration_dropdown.dart';
 import 'package:mocksum_flutter/view/history/widgets/duration_list_filter.dart';
 import 'package:mocksum_flutter/view/history/widgets/score_explain.dart';
@@ -72,6 +73,8 @@ class _HistoryState extends State<History> {
   final GlobalKey timelineKey = GlobalKey();
 
   final GlobalKey todayCountKey = GlobalKey();
+
+  final _amplitudeManager = AmplitudeEventManager();
 
 
   late Map<String, int> poseCount;
@@ -490,6 +493,7 @@ class _HistoryState extends State<History> {
                               left: res.percentWidth(79),
                               child: GestureDetector(
                                 onTap: () {
+
                                   showModalBottomSheet(
                                       context: context,
                                       useSafeArea: false,

@@ -105,6 +105,7 @@ class StartPositionState extends State<StartPosition> {
             builder: (context, index) => TextDefault(content: '${index+1}${context.locale.languageCode == 'ko' ? '분' : "'"}', fontSize: 25, isBold: true, fontColor: const Color(0xFFB0B8C6),),
             // selectedIndexColor: Colors.orange,
             looping: false,
+            initialIndex: _detectionMin-1,
             onIndexChanged: (idx) {
               setState(() {
                 _detectionMin = idx+1;

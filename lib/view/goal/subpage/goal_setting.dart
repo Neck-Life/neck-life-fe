@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocksum_flutter/service/goal_provider.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:provider/provider.dart';
@@ -80,6 +81,7 @@ class _GoalSettingState extends State<GoalSetting> {
   GoalType? _chosenGoalType;
   int _goalValue = 85;
   int _initialValue = 0;
+  final _amplitudeManager = AmplitudeEventManager();
 
   @override
   void initState() {
@@ -546,6 +548,7 @@ class _GoalSettingState extends State<GoalSetting> {
               margin: EdgeInsets.only(left: res.percentWidth(5), bottom: res.percentHeight(5)),
               child: !goalState.settedGoalTypes.contains(_chosenGoalType) ? Button(
                 onPressed: () async {
+                  _amplitudeManager.actionEvent('goal', 'set_goal', _chosenGoalType?.typeName, _goalValue);
                   await addGoalSetting();
                 },
                 text: 'goal_view.add_txt'.tr(),

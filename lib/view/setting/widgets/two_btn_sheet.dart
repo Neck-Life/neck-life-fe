@@ -76,30 +76,16 @@ class TwoBtnSheet extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: () {
+                Button(
+                  onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Container(
-                    width: res.percentWidth(38.5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF8991A0),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: res.percentWidth(4),),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextDefault(
-                          content: btnStr ?? 'setting_widgets.two_btn_sheet.cancel'.tr(),
-                          fontSize: 16,
-                          isBold: true,
-                          fontColor: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
+                  text: btnStr ?? 'setting_widgets.two_btn_sheet.cancel'.tr(),
+                  backgroundColor: const Color(0xFF8991A0),
+                  color: Colors.white,
+                  width: res.percentWidth(38.5),
+                  padding: res.percentWidth(4),
+                  horizontalPadding: res.percentWidth(4),
                 ),
                 Button(
                   onPressed: () {

@@ -44,6 +44,7 @@ class _GoalState extends State<Goal> {
   List<int> _goalRateList = List.filled(30, 0);
   int _nowStreak = 0;
   late BannerAd _ad;
+  bool _addGoalPressed = false;
 
   @override
   void initState() {
@@ -321,12 +322,25 @@ class _GoalState extends State<Goal> {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () {
+                  onTapUp: (details) {
+                    setState(() {
+                      _addGoalPressed = false;
+                    });
                     if (userStatus.isLogged) {
                       Navigator.push(
                           context, MaterialPageRoute(
                           builder: (context) => const GoalSetting()));
                     }
+                  },
+                  onTapDown: (details) {
+                    setState(() {
+                      _addGoalPressed = true;
+                    });
+                  },
+                  onTapCancel: () {
+                    setState(() {
+                      _addGoalPressed = false;
+                    });
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: res.percentHeight(3), left: res.percentWidth(context.locale.languageCode == 'ko' ? 57.5 : 54.5)),
@@ -335,7 +349,7 @@ class _GoalState extends State<Goal> {
                     padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3.25), vertical: res.percentHeight(1.75)),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        color: const Color(0xFF236EF3)
+                        color: _addGoalPressed ? const Color(0xFF236EF3).withOpacity(0.7) : const Color(0xFF236EF3)
                     ),
                     child: Row(
                       children: [

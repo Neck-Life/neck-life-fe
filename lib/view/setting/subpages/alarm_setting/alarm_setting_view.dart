@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/sound_setting_view.dart';
@@ -28,10 +29,12 @@ class _AlarmSettingState extends State<AlarmSetting> {
   bool _pushNotiActive = true;
   double _volume = 0.4;
   bool _useHorizontalMove = true;
+  final _amplitudeManager = AmplitudeEventManager();
 
   @override
   void initState() {
     super.initState();
+    _amplitudeManager.viewEvent('alarm_setting');
     Future.delayed(Duration.zero, () {
       setState(() {
         _sensitivity = Provider.of<DetectStatus>(context, listen: false).sensitivity.toDouble();

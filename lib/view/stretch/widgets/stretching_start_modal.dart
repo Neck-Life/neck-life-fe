@@ -5,6 +5,7 @@ import 'package:mocksum_flutter/service/global_timer.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/theme/component/button.dart';
 import 'package:mocksum_flutter/theme/component/person_icon.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:provider/provider.dart';
@@ -52,11 +53,13 @@ class StretchingStartModalSheet extends StatefulWidget {
 class _StretchingStartModalSheetState extends State<StretchingStartModalSheet> {
   int countdown = 29; // 초기값 29로 설정
   Timer? _timer; // 타이머를 위한 변수
+  final _amplitudeManager = AmplitudeEventManager();
 
   @override
   void initState() {
     super.initState();
     _startCountdown(); // 타이머 시작
+    _amplitudeManager.viewEvent('stretching_modal');
   }
 
   @override

@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../main.dart';
+import '../util/NotificationService.dart';
 
 class UserStatus with ChangeNotifier {
   static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
@@ -343,6 +344,8 @@ class UserStatus with ChangeNotifier {
       await storage.write(key: 'provider', value: resData['data']['provider'].toString());
 
 
+      NotificationService notificationService = NotificationService();
+      await notificationService.initFirebaseMessaging();
       // await postFcmToken(storage);
 
       return true;

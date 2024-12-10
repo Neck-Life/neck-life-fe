@@ -54,7 +54,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   final appLinks = AppLinks();
 
   // static const storage = FlutterSecureStorage();
-  static MyAudioHandler? _audioHandler;
+  static MyAudioHandler? audioHandler;
   final InAppReview inAppReview = InAppReview.instance;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
   // final DynamicIslandManager diManager = DynamicIslandManager(channelKey: 'NECKLIFEDI');
@@ -104,7 +104,16 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                 builder: (
                     context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
                   audioHandler?.play();
-                  _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
+
+                  DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
+                  _amplitudeEventManager.actionEvent('mainpage', 'startdetection', detectionMin, 0, {
+                    'sensitivity': detectStatus.sensitivity,
+                    'alarmGap': detectStatus.alarmGap,
+                    'bgSoundActive': detectStatus.bgSoundActive,
+                    'volume': detectStatus.soundVolume,
+                    'pushNotiActive': detectStatus.pushNotiAvtive,
+                    'useHorizontalMove': detectStatus.useHorizontalMove
+                  });
 
                   String? refreshToken = await storage.read(key: 'refreshToken');
                   if (refreshToken != null) {
@@ -175,7 +184,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
-        _audioHandler?.pause();
+        audioHandler?.pause();
         _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
@@ -191,7 +200,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
         Provider.of<GlobalTimer>(context, listen: false).stopTimer();
         Provider.of<StretchingTimer>(context, listen: false).cancelTimer();
         Provider.of<DetectStatus>(context, listen: false).endDetecting();
-        _audioHandler?.pause();
+        audioHandler?.pause();
         _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
         // _liveActivitiesPlugin.endAllActivities();
         // setState(() {
@@ -498,13 +507,13 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
     GlobalTimer globalTimer = context.watch();
     StretchingTimer stretchingTimer = context.watch();
 
-    return SafeArea(
-      child: Scaffold(
-          appBar: const PreferredSize(
-              preferredSize: Size.fromHeight(60),
-              child: BannerCarousel()
-          ),
-          body: SingleChildScrollView(
+    return Scaffold(
+      appBar:  const PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: HomeAppBar()
+      ),
+        body: SafeArea(
+          child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: res.deviceWidth,
@@ -523,6 +532,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                             //     default: throw Exception('Platform not supported');
                             //   }
                             // }
+                            _amplitudeEventManager.actionEvent('clicked', 'show_connectguide');
                             Navigator.push(
                                 context, MaterialPageRoute(builder: (
                                 context) => const ConnectGuide()));
@@ -601,19 +611,28 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                   children: [
                                     StartButton(
                                         onPressed: () async {
-                                          print('asdf');
                                           if (!detectStatus.detectAvailable && !detectStatus.nowDetecting) {
                                             showSnackbar(LS.tr('home_view.airpods_connect_ask'));
                                           } else if (!detectStatus.nowDetecting) {
                                             if (!userStatus.isPremium && globalTimer.useSec >= 3600) {
                                               showSnackbar(LS.tr('home_view.end_today_free_time'));
                                             } else {
+                                              _amplitudeEventManager.actionEvent('mainpage', 'click_startbutton');
                                               Navigator.push(context, MaterialPageRoute(
                                                   builder: (
                                                       context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
                                                     audioHandler?.play();
-                                                    _amplitudeEventManager.actionEvent('mainpage', 'startdetection');
-      
+
+                                                    DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
+                                                    _amplitudeEventManager.actionEvent('mainpage', 'startdetection', detectionMin, 0, {
+                                                      'sensitivity': detectStatus.sensitivity,
+                                                      'alarmGap': detectStatus.alarmGap,
+                                                      'bgSoundActive': detectStatus.bgSoundActive,
+                                                      'volume': detectStatus.soundVolume,
+                                                      'pushNotiActive': detectStatus.pushNotiAvtive,
+                                                      'useHorizontalMove': detectStatus.useHorizontalMove
+                                                    });
+
                                                     String? refreshToken = await storage.read(key: 'refreshToken');
                                                     if (refreshToken != null) {
                                                       Response resForToken = await HistoryStatus
@@ -630,7 +649,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                         String refreshTokenNew = resForToken
                                                             .data['data']['refreshToken'] ??
                                                             '';
-      
+
                                                         if (accessTokenNew != '') {
                                                           HistoryStatus.dio.options
                                                               .headers["authorization"] =
@@ -726,6 +745,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
               )
           ),
         ),
-    );
+      );
   }
 }
