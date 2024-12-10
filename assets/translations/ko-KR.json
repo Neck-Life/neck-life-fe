@@ -92,15 +92,16 @@
     "posture_detection" : "자세 탐지",
     "average_posture_lose_time": "평균 {}마다 자세가 무너져요",
     "forward_neck_detection": "거북목 자세 탐지",
-    "tbd_content1": "더 다양한 나쁜 자세",
-    "tbd_content2": "탐지를 준비하고 있어요!",
+    "tbd_content1": "히스토리 탭은",
+    "tbd_content2": "로그인 후 이용할 수 있어요",
     "today_history_scoring_default":"자세 탐지를 하면 1초단위로\\n내 자세를 알 수 있어요",
     "example" : "예시",
-    "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요"
+    "posture_score_difference" : "자세 변화를\\n점수로 확인해보세요",
     "goal": "목표",
     "measuring": "탐지 진행 중",
     "measuring_title": "히스토리는 언제 업데이트되나요?",
-    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다."
+    "measuring_desc": "홈 탭의 '그만할게요' 버튼을 눌러 탐지를 종료하면 히스토리가 업데이트됩니다.",
+    "not_detected": "해당 자세는 한 번도 탐지되지 않았어요!"
   },
 
   "history_widgets" : {
@@ -114,13 +115,13 @@
       "slouch" : "굽은 자세",
       "turtle" : "거북목",
       "back" : "뒤로 빠짐",
+      "tilt": "턱 괴기",
       "count" : "회"
     },
     "score_explain" : {
       "how_to_score" : "자세 점수는 어떻게 계산되나요?",
       "how_to_score_explain" : "자세 점수는 사용자의 자세 변화를 감지하여 계산됩니다. 자세 변화는 사용자의 기준 자세와 비교하여 측정됩니다. 자세 변화가 적을수록 높은 점수를 받습니다.",
       "understand" : "이해했어요"
-
     }
   },
 
@@ -139,7 +140,9 @@
     "detection_start_ask" : "자세 탐지를\\n시작할까요?",
     "airpods_connect_ask" : "에어팟을 연결해주세요",
     "end_today_free_time" : "오늘의 사용 제한 시간이 끝났습니다.",
-    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지"
+    "turtle_neck_forward_backward_detection" : "거북목, 뒤로 빠짐 이동 감지",
+    "start_cta": "자세 모니터링을 시작해보세요!",
+    "stop_cta": "탐지를 끝내면 자세 기록이 업데이트돼요!"
   },
 
   "home_widgets" : {
@@ -148,7 +151,7 @@
       "airpods_connect_no_device": "연결 기기 없음"
     },
     "start_button": {
-      "stop": "그만둘게요",
+      "stop": "그만할게요",
       "start": "시작할까요?"
     },
     "stop_bottomsheet": {
@@ -205,15 +208,23 @@
     "terms_of_service" : "이용 약관",
     "privacy_policy" : "개인정보 처리방침",
     "logout" : "넥라이프 로그아웃",
+    "login": "넥라이프 로그인",
     "if_quit": "넥라이프를 탈퇴하려면 ",
     "here": "여기를",
-    "click": "클릭하세요"
+    "click": "클릭하세요",
+
+    "general": "일반",
+    "lang": "언어 설정",
+    "lang_exp": "선호하는 언어를 선택할 수 있어요",
+    "lang_noti": "* 언어를 바꾼 후에는 앱을 종료 후 재실행해주세요"
+
   },
   "setting_widgets": {
     "feedback_popup": {
       "feedback_and_inquiry": "문의 또는 피드백을 전달해주세요",
       "cancel_feedback":"그만할래요",
-      "send_feedback": "피드백 보내기"
+      "send_feedback": "피드백 보내기",
+      "email": "개발자의 답장을 원하시는 경우 여기에 이메일을 적어주세요."
     },
     "menu_item" : {
       "my_subscription" : "내 구독",
@@ -237,7 +248,22 @@
         "alarm_sensitive_high":"높음",
         "alarm_time":"알림 시간 기준 설정",
         "alarm_time_explain":"잘못된 자세를 얼마나 유지했을 때 알림을 받을지 설정할 수 있어요.",
-        "sound_alarm_turn_on":"소리알림 켜기"
+        "sound_alarm_turn_on":"소리 알림 켜기",
+        "sound_setting": "자세 알림 설정",
+        "volume_setting": "불륨 조절",
+        "push_setting": "자세 푸시 알림 켜기",
+        "change_sound": "알림 소리 변경",
+        "change_sound_setting": "자세 알림 소리 설정",
+        "change_desc": "나쁜 자세를 취했을 때의 알림 소리를 바꿀 수 있어요.",
+        "change_noti": "* 알림 소리는 탐지 중이 아닐 때만 변경할 수 있어요.",
+        "default": "기본",
+        "sound": "소리",
+        "horizon_check": "거북목 탐지 기준 설정",
+        "horizon_desc": "거북목탐지에 어떤 자세까지 고려할지 선택할 수 있어요.",
+        "horizon_o1": "고개의 앞/뒤 움직임까지 탐지해주세요",
+        "horizon_o2": "고개의 위/아래 움직임만 탐지해주세요",
+        "recommend1": "노트북/모니터 등을 이용할 때 추천드려요",
+        "recommend2": "스마트폰을 이용할 때 추천드려요"
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -299,7 +325,11 @@
     "measuring_txt": "기준 자세 측정 중",
     "btn_txt": "기준 자세 측정",
     "guide_txt" : "등과 허리, 목을 곧게 펴고, 턱을 약간 당겨주세요.",
-    "start": "준비됐어요"
+    "start": "준비됐어요",
+    "snackbar_txt": "무료 플랜에는 하루 당 시간 제한이 있어요",
+    "detect_txt": "동안 탐지할게요",
+    "direct_stop": "타이머 없이 사용할게요",
+    "today_time": "오늘의 남은 탐지 시간"
   },
 
   "today_history_view": {
@@ -365,7 +395,11 @@
     "add_snack": "목표가 추가되었어요.",
     "upd_snack": "목표가 수정되었어요.",
     "del_snack": "목표가 삭제되었어요.",
-    "err_popup": "오류가 발생했어요. 다시 시도해주세요"
+    "err_popup": "오류가 발생했어요. 다시 시도해주세요",
+    "tbd_content1": "목표 설정 기능은",
+    "tbd_content2": "로그인 후 이용할 수 있어요",
+    "streak_title": "언제 출석이 인정되나요?",
+    "streak_explain": "한 번 이상 탐지 시작 및 종료하면 출석으로 인정됩니다."
   },
   "connect_guide": {
     "guide": "에어팟을 연결해도 작동하지 않나요?",
@@ -378,6 +412,78 @@
     "conn_txt": "2. 에어팟이 다른 기기에 연결되어있지 않은지 확인해주세요.",
     "conn_desc": "에어팟이 다른 스마트폰이나 노트북 등의 기기에 동시에 연결되어있다면 본 앱이 작동하지 않을 수 있습니다. 본 앱을 실행중인 기기에서 음악 등을 재생하여 에어팟 연결을 가져오거나, 다른 기기와의 연결을 끊어주세요.",
     "last": "만약 위 경우에 해당하지 않음에도 불구하고 앱이 작동하지 않는다면, 앱의 설정 탭의 '문의/피드백 보내기'를 사용해주시거나 somart.necklife@gmail.com로 메일을 보내주시면 최대한 빠르게 수정하겠습니다."
+  },
+
+  "stretching": {
+    "stretching_alarm": {
+      "title": "설정",
+      "title2": "스트레칭 세트",
+      "stretching_alarm_setting": "스트레칭 리마인더",
+      "stretching_alarm_description": "자세 탐지 중 설정한 시간마다 스트레칭을 알려드려요",
+      "use_reminder": "스트레칭 리마인더 사용",
+      "stretching_interval_disabled": "비활성",
+      "stretching_interval_10s": "10초",
+      "stretching_interval_10m": "10분",
+      "stretching_interval_20m": "20분",
+      "stretching_interval_30m": "30분",
+      "stretching_interval_40m": "40분",
+      "stretching_interval_50m": "50분",
+      "stretching_selection": "스트레칭 선택",
+      "stretching_selection_description": "선택한 스트레칭으로 가이드해 드릴게요",
+      "why_stretch": "스트레칭을 왜 해야하나요?",
+      "why_stretch_description": "규칙적인 스트레칭은 근육 피로를 평균 60% 줄이고 혈액 순환을 30% 개선합니다.\\n거북목을 예방하고 신체 유연성도 높일 수 있답니다!"
+    },
+    "recommended_stretching": {
+      "title": "추천 스트레칭",
+      "announce": "추천 스트레칭 페이지\\nTo Be Announced"
+    },
+    "timer": {
+      "stretching_reminder_title": "네키: 스트레칭 알리미",
+      "stretching_reminder_body": "{}분 후에 네키가 스트레칭 알림을 보내드릴게요!",
+      "stretching_time_passed": "벌써 {}분이 지났어요!\\n네키랑 같이 스트레칭 해볼까요?\\n[여기 눌러 시작하세요!]"
+    },
+
+    "start_modal": {
+      "stretch_prompt": "벌써 {}분이 지났어요\\n스트레칭을 해볼까요?",
+      "detection_time": "탐지 시간: {}, 스트레칭 : {}",
+      "no_stretch": "안할래요 ({})",
+      "start_stretching": "스트레칭 시작",
+      "start_stretching_with_airpods": "에어팟 연결 후 스트레칭 시작"
+    },
+    "exit_modal": {
+      "stretch_exit_prompt": "스트레칭을 그만할까요?",
+      "detection_time_info": "탐지 시간: {}, 스트레칭 : {}",
+      "continue_stretching": "이어서하기",
+      "stop_stretching": "그만하기"
+    },
+    "stretching_session": {
+      "good_job_next_step_title": "잘했어요!",
+      "good_job_next_step_body": "다음단계로 넘어갈게요!",
+      "congratulations_all_done_title": "수고하셨어요",
+      "congratulations_all_done_body": "모든 스트레칭이 끝났습니다!",
+      "all_done": "모든 스트레칭이 끝났습니다.",
+      "skip_stretching": "스트레칭 건너뛰기"
+    },
+    "completed_view": {
+      "good_job": "수고하셨어요!",
+      "stretching_complete": "모든 스트레칭이 끝났습니다.",
+      "stretching_info": "xx 자료에 의하면, 주기적인 스트레칭은\\n집중력을 xx% 향상시켜준다고 해요!"
+    },
+    "progress_bar": {
+      "slightly_more_tilt": "고개를 조금 더 기울여볼까요?",
+      "time_elapsed": "{}초 / {}초"
+    }
+  },
+  "survey": {
+    "title": "자세 탐지 만족도 조사",
+    "txt1": "자세 탐지 기능의 체감 정확도를 알려주세요",
+    "desc1": "최고 10점, 최저 1점 사이로 점수를 매겨주세요. 기능이 정확할수록 높은 점수를 주시면 됩니다.",
+    "min": "부정확",
+    "max": "정확",
+    "ex_txt": "정확한 탐지가 되지 않았던 상황이 있다면 적어주세요",
+    "popup": "조사에 참여해주셔서 감사합니다. 앱의 발전을 위한 귀중한 자료로 사용하겠습니다.",
+    "send": "보내기",
+    "banner_txt": "자세 탐지에 대한 의견을 들려주세요!"
   }
 }
 

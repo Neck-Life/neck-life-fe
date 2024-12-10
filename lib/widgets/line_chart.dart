@@ -3,6 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/main.dart';
 
+import '../service/user_provider.dart';
+
 class ScoreChart extends StatefulWidget {
   final Map<dynamic, dynamic> scoreValues;
   final String duration;
@@ -44,28 +46,33 @@ class _ScoreChartState extends State<ScoreChart> {
 
     // print('score ${widget.scoreValues}');
 
-    for (int i = 0; i < daySubtracted+1; i++, now = now.add(const Duration(days: 1))) {
-      String dateStr = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-      if (widget.scoreValues.containsKey(dateStr)) {
-        // print(dateStr);
-        _scoreValues[dateStr] = widget.scoreValues[dateStr];
-      } else {
-        _scoreValues[dateStr] = 0;
+    if (UserStatus.sIsLogged) {
+      for (int i = 0; i < daySubtracted + 1; i++,
+      now = now.add(const Duration(days: 1))) {
+        String dateStr = '${now.year.toString()}-${now.month.toString().padLeft(
+            2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        if (widget.scoreValues.containsKey(dateStr)) {
+          // print(dateStr);
+          _scoreValues[dateStr] = widget.scoreValues[dateStr];
+        } else {
+          _scoreValues[dateStr] = 0;
+        }
       }
+      showingTooltipOnSpots = [_scoreValues.length-1];
+    } else {
+      _scoreValues = {
+        '2024-09-01': 60,
+        '2024-09-02': 75,
+        '2024-09-03': 55,
+        '2024-09-04': 80,
+        '2024-09-05': 92,
+        '2024-09-06': 85,
+        '2024-09-07': 65,
+      };
     }
-    // _scoreValues = {
-    //   '2024-09-01': 70,
-    //   '2024-09-02': 75,
-    //   '2024-09-03': 80,
-    //   '2024-09-04': 90,
-    //   '2024-09-05': 100,
-    //   '2024-09-06': 95,
-    //   '2024-09-07': 70,
-    // };
     // if (showingTooltipOnSpots.isNotEmpty && showingTooltipOnSpots[0] > daySubtracted) {
     //   showingTooltipOnSpots.removeAt(0);
     // }
-    showingTooltipOnSpots = [_scoreValues.length-1];
     // showingTooltipOnSpots.add(_scoreValues.length-1);
   }
 

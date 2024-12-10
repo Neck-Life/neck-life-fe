@@ -94,13 +94,13 @@
     "example": "example",
     "posture_score_difference": "Check your change\\nwith posture score",
     "timeLine": "Timeline",
-    "tbd_content1": "We are preparing to",
-    "tbd_content2": "detect more postures!",
+    "tbd_content1": "History tab is available",
+    "tbd_content2": "after logging in",
     "goal": "Goals",
     "measuring": "Detecting",
     "measuring_title": "When is the history updated?",
-    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab."
-
+    "measuring_desc": "The history will be updated when you stop detection by pressing the 'Stop' button in the Home tab.",
+    "not_detected": "Not Detected!"
   },
   "history_widgets": {
     "duration_dropdown": {
@@ -112,6 +112,7 @@
     "pose_count_frame": {
       "slouch": "Slouched",
       "turtle": "Tech Neck",
+      "tilt": "Tilted",
       "back": "Reclining",
       "count": ""
     },
@@ -136,7 +137,9 @@
     "airpods_connect_ask": "Please connect your AirPods",
     "end_today_free_time": "Today's usage time limit has been reached.",
     "turtle_neck_forward_backward_detection": "Detect Head Move Back and Forth",
-    "detection_doing": "Detecting Your\\nHead Posture"
+    "detection_doing": "Detecting Your\\nHead Posture",
+    "start_cta": "Press Start for bad posture alert!",
+    "stop_cta": "Pressing 'Stop' will update your history!"
   },
   "home_widgets": {
     "bottomsheet": {
@@ -197,16 +200,24 @@
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
     "logout": "Logout from NeckLife",
+    "login": "Login to NeckLife",
     "if_quit": "To delete your NeckLife account ",
     "here": "click here",
     "click": "",
-    "submit": "Submit"
+    "submit": "Submit",
+
+    "general": "General",
+    "lang": "Language Settings",
+    "lang_exp": "You can select your preferred language.",
+    "lang_noti": "* After changing the language, please close and reopen the app."
+
   },
   "setting_widgets": {
     "feedback_popup": {
       "feedback_and_inquiry": "Send feedback or inquiry",
       "send_feedback": "Send Feedback",
-      "cancel_feedback": "Cancel"
+      "cancel_feedback": "Cancel",
+      "email": "If you'd like a reply, you may provide email here."
     },
     "menu_item": {
       "my_subscription": "My Subscription",
@@ -229,8 +240,17 @@
         "alarm_sensitive_high": "High",
         "alarm_time": "Alert Time Delay",
         "alarm_time_explain": "Set how long you can maintain bad posture before receiving an alert.",
-        "sound_alarm_turn_on": "Enable sound alert",
-        "sound_setting": "Alert Sound Settings"
+        "sound_alarm_turn_on": "Enable Sound Alert",
+        "sound_setting": "Posture Alert Settings",
+        "volume_setting": "Volume Control",
+        "push_setting": "Enable Push Notification",
+        "change_sound": "Change Alert Sound",
+        "change_sound_setting": "Alert Sound Change",
+        "change_desc": "You can change the alert sound for bad posture.",
+        "change_noti": "* Sounds can only be changed when detection is off.",
+        "default": "Default",
+        "sound": "Sound "
+
       },
       "alarm_setting_widgets": {
         "time_delay_tile": {
@@ -283,7 +303,11 @@
     "measuring_txt": "Measuring...",
     "btn_txt": "Measure Reference Posture",
     "guide_txt" : "Straighten your back, waist, and neck, and slightly tuck in your chin.",
-    "start": "I'm ready"
+    "start": "I'm ready",
+    "snackbar_txt": "The free plan has a daily time limit.",
+    "detect_txt": "Detect for",
+    "direct_stop": "Use without a timer",
+    "today_time": "Remaining time for today"
   },
   "today_history_view": {
     "posture_detection": "Posture Detection",
@@ -308,10 +332,10 @@
   },
   "tutorial": {
     "tutorial_view": {
-      "step1_airpods": "First, please connect \\nyour AirPods",
+      "step1_airpods": "Please connect \\nyour AirPods",
       "step1_airpods_models": "Only the following models are supported",
       "step1_airpods_models_name": "AirPods Pro, AirPods Max, AirPods(3rd, 4th Gen)",
-      "step2_posture": "Maintain a correct posture for 5 seconds",
+      "step2_posture": "Press 'Start' button and Maintain a correct posture for 5 seconds",
       "step2_explain": "This step measures your reference posture for accurate posture detection.",
       "step3_concentrate": "Focus on your work with proper posture",
       "step3_explain": "We will notify you if your posture deteriorates unconsciously.",
@@ -344,7 +368,11 @@
     "add_snack": "The goal has been added.",
     "upd_snack": "The goal has been updated.",
     "del_snack": "The goal has been deleted.",
-    "err_popup": "An error occurred. Please try again."
+    "err_popup": "An error occurred. Please try again.",
+    "tbd_content1": "Goal setting is available",
+    "tbd_content2": "after logging in",
+    "streak_title": "When is attendance recognized?",
+    "streak_explain": "Starting and stopping detection at least once counts as attendance."
   },
   "connect_guide": {
     "guide": "Is it not working after connecting AirPods?",
@@ -357,6 +385,77 @@
     "conn_txt": "2. Check if your AirPods are connected to another device.",
     "conn_desc": "If your AirPods are connected to another smartphone, laptop, or device simultaneously, the app may not work. Play music on the device running this app to take over the AirPods connection, or disconnect them from the other device.",
     "last": "If the app still does not work even after checking the above, please use the 'Send Feedback' option in the app's settings tab, or send an email to somart.necklife@gmail.com, and we will fix the issue as soon as possible."
-  }
+  },
 
+  "stretching": {
+    "stretching_alarm": {
+      "title": "Setting",
+      "title2": "Stretching Sets",
+      "stretching_alarm_setting": "Stretching Reminder",
+      "stretching_alarm_description": "We'll remind you to stretch at your chosen interval during posture detection.",
+      "use_reminder": "Use Stretching Reminder",
+      "stretching_interval_disabled": "Off",
+      "stretching_interval_10s": "10s",
+      "stretching_interval_10m": "10m",
+      "stretching_interval_20m": "20m",
+      "stretching_interval_30m": "30m",
+      "stretching_interval_40m": "40m",
+      "stretching_interval_50m": "50m",
+      "stretching_selection": "Choose Stretch Type",
+      "stretching_selection_description": "Select your preferred stretch, and we’ll guide you through it.",
+      "why_stretch": "Why Stretch?",
+      "why_stretch_description": "Regular stretching can reduce muscle fatigue by 60% and improve circulation by 30%. It also helps prevent forward head posture and improves flexibility."
+    },
+    "recommended_stretching": {
+      "title": "Recommended Stretches",
+      "announce": "Recommended stretches\\nComing soon"
+    },
+    "timer": {
+      "stretching_reminder_title": "Necki: Your Stretch Assistant",
+      "stretching_reminder_body": "Necki will remind you to stretch in {} minutes!",
+      "stretching_time_passed": "{} minutes have passed!\\nLet’s take a stretch break with Necki!\\n[Click Here]"
+    },
+    "start_modal": {
+      "stretch_prompt": "{} minutes have passed.\\nReady to stretch?",
+      "detection_time": "Detection Time: {}, Stretches: {}",
+      "no_stretch": "Not now ({})",
+      "start_stretching": "Stretch",
+      "start_stretching_with_airpods": "Stretch after connecting AirPods"
+    },
+    "exit_modal": {
+      "stretch_exit_prompt": "Stop stretching?",
+      "detection_time_info": "Detection Time: {}, Stretches: {}",
+
+      "continue_stretching": "Continue",
+      "stop_stretching": "Stop"
+    },
+    "stretching_session": {
+      "good_job_next_step_title": "Nice work!",
+      "good_job_next_step_body": "Let’s move on to the next stretch!",
+      "congratulations_all_done_title": "Well done!",
+      "congratulations_all_done_body": "You’ve completed all your stretches!",
+      "all_done": "All stretches completed.",
+      "skip_stretching": "Skip Stretch"
+    },
+    "completed_view": {
+      "good_job": "Great job!",
+      "stretching_complete": "All stretches completed.",
+      "stretching_info": "Research suggests that regular stretching can boost focus by up to xx%!"
+    },
+    "progress_bar": {
+      "slightly_more_tilt": "Could you tilt your head a bit more?",
+      "time_elapsed": "{} sec / {} sec"
+    }
+  },
+  "survey": {
+    "title": "Posture Detection Survey",
+    "txt1": "Please rate the perceived accuracy of the posture detection feature.",
+    "desc1": "Rate it between 1 (lowest) and 10 (highest). The more accurate the feature feels, the higher the score.",
+    "min": "Inaccurate",
+    "max": "Accurate",
+    "ex_txt": "If there were situations where detection was inaccurate, please describe them.",
+    "popup": "Thank you for participating in the survey. Your feedback will be valuable for the app's improvement.",
+    "send": "Submit",
+    "banner_txt": "Please share your feedback on posture detection!"
+  }
 }

@@ -11,22 +11,27 @@ import 'package:mocksum_flutter/service/history_provider.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/util/time_convert.dart';
 import 'package:mocksum_flutter/view/history/widgets/pose_count_frame.dart';
+import 'package:mocksum_flutter/view/history/widgets/pose_dropdown.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/date_tile.dart';
 import 'package:mocksum_flutter/view/today_history/widgets/pose_list_item.dart';
 
+import '../../main.dart';
 import '../../theme/component/button.dart';
 import '../../theme/popup.dart';
 import '../../util/localization_string.dart';
+import '../history/widgets/duration_list_filter.dart';
 
 
 class TodayHistory extends StatefulWidget {
   final Map<String, dynamic> fullHistoryData;
   final Map<String, int> date2idx;
+  final PoseType? chosenType;
 
   const TodayHistory({
     super.key,
     required this.fullHistoryData,
-    required this.date2idx
+    required this.date2idx,
+    this.chosenType
   });
 
   @override
@@ -46,6 +51,7 @@ class _TodayHistoryState extends State<TodayHistory> {
   int _normalTimeSec = 0;
   Map<String, dynamic> _filteredPoseMap = {};
   Map<dynamic, dynamic> _historyDateKeyMap = {}; // {month : {date:{}, date:{}}}
+  PoseType _chosenType = PoseType.slouch;
 
   @override
   void initState() {
@@ -54,25 +60,30 @@ class _TodayHistoryState extends State<TodayHistory> {
       _month = now.month;
       _date = now.day;
       _chosenDate = now.day-1;
+      _chosenType = widget.chosenType ?? PoseType.slouch;
     });
     _amplitudeEventManager.viewEvent('todayhistory');
 
     // Map<String, dynamic> historyData = Provider.of<HistoryStatus>(context, listen: false).getPastHistoryWithDateV2(_chosenDate+1);
     // print('widget $historyData');
-    Map histodyDateKeyMap = {};
+    Map historyDateKeyMap = {};
     Map monthDataMap = {};
+    // print(widget.fullHistoryData);
     widget.fullHistoryData['daily'].forEach((item) {
+      // print('?? $item');
       monthDataMap[item['date']] = item;
     });
+    // print('asdf $monthDataMap');
     final historyData = monthDataMap.containsKey(_chosenDate+1) ? monthDataMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     // print('th $historyData');
-    histodyDateKeyMap[_month] = monthDataMap;
+    historyDateKeyMap[_month] = monthDataMap;
+    // print('${_chosenType.poseIdentifier}NORMAL');
     setState(() {
-      _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+      _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'] == null ? 0 : historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'].toInt();
       _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
-      _historyDateKeyMap = histodyDateKeyMap;
+      _historyDateKeyMap = historyDateKeyMap;
     });
-    _filterPoseMap(historyData['history']);
+    _filterPoseMap(historyData);
 
     Future.delayed(Duration.zero, () {
       if (_scrollController.hasClients) {
@@ -84,7 +95,7 @@ class _TodayHistoryState extends State<TodayHistory> {
   }
 
   Future<void> getPrevMonthData() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     int newYear = _month > 1 ? _year : _year-1;
     int newMonth = _month > 1 ? _month-1 : 12;
     try {
@@ -94,20 +105,20 @@ class _TodayHistoryState extends State<TodayHistory> {
       }
 
       Response res = await HistoryStatus.dio.get(
-          '${HistoryStatus.serverAddress}/history/monthly?year=$newYear&month=$newMonth');
+          '${HistoryStatus.serverAddressV3}/history/monthly?year=$newYear&month=$newMonth');
+
 
       if (res.data['code'] == 'success') {
         // print('ok');
-        // print(res.data);
         final fullHistoryData = res.data['data'];
         Map monthDataMap = {};
         fullHistoryData['daily'].forEach((item) {
           monthDataMap[item['date']] = item;
         });
         final historyData = monthDataMap.containsKey(_chosenDate+1) ? monthDataMap[_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
-        // print('th $historyData');
+
         setState(() {
-          _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+          _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'] == null ? 0 : historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'].toInt();
           _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
           _historyDateKeyMap[newMonth] = monthDataMap;
           _date = DateTime(_year, _month, 1).subtract(const Duration(days: 1)).day;
@@ -115,7 +126,7 @@ class _TodayHistoryState extends State<TodayHistory> {
           _year = newYear;
           _chosenDate = _date-1;
         });
-        _filterPoseMap(historyData['history']);
+        _filterPoseMap(historyData);
         _scrollController.animateTo(MediaQuery.of(context).size.width*0.16*(_date+2),
             duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
       } else {
@@ -137,14 +148,14 @@ class _TodayHistoryState extends State<TodayHistory> {
     final historyData = _historyDateKeyMap[newMonth].containsKey(_chosenDate+1) ? _historyDateKeyMap[newMonth][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     try {
         setState(() {
-          _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+          _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'] == null ? 0 : historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'].toInt();
           _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
           _date = newMonth == DateTime.now().month ? DateTime.now().day : DateTime(newMonth > 11 ? _year+1 : _year, newMonth > 11 ? 1 : newMonth+1, 1).subtract(const Duration(days: 1)).day;
           _month = newMonth;
           _year = newYear;
           _chosenDate = 0;
         });
-        _filterPoseMap(historyData['history']);
+        _filterPoseMap(historyData);
 
     } on Exception catch (e) {
       print(e);
@@ -161,11 +172,13 @@ class _TodayHistoryState extends State<TodayHistory> {
     }
 
     Map<String, dynamic> filteredPoseMap = {};
-    historyMap.forEach((key, val) {
-      if (val != 'NORMAL' && val != 'START' && val != 'END') {
-        filteredPoseMap[key] = val;
-      }
-    });
+    if (historyMap[_chosenType.poseFilter] != null) {
+      historyMap[_chosenType.poseFilter].forEach((key, val) {
+        if (val == _chosenType.poseIdentifier) {
+          filteredPoseMap[key] = val;
+        }
+      });
+    }
     setState(() {
       _filteredPoseMap = filteredPoseMap;
     });
@@ -174,11 +187,11 @@ class _TodayHistoryState extends State<TodayHistory> {
   void changeChosenDate(int chosenDate) {
     final historyData = _historyDateKeyMap[_month].containsKey(chosenDate+1) ? _historyDateKeyMap[_month][chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
     setState(() {
-      _normalTimeSec = historyData['poseTimerMap']['NORMAL'] == null ? 0 : historyData['poseTimerMap']['NORMAL'].toInt();
+      _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'] == null ? 0 : historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'].toInt();
       _fullTimeSec = historyData['measurementTime'] == null ? 0 : historyData['measurementTime'].toInt();
       _chosenDate = chosenDate;
     });
-    _filterPoseMap(historyData['history']);
+    _filterPoseMap(historyData);
   }
 
   void _openErrorPopUp() {
@@ -202,7 +215,7 @@ class _TodayHistoryState extends State<TodayHistory> {
             content: 'today_history_view.posture_detection'.tr(),
             fontSize: 16,
             isBold: false,
-            fontColor: Color(0xFF64646F),
+            fontColor: const Color(0xFF64646F),
           ),
           centerTitle: true,
           leading: IconButton(
@@ -229,7 +242,6 @@ class _TodayHistoryState extends State<TodayHistory> {
                   margin: EdgeInsets.only(left: res.percentWidth(7.5)),
                   child: TextDefault(
                       content: context.locale.languageCode == 'ko' ? '$_month월 ${_chosenDate+1}일' : TimeConvert.engDateFormat(_month, _chosenDate+1),
-                      //'$_month월 ${_chosenDate+1}일',
                       fontSize: 20,
                       isBold: true
                   ),
@@ -336,30 +348,64 @@ class _TodayHistoryState extends State<TodayHistory> {
           ),
           Container(
             width: res.deviceWidth,
-            padding: EdgeInsets.only(left: res.percentWidth(7.5)),
+            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(7.5)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextDefault(
-                  content: 'today_history_view.good_posture'.tr(),
-                  fontSize: 28,
-                  isBold: true,
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextDefault(
-                      content: TimeConvert.sec2Min(_normalTimeSec, context.locale.languageCode),
-                      fontSize: 28,
-                      isBold: true,
-                      fontColor: const Color(0xFF115FE9),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextDefault(
+                          content: 'today_history_view.good_posture'.tr(),
+                          fontSize: 28,
+                          isBold: true,
+                        ),
+                        Row(
+                          children: [
+                            TextDefault(
+                              content: TimeConvert.sec2Min(_normalTimeSec, context.locale.languageCode),
+                              fontSize: 28,
+                              isBold: true,
+                              fontColor: const Color(0xFF115FE9),
+                            ),
+                            TextDefault(
+                              content: 'today_history_view.total_time'.tr(args: [TimeConvert.sec2Min(_fullTimeSec, context.locale.languageCode)]),
+                              //'/총 ${TimeConvert.sec2Min(_fullTimeSec)}',
+                              fontSize: 18,
+                              isBold: false,
+                              fontColor: const Color(0xFF115FE9),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: res.percentHeight(1),),
+                        SizedBox(
+                          width: res.percentWidth(85),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [PoseType.slouch, PoseType.turtle, PoseType.tilt].map((value) {
+                              return DurationListFilter(type: value, chosen: value == _chosenType, onClick: () {
+                                setState(() {
+                                  _chosenType = value;
+                                });
+                              });
+                            }).toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                    TextDefault(
-                      content: 'today_history_view.total_time'.tr(args: [TimeConvert.sec2Min(_fullTimeSec, context.locale.languageCode)]),
-                      //'/총 ${TimeConvert.sec2Min(_fullTimeSec)}',
-                      fontSize: 18,
-                      isBold: false,
-                      fontColor: const Color(0xFF115FE9),
-                    ),
+                    // PoseDropdown(onChanged: (PoseType type) {
+                    //   setState(() {
+                    //     _chosenType = type;
+                    //   });
+                    //   final historyData = _historyDateKeyMap[_month].containsKey(_chosenDate+1) ? _historyDateKeyMap[_month][_chosenDate+1] : {'poseTimerMap': {}, 'daily': []};
+                    //   _filterPoseMap(historyData);
+                    //   setState(() {
+                    //     _normalTimeSec = historyData['poseTimerMap']['${_chosenType.poseIdentifier}NORMAL'];
+                    //   });
+                    // }, chosenValue: _chosenType,)
                   ],
                 ),
                 SizedBox(height: res.percentHeight(3),),
@@ -369,7 +415,7 @@ class _TodayHistoryState extends State<TodayHistory> {
                     scrollDirection: Axis.vertical,
                     itemCount: _filteredPoseMap.length,
                     itemBuilder: (context, index) {
-                      return PoseListItem(poseType: PoseType.turtle, time: _filteredPoseMap.keys.toList()[index].split('T')[1]);
+                      return PoseListItem(poseType: _chosenType, time: _filteredPoseMap.keys.toList()[index].split('T')[1]);
                     }
                   ),
                 ) : Container(

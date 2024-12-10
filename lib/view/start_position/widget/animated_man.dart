@@ -38,6 +38,7 @@ class _AnimatedManState extends State<AnimatedMan> with SingleTickerProviderStat
       }
     });
 
+
     _curve = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _pitchAnimation = Tween<double>(begin: 0.1, end: -0.1).animate(_curve);
 

@@ -24,8 +24,9 @@ class TimeDelayTile extends StatelessWidget {
       onTap: () {
         onChange(alarmDelay);
       },
-      child: SizedBox(
+      child: Container(
         height: res.percentHeight(6),
+        color: Colors.transparent,
         child: Row(
           children: [
             Container(
@@ -39,7 +40,7 @@ class TimeDelayTile extends StatelessWidget {
               child: AssetIcon('check', size: 1, color: chosenVal == alarmDelay ? Colors.white : const Color(0xFF101E32),),
             ),
             SizedBox(width: res.percentWidth(3),),
-            TextDefault(content: 'setting_subpages.alarm_setting.alarm_setting_widgets.time_delay_tile.seconds'.tr(args:[alarmDelay.toString()]), fontSize: 16, isBold: false,),
+            TextDefault(content: alarmDelay == 1 ? (context.locale.languageCode == 'ko' ? '탐지 즉시' : 'Immediately') : 'setting_subpages.alarm_setting.alarm_setting_widgets.time_delay_tile.seconds'.tr(args:[alarmDelay.toString()]), fontSize: 16, isBold: false,),
           ],
         ),
     )

@@ -8,6 +8,7 @@ import 'package:mocksum_flutter/view/goal/goal_view.dart';
 import 'package:mocksum_flutter/view/login/login_view.dart';
 import 'package:mocksum_flutter/theme/asset_icon.dart';
 import 'package:mocksum_flutter/view/start_position/start_position_view.dart';
+import 'package:mocksum_flutter/view/stretch/stretching.dart';
 import 'package:mocksum_flutter/view/tutorial/tutorial_view.dart';
 import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/service/user_provider.dart';
@@ -17,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:mocksum_flutter/view/history/history_view.dart';
 import 'package:mocksum_flutter/view/setting/setting_view.dart';
 import 'package:app_settings/app_settings.dart';
+import 'main.dart';
 
 class PageNavBar extends StatefulWidget {
   final int? pageIdx;
@@ -48,22 +50,24 @@ class _PageNavBarState extends State<PageNavBar> {
           .checkAndUpdateToken();
       Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
 
-
+      print('login checked');
 
       if (_isFirstLaunch) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Tutorials()));
       }
 
-      if (!isLogged) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
-      } else {
-        final sensorPermission = await Permission.sensors.status;
-        if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
-          await showSensorPermissionDialog(context);
-          AppSettings.openAppSettings();
-        }
-        await _amplitudeEventManager.initAmplitude(Provider.of<UserStatus>(context, listen: false).email);
+      // if (isLogged) {
+      await _amplitudeEventManager.initAmplitude();
+      // }
+      if (isLogged) {
+        await _amplitudeEventManager.setUserID(Provider.of<UserStatus>(context, listen: false).email);
       }
+
+      // final sensorPermission = await Permission.sensors.status;
+      // if (sensorPermission.isDenied || sensorPermission.isPermanentlyDenied) {
+      //   await showSensorPermissionDialog(context);
+      //   AppSettings.openAppSettings();
+      // }
 
       DetectStatus.lanCode = context.locale.languageCode;
     });
@@ -100,10 +104,16 @@ class _PageNavBarState extends State<PageNavBar> {
 
 
   Future<void> _updateIsFirstLaunch() async {
-    const storage = FlutterSecureStorage();
+    // const storage = FlutterSecureStorage();
     String? first = await storage.read(key: 'first');
     if (first == null) {
       _isFirstLaunch = true;
+      /**
+       * 기존 기본옵션으로 저장된 스토리지키들 전부 삭제
+       * 동일키 다른옵션으로 저장되어있으면 충돌되는 이슈 존재
+       * written by ryu
+       **/
+      await storage.deleteAll(iOptions: const IOSOptions());
       await storage.write(key: 'first', value: '1');
     }
     // _isFirstLaunch = true;
@@ -119,11 +129,10 @@ class _PageNavBarState extends State<PageNavBar> {
         future: userStatus.checkAndUpdateToken(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data!) {
               return Scaffold(
                 body: IndexedStack(
                   index: _index,
-                  children: const [Home(), Goal(), History(), Settings()], // History(key: UniqueKey(),)
+                  children: const [Home(), History(), Stretching(), Goal(), Settings()], // History(key: UniqueKey(),)
                 ),
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -147,9 +156,10 @@ class _PageNavBarState extends State<PageNavBar> {
                       type: BottomNavigationBarType.fixed,
                       items: [
                         BottomNavigationBarItem(icon: AssetIcon('home', size: 4.5, color: _index == 0 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '홈' : 'Home'),
-                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
-                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
-                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
+                        BottomNavigationBarItem(icon: AssetIcon('graph', size: 4.5, color: _index == 1 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '기록' : 'History'),
+                        BottomNavigationBarItem(icon: AssetIcon('strch', size: 4.5, color: _index == 2 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '스트레칭' : 'Stretching'),
+                        BottomNavigationBarItem(icon: AssetIcon('activity', size: 4.5, color: _index == 3 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '목표' : 'Goals'),
+                        BottomNavigationBarItem(icon: AssetIcon('setting', size: 4.5, color: _index == 4 ? const Color(0xFF101010) : const Color(0xFFCFCFD8)), label: context.locale.languageCode == 'ko' ? '설정' : 'Settings')
                       ],
                       currentIndex: _index,
                       onTap: (newIndex) async {
@@ -158,26 +168,32 @@ class _PageNavBarState extends State<PageNavBar> {
                           if (_index == 0) {
                             _amplitudeEventManager.viewEvent('mainpage');
                           } else if (_index == 1) {
-                            _amplitudeEventManager.viewEvent('goal');
+                            _amplitudeEventManager.viewEvent('history');
                           } else if (_index == 2) {
-                            _amplitudeEventManager.viewEvent('setting');
+                            _amplitudeEventManager.viewEvent('stretching');
                           } else if (_index == 3) {
+                            _amplitudeEventManager.viewEvent('goal');
+                          } else if (_index == 4) {
                             _amplitudeEventManager.viewEvent('setting');
                           }
                         });
 
-                        if (newIndex == 0) {
-                          bool isPremium = await userStatus.getUserIsPremium();
-                          userStatus.setIsPremium(isPremium);
+                        try {
+                          if (newIndex == 0) {
+                            if (userStatus.isLogged) {
+                              bool isPremium = await userStatus
+                                  .getUserIsPremium();
+                              userStatus.setIsPremium(isPremium);
+                            }
+                          }
+                        } catch (e) {
+                          print(e);
                         }
                       },
                     ),
                   ),
                 ),
               );
-            } else {
-              return const LoginPage();
-            }
           }
           return const Scaffold();
           // return MainPage();

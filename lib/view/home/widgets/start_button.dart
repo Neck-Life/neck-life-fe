@@ -42,20 +42,32 @@ class _StartButtonState extends State<StartButton> {
 
     return GestureDetector(
       /// Click Event
+      // onTapUp: (details) {
+      //   onPressed(false);
+      //   if (!widget.isDisabled) {
+      //     widget.onPressed();
+      //   }
+      // },
+      // onTapDown: (details) => onPressed(true),
+      // onTapCancel: () => onPressed(false),
       onTapUp: (details) {
         onPressed(false);
         if (!widget.isDisabled) {
           widget.onPressed();
         }
       },
-      onTapDown: (details) => onPressed(true),
-      onTapCancel: () => onPressed(false),
+      onTapDown: (details) {
+        onPressed(true);
+      },
+      onTapCancel: () {
+        onPressed(false);
+      },
 
       /// Container
       child: Container(
         width: res.percentWidth(80),
         decoration: BoxDecoration(
-          color: widget.isDisabled ? const Color(0xFFCFCFD8) : (widget.isRunning ? Colors.white : const Color(0xFF236EF3)),
+          color: widget.isDisabled ? const Color(0xFFCFCFD8) : (widget.isRunning ? (isPressed ? Colors.white.withOpacity(0.7) : Colors.white) : (isPressed ? const Color(0xFF236EF3).withOpacity(0.7) : const Color(0xFF236EF3))),
           borderRadius: BorderRadius.circular(15),
         ),
         alignment: Alignment.center,

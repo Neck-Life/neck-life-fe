@@ -2,8 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/white_container.dart';
+import 'package:mocksum_flutter/util/amplitude.dart';
 import 'package:mocksum_flutter/util/responsive.dart';
 import 'package:mocksum_flutter/service/status_provider.dart';
+import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/sound_setting_view.dart';
+import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/widgets/detect_mode_tile.dart';
 import 'package:mocksum_flutter/view/setting/subpages/alarm_setting/widgets/time_delay_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -23,31 +26,40 @@ class _AlarmSettingState extends State<AlarmSetting> {
   double _sensitivity = 1;
   int _alarmGap = 5;
   bool _bgSoundActive = false;
+  bool _pushNotiActive = true;
   double _volume = 0.4;
+  bool _useHorizontalMove = true;
+  final _amplitudeManager = AmplitudeEventManager();
 
   @override
   void initState() {
     super.initState();
+    _amplitudeManager.viewEvent('alarm_setting');
     Future.delayed(Duration.zero, () {
       setState(() {
         _sensitivity = Provider.of<DetectStatus>(context, listen: false).sensitivity.toDouble();
         _alarmGap = Provider.of<DetectStatus>(context, listen: false).alarmGap;
         _bgSoundActive = Provider.of<DetectStatus>(context, listen: false).bgSoundActive;
+        _volume = Provider.of<DetectStatus>(context, listen: false).soundVolume;
+        _pushNotiActive = Provider.of<DetectStatus>(context, listen: false).pushNotiAvtive;
+        _useHorizontalMove = Provider.of<DetectStatus>(context, listen: false).useHorizontalMove;
       });
     });
   }
 
-  // @override
-  // void dispose() {
-  //   Provider.of<DetectStatus>(context, listen: false).setSoundVolume(_volume);
-  //   super.dispose();
-  // }
 
   void changeAlarmDelay(int? value, DetectStatus detectStatus) {
     setState(() {
       _alarmGap = value!;
     });
     detectStatus.setAlarmGap(_alarmGap);
+  }
+
+  void changeUseHorizontalMove(bool value, DetectStatus detectStatus) {
+    setState(() {
+      _useHorizontalMove = value;
+    });
+    detectStatus.setUseHorizontalMove(_useHorizontalMove);
   }
 
   @override
@@ -83,6 +95,29 @@ class _AlarmSettingState extends State<AlarmSetting> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: res.percentHeight(2)),
+              WhiteContainer(
+                // margin: EdgeInsets.only(left: res.percentWidth(5)),
+                width: 87.5,
+                padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
+                radius: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextDefault(content: 'setting_subpages.alarm_setting.alarm_setting_view.horizon_check'.tr(), fontSize: 18, isBold: true),
+                    SizedBox(height: res.percentHeight(0.5),),
+                    TextDefault(
+                      content: 'setting_subpages.alarm_setting.alarm_setting_view.horizon_desc'.tr(),
+                      fontSize: 13,
+                      isBold: false,
+                      fontColor: const Color(0xFF8991A0),
+                    ),
+                    SizedBox(height: res.percentHeight(2),),
+                    DetectModeTile(useHorizontalMove: false, onChange: (bool value) => changeUseHorizontalMove(value, detectStatus), chosenVal: _useHorizontalMove),
+                    DetectModeTile(useHorizontalMove: true, onChange: (bool value) => changeUseHorizontalMove(value, detectStatus), chosenVal: _useHorizontalMove),
+                  ],
+                ),
+              ),
+              SizedBox(height: res.percentHeight(2),),
               WhiteContainer(
                 // margin: EdgeInsets.only(left: res.percentWidth(5)),
                 width: 87.5,
@@ -151,6 +186,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
                       fontColor: const Color(0xFF8991A0),
                     ),
                     SizedBox(height: res.percentHeight(2),),
+                    TimeDelayTile(alarmDelay: 1, chosenVal: _alarmGap, onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 5, chosenVal: _alarmGap, onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 10, chosenVal: _alarmGap,onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
                     TimeDelayTile(alarmDelay: 15, chosenVal: _alarmGap,onChange: (int? value) => changeAlarmDelay(value, detectStatus)),
@@ -173,6 +209,25 @@ class _AlarmSettingState extends State<AlarmSetting> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.push_setting".tr(), fontSize: 16, isBold: false),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: CupertinoSwitch(
+                            value: _pushNotiActive,
+                            activeColor: CupertinoColors.activeBlue,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _pushNotiActive = value ?? false;
+                                detectStatus.setPushNotiActive(_pushNotiActive);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.sound_alarm_turn_on".tr(), fontSize: 16, isBold: false),
                         Transform.scale(
                           scale: 0.8,
@@ -189,6 +244,9 @@ class _AlarmSettingState extends State<AlarmSetting> {
                         ),
                       ],
                     ),
+                    SizedBox(height: res.percentHeight(1)),
+                    TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.volume_setting".tr(), fontSize: 16, isBold: false),
+                    SizedBox(height: res.percentHeight(2)),
                     SliderTheme(
                       data: SliderThemeData(
                           activeTrackColor: const Color(0xFF3077F4),
@@ -202,15 +260,39 @@ class _AlarmSettingState extends State<AlarmSetting> {
                           onChanged: (double? value) {
                             setState(() {
                               _volume = value!;
-                              DetectStatus.sSoundVolume = _volume;
-                              print(value);
                             });
-                          }
+                          },
+                        onChangeEnd: (double? value) {
+                          setState(() {
+                            _volume = value!;
+                            Provider.of<DetectStatus>(context, listen: false).setSoundVolume(_volume);
+                          });
+                        },
                       ),
                     ),
+                    SizedBox(height: res.percentHeight(2),),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (
+                            context) => const SoundSetting()));
+                      },
+                      child: Container(
+                        width: res.percentWidth(80),
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            TextDefault(content: "setting_subpages.alarm_setting.alarm_setting_view.change_sound".tr(), fontSize: 16, isBold: false),
+                            SizedBox(width: res.percentWidth(2),),
+                            AssetIcon('arrowNext', size: res.percentWidth(1),)
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
+              SizedBox(height: res.percentHeight(5),)
             ],
           ),
         ),

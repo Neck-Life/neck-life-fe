@@ -9,7 +9,7 @@ import 'package:mocksum_flutter/util/responsive.dart';
 enum PoseType {
   slouch,
   turtle,
-  back;
+  tilt;
 
   String get poseString {
     switch (this) {
@@ -17,8 +17,8 @@ enum PoseType {
         return 'history_widgets.pose_count_frame.slouch'.tr();
       case PoseType.turtle:
         return 'history_widgets.pose_count_frame.turtle'.tr();
-      case PoseType.back:
-        return 'history_widgets.pose_count_frame.back'.tr();;
+      case PoseType.tilt:
+        return 'history_widgets.pose_count_frame.tilt'.tr();
     }
   }
 
@@ -28,8 +28,30 @@ enum PoseType {
         return 'assets/slouch.svg';
       case PoseType.turtle:
         return 'assets/turtle.svg';
-      case PoseType.back:
-        return 'assets/back.svg';
+      case PoseType.tilt:
+        return 'assets/tilt2.svg';
+    }
+  }
+
+  String get poseIdentifier {
+    switch (this) {
+      case PoseType.slouch:
+        return 'DOWN';
+      case PoseType.turtle:
+        return 'FORWARD';
+      case PoseType.tilt:
+        return 'TILT';
+    }
+  }
+
+  String get poseFilter {
+    switch (this) {
+      case PoseType.slouch:
+        return 'pitch';
+      case PoseType.turtle:
+        return 'forward';
+      case PoseType.tilt:
+        return 'tilt';
     }
   }
 }

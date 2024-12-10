@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/home/widgets/app_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../theme/asset_icon.dart';
 import '../../../../util/responsive.dart';
 
 class ConnectGuide extends StatefulWidget {
@@ -34,9 +35,24 @@ class _ConnectGuideState extends State<ConnectGuide> {
     Responsive res = Responsive(context);
 
     return Scaffold(
-      appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(80),
-          child: HomeAppBar()
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(
+              backgroundColor: const Color(0xFFF4F4F7),
+              title: TextDefault(
+                content: 'Neck-Life',
+                fontSize: 16,
+                isBold: true,
+                fontColor: const Color(0xFF64646F),
+              ),
+              centerTitle: true,
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const AssetIcon('arrowBack', color: Color(0xFF8991A0), size: 6,)
+              )
+          )
       ),
       body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
