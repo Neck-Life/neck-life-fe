@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mocksum_flutter/view/use_env_ask/widget/env_item.dart';
 
 import '../main.dart';
 import '../util/amplitude.dart';
@@ -54,6 +55,7 @@ class DetectStatus with ChangeNotifier {
   int _detectionMin = 10;
   String _soundFileName = 'noti.mp3';
   bool _useHorizontalMove = true;
+  UserEnvType _userEnvType = UserEnvType.no_setting;
 
   bool get nowDetecting => _nowDetecting;
   bool get detectAvailable => _detectAvailable;
@@ -67,6 +69,7 @@ class DetectStatus with ChangeNotifier {
   int get detectionMin => _detectionMin;
   String get soundFileName => _soundFileName;
   bool get useHorizontalMove => _useHorizontalMove;
+  UserEnvType get userEnvType => _userEnvType;
   final AmplitudeEventManager _amplitudeEventManager = AmplitudeEventManager();
 
   static final _detectAvailableEventController = StreamController<dynamic>.broadcast();
@@ -166,63 +169,80 @@ class DetectStatus with ChangeNotifier {
 
   }
 
-  void setSensitivity(double sensitivityVal) async {
+  void setSensitivity(double sensitivityVal, {bool updateStorage = true}) async {
     _sensitivity = sensitivityVal.toInt();
     sSensitivity = _sensitivity;
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'sensitivity', value: _sensitivity.toString());
+    if (updateStorage) {
+      await storage.write(key: 'sensitivity', value: _sensitivity.toString());
+    }
   }
 
-  void setSoundVolume(double volume) async {
+  void setSoundVolume(double volume, {bool updateStorage = true}) async {
     _soundVolume = volume;
     sSoundVolume = volume;
     emitSoundEvent('volume $volume');
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'soundVolume', value: _soundVolume.toString());
+    if (updateStorage) {
+      await storage.write(key: 'soundVolume', value: _soundVolume.toString());
+    }
   }
 
-  void setPushNotiActive(bool value) async {
+  void setPushNotiActive(bool value, {bool updateStorage = true}) async {
     _pushNotiAvtive = value;
     sPushNotiAvtive = value;
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'pushNotiActive', value: value ? "1" : "0");
+    if (updateStorage) {
+      await storage.write(key: 'pushNotiActive', value: value ? "1" : "0");
+    }
   }
 
-  void setUseHorizontalMove(bool value) async {
+  void setUseHorizontalMove(bool value, {bool updateStorage = true}) async {
     _useHorizontalMove = value;
     sUseHorizontalMove = value;
     notifyListeners();
-    const storage = FlutterSecureStorage();
-    await storage.write(key: 'useHorizontalMove', value: value ? '1' : '0');
+    if (updateStorage) {
+      await storage.write(key: 'useHorizontalMove', value: value ? '1' : '0');
+    }
   }
 
-  void setAlarmGap(int alarmGapVal) async {
+  void setAlarmGap(int alarmGapVal, {bool updateStorage = true}) async {
     _alarmGap = alarmGapVal;
     sAlarmGap = alarmGapVal;
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'alarm', value: alarmGapVal.toString());
+    if (updateStorage) {
+      await storage.write(key: 'alarm', value: alarmGapVal.toString());
+    }
   }
 
-  void setBgSoundActive(bool isActive) async {
+  void setBgSoundActive(bool isActive, {bool updateStorage = true}) async {
     _bgSoungActive = isActive;
     sBgSoundActive = _bgSoungActive;
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
+    if (updateStorage) {
+      await storage.write(key: 'isBgActive', value: isActive ? '1' : '0');
+    }
   }
 
-  static void setHasWroteReview(bool hasWrote) async {
+  void setUserEnvType(UserEnvType type) {
+    _userEnvType = type;
+  }
+
+  static void setHasWroteReview(bool hasWrote, {bool updateStorage = true}) async {
     print('haswrote $hasWrote');
     hasWroteReview = hasWrote;
     if (!hasWrote) {
       reviewRequestCount = 30;
     }
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'hasWroteReview', value: hasWrote ? '1' : '0');
+    if (updateStorage) {
+      await storage.write(key: 'hasWroteReview', value: hasWrote ? '1' : '0');
+    }
   }
 
   void disavailableDetect() {
@@ -250,12 +270,14 @@ class DetectStatus with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSoundFileName(String filename) async {
+  void setSoundFileName(String filename, {bool updateStorage = true}) async {
     _soundFileName = filename;
     sSoundFileName = filename;
     emitSoundEvent('file $filename');
     notifyListeners();
     // const storage = FlutterSecureStorage();
-    await storage.write(key: 'soundFileName', value: filename);
+    if (updateStorage) {
+      await storage.write(key: 'soundFileName', value: filename);
+    }
   }
 }

@@ -11,6 +11,7 @@ import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/start_position/widget/animated_man.dart';
 import 'package:mocksum_flutter/view/start_position/widget/spinning_timer.dart';
 import 'package:mocksum_flutter/view/start_position/widget/time_display.dart';
+import 'package:mocksum_flutter/view/use_env_ask/widget/env_item.dart';
 import '../../theme/asset_icon.dart';
 import '../../theme/component/button.dart';
 import '../../util/localization_string.dart';
@@ -22,8 +23,9 @@ import 'package:wheel_picker/wheel_picker.dart';
 
 class StartPosition extends StatefulWidget {
   final void Function(bool, int)? onStart;
+  final UserEnvType selectedEnv;
 
-  const StartPosition({super.key, this.onStart});
+  const StartPosition({super.key, this.onStart, required this.selectedEnv});
   @override
   StartPositionState createState() => StartPositionState();
 }
@@ -55,6 +57,7 @@ class StartPositionState extends State<StartPosition> {
     setState(() {
       _started = true;
     });
+    setAlarmSetting();
     DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
     _timerRunning = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -82,8 +85,29 @@ class StartPositionState extends State<StartPosition> {
           showSnackbar(LS.tr('home_view.airpods_disconnect_detection_end'));
         }
         Navigator.pop(context);
+        Navigator.pop(context);
       }
     });
+  }
+
+  void setAlarmSetting() {
+    DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
+    switch (widget.selectedEnv) {
+      case UserEnvType.book:
+        detectStatus.setUseHorizontalMove(false, updateStorage: false);
+        detectStatus.setSensitivity(0, updateStorage: false);
+      case UserEnvType.moving:
+        detectStatus.setUseHorizontalMove(false, updateStorage: false);
+        // detectStatus.setSensitivity();
+      case UserEnvType.phone:
+        detectStatus.setUseHorizontalMove(false, updateStorage: false);
+      case UserEnvType.monitor:
+        detectStatus.setUseHorizontalMove(true, updateStorage: false);
+      case UserEnvType.laptop:
+        detectStatus.setUseHorizontalMove(false, updateStorage: false);
+        detectStatus.setSensitivity(0, updateStorage: false);
+      case UserEnvType.no_setting:
+    }
   }
 
   void _showMinWheelPicker() {

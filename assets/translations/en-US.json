@@ -139,8 +139,25 @@
     "turtle_neck_forward_backward_detection": "Detect Head Move Back and Forth",
     "detection_doing": "Detecting Your\\nHead Posture",
     "start_cta": "Press Start for bad posture alert!",
-    "stop_cta": "Pressing 'Stop' will update your history!"
+    "stop_cta": "Pressing 'Stop' will update your history!",
+    "strch_reminder": "Stretching Reminder",
+    "strch_off": "Stretching guidance is turned off.",
+    "strch_on": "Stretching guidance will be\nprovided every {} minutes.",
+    "alarm_desc1": "To ensure posture alerts are not disruptive",
+    "alarm_desc2": "customize the alert settings"
+
   },
+  "user_env": {
+    "when": "In what situation \ndo you use detection?",
+    "desc": "We'll configure the detection settings\nto match your situation.",
+    "book": "I'm reading a book.",
+    "moving": "I'm on a bus/train.",
+    "phone": "I'm using my phone.",
+    "laptop": "I'm using my laptop.",
+    "monitor": "I'm using a monitor.",
+    "no_setting": "I configured it manually\nin the settings tab."
+  },
+
   "home_widgets": {
     "bottomsheet": {
       "airpods_connect_reconnect_ask": "AirPods disconnected. Please reconnect.",
