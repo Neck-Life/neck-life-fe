@@ -418,9 +418,9 @@
     "stretching_alarm": {
       "title": "설정",
       "title2": "스트레칭 세트",
-      "stretching_alarm_setting": "스트레칭 리마인더",
+      "stretching_alarm_setting": "알람 간격 설정",
       "stretching_alarm_description": "자세 탐지 중 설정한 시간마다 스트레칭을 알려드려요",
-      "use_reminder": "스트레칭 리마인더 사용",
+      "use_reminder": "스트레칭 리마인더",
       "stretching_interval_disabled": "비활성",
       "stretching_interval_10s": "10초",
       "stretching_interval_10m": "10분",
