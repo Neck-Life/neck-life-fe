@@ -77,11 +77,24 @@ class GoalListItem extends StatelessWidget {
                 )
               ],
             ),
-            !isSet ? Container(
-              width: res.percentWidth(85),
-              height: res.percentHeight(2),
-              color: const Color(0xAAFFFFFF),
-            ) : const SizedBox()
+            if(!isSet)
+              Positioned.fill(
+                child: AbsorbPointer(
+                  absorbing: true,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7), // 반투명 효과
+                      borderRadius: BorderRadius.circular(20), // 동일한 radius
+                    ),
+                  ),
+                ),
+              ),
+            // Container(
+            //   width: res.percentWidth(85),
+            //   height: res.percentHeight(2),
+            //   color: const Color(0xAAFFFFFF),
+            // )
+            // : const SizedBox()
           ],
         ),
       ),
