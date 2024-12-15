@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                           userStatus.setIsLogged(true);
                           Navigator.push(
                               context, MaterialPageRoute(builder: (
-                              context) => const PageNavBar()));
+                              context) => const PageNavBar(fromLoginSuccess: true,)));
                         } else {
                           throw Exception();
                         }
