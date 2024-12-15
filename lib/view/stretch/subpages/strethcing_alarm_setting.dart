@@ -89,106 +89,118 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
             SizedBox(height: res.percentHeight(1)),
             WhiteContainer(
               width: 87.5,
-              padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(3.5)),
+              padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(1.5)),
               radius: 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset('assets/icons/time.svg'),
-                      SizedBox(width: res.percentWidth(0.5),),
-                      TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
-
-                    ],
-                  ),
-                  SizedBox(height: res.percentHeight(0.5)),
                   TextDefault(
-                    content: LS.tr('stretching.stretching_alarm.stretching_alarm_description'),
-                    fontSize: 14,
-                    isBold: false,
-                    fontColor: const Color(0xFF8991A0),
+                    content: LS.tr('stretching.stretching_alarm.use_reminder'),
+                    fontSize: 18,
+                    isBold: true,
                   ),
-                  SizedBox(height: res.percentHeight(2)),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextDefault(
-                        content: LS.tr('stretching.stretching_alarm.use_reminder'),
-                        fontSize: 15,
-                        isBold: false,
-                      ),
-                      Transform.scale(
-                        scale: 0.8,
-                        child: CupertinoSwitch(
-                          value: _stretchingSetted,
-                          activeColor: CupertinoColors.activeBlue,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _stretchingSetted = value;
-                              stretchingTimer.setStretchingIntervalIndex(value ? 1 : 0);
-                              _selectedIntervalIndex = value ? 1 : 0;
-                              // StretchingTimer.isStretchingMode = false;
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: res.percentHeight(2),),
-                  Stack(
-                    children: [
-                      Column(
-                        children: [
-                          SliderTheme(
-                            data: SliderThemeData(
-                              activeTrackColor: const Color(0xFF3077F4),
-                              inactiveTrackColor: const Color(0xFFE5E5EB),
-                              thumbColor: const Color(0xFF3077F4),
-                              trackHeight: 8.0,
-                              overlayShape: SliderComponentShape.noOverlay,
-                            ),
-                            child: Slider(
-                              value: _selectedIntervalIndex-1 < 0 ? 0 : _selectedIntervalIndex-1,
-                              max: 4,
-                              divisions: 4,
-                              onChanged: (double? value) {
-                                setState(() {
-                                  _selectedIntervalIndex = value!+1;
-                                  stretchingTimer.setStretchingIntervalIndex(value.toInt()+1);
-                                });
-                              },
-                            ),
-                          ),
-                          SizedBox(height: res.percentHeight(1)),
-                          SizedBox(
-                            width: res.percentWidth(85),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_disabled'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_20m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_40m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 4 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                                TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 5 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      !_stretchingSetted ? Container(
-                        width: res.percentWidth(85),
-                        height: res.percentHeight(5),
-                        color: const Color(0xAAFFFFFF),
-                      ) : const SizedBox()
-                    ],
+                  Transform.scale(
+                    scale: 1.0,
+                    child: CupertinoSwitch(
+                      value: _stretchingSetted,
+                      activeColor: CupertinoColors.activeBlue,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _stretchingSetted = value;
+                          stretchingTimer.setStretchingIntervalIndex(value ? 1 : 0);
+                          _selectedIntervalIndex = value ? 1 : 0;
+                          // StretchingTimer.isStretchingMode = false;
+                        });
+                      },
+                    ),
                   )
                 ],
               ),
             ),
-            SizedBox(height: res.percentHeight(2)),
+            SizedBox(height: res.percentHeight(1)),
+
+            Stack(
+              children: [
+                WhiteContainer(
+                  width: 87.5,
+                  padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(3.5)),
+                  radius: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          // SvgPicture.asset('assets/icons/time.svg'),
+                          // SizedBox(width: res.percentWidth(0.5),),
+                          TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_alarm_setting'), fontSize: 18, isBold: true),
+
+                        ],
+                      ),
+                      SizedBox(height: res.percentHeight(0.5)),
+                      TextDefault(
+                        content: LS.tr('stretching.stretching_alarm.stretching_alarm_description'),
+                        fontSize: 14,
+                        isBold: false,
+                        fontColor: const Color(0xFF8991A0),
+                      ),
+                      SizedBox(height: res.percentHeight(2)),
+
+
+                      // SizedBox(height: res.percentHeight(1),),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          activeTrackColor: const Color(0xFF3077F4),
+                          inactiveTrackColor: const Color(0xFFE5E5EB),
+                          thumbColor: const Color(0xFF3077F4),
+                          trackHeight: 8.0,
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _selectedIntervalIndex-1 < 0 ? 0 : _selectedIntervalIndex-1,
+                          max: 4,
+                          divisions: 4,
+                          onChanged: (double? value) {
+                            setState(() {
+                              _selectedIntervalIndex = value!+1;
+                              stretchingTimer.setStretchingIntervalIndex(value.toInt()+1);
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(height: res.percentHeight(1)),
+                      SizedBox(
+                        width: res.percentWidth(85),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_disabled'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 0 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                            TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_10m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 1 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                            TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_20m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 2 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                            TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_30m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 3 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                            TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_40m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 4 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                            TextDefault(content: LS.tr('stretching.stretching_alarm.stretching_interval_50m'), fontSize: 14, isBold: false, fontColor: _selectedIntervalIndex == 5 ? const Color(0xFF3077F4) : const Color(0xFF8991A0)),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                // 비활성화 레이어
+                if (!_stretchingSetted)
+                  Positioned.fill(
+                    child: AbsorbPointer(
+                      absorbing: true,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5), // 반투명 효과
+                          borderRadius: BorderRadius.circular(20), // 동일한 radius
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: res.percentHeight(1)),
             // 드롭다운 메뉴 추가
             WhiteContainer(
               width: 87.5,
@@ -282,35 +294,35 @@ class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
               padding: res.percentWidth(4.0),
             )
             ,
-            SizedBox(height: res.percentHeight(2)),
-            WhiteContainer(
-              width: 87.5,
-              padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
-              radius: 20,
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AssetIcon('info', size: res.percentWidth(1,)),
-                      const SizedBox(width: 8),
-                      TextDefault(
-                        content: LS.tr('stretching.stretching_alarm.why_stretch'),
-                        fontSize: 15,
-                        isBold: true,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: res.percentHeight(1),),
-                  TextDefault(
-                    content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
-                    fontSize: 14,
-                    isBold: false,
-                    fontColor: const Color(0xFF8991A0),
-                  )
-                ],
-              ),
-            ),
+            // SizedBox(height: res.percentHeight(2)),
+            // WhiteContainer(
+            //   width: 87.5,
+            //   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2.5)),
+            //   radius: 20,
+            //   child: Column(
+            //     children: [
+            //       Row(
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         children: [
+            //           AssetIcon('info', size: res.percentWidth(1,)),
+            //           const SizedBox(width: 8),
+            //           TextDefault(
+            //             content: LS.tr('stretching.stretching_alarm.why_stretch'),
+            //             fontSize: 15,
+            //             isBold: true,
+            //           ),
+            //         ],
+            //       ),
+            //       SizedBox(height: res.percentHeight(1),),
+            //       TextDefault(
+            //         content: LS.tr('stretching.stretching_alarm.why_stretch_description'),
+            //         fontSize: 14,
+            //         isBold: false,
+            //         fontColor: const Color(0xFF8991A0),
+            //       )
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
