@@ -117,7 +117,7 @@ class StretchingTimer extends ChangeNotifier {
     late int currentUseSec;
 
     _showPushAlarm(
-        LS.tr('stretching.timer.stretching_reminder_title', [_interval!~/60]),
+        LS.tr('stretching.timer.stretching_reminder_title', [_interval~/60]),
         LS.tr('stretching.timer.stretching_reminder_body',[_interval~/60])
     );
 

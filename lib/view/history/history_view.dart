@@ -74,8 +74,6 @@ class _HistoryState extends State<History> {
 
   final GlobalKey todayCountKey = GlobalKey();
 
-  final _amplitudeManager = AmplitudeEventManager();
-
 
   late Map<String, int> poseCount;
   late final _internetCheckListener;

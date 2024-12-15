@@ -213,7 +213,7 @@ class _SurveyState extends State<Survey> {
                   onPressed: () async {
                     try {
                       if (_worksheet != null) {
-                        await insert(userStatus.email ?? '');
+                        await insert(userStatus.email);
                         _openSuccessPopUp();
                       } else {
                         throw Exception();

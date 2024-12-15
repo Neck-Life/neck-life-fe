@@ -115,7 +115,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                     'bgSoundActive': detectStatus.bgSoundActive,
                     'volume': detectStatus.soundVolume,
                     'pushNotiActive': detectStatus.pushNotiAvtive,
-                    'useHorizontalMove': detectStatus.useHorizontalMove
+                    'useHorizontalMove': detectStatus.useHorizontalMove,
+                    'env': detectStatus.userEnvType.typeString
                   });
 
                   String? refreshToken = await storage.read(key: 'refreshToken');
@@ -640,7 +641,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                       'volume': detectStatus.soundVolume,
                                                       'pushNotiActive': detectStatus.pushNotiAvtive,
                                                       'useHorizontalMove': detectStatus.useHorizontalMove,
-                                                      'env': detectStatus.userEnvType
+                                                      'env': detectStatus.userEnvType.typeString
                                                     });
 
                                                     String? refreshToken = await storage.read(key: 'refreshToken');

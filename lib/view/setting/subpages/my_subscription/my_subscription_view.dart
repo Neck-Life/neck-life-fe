@@ -327,7 +327,7 @@ class _MySubscriptionState extends State<MySubscription> {
                           }
 
                           await _purchaseSupscription(userStatus);
-                        } on Exception catch(e) {
+                        } on Exception {
                           _showErrorPopUp();
                         }
                       },

@@ -32,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     'email',
   ];
 
-  final _amplitudeManager = AmplitudeEventManager();
 
   bool _loginProcessStarted = false;
 
@@ -126,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                             AppleIDAuthorizationScopes.email,
                           ],
                         );
-                        // print(credential);
+                        print(credential);
                         bool success = await userStatus.socialLogin(
                             credential.authorizationCode, 'apple');
                         if (success) {
