@@ -27,6 +27,7 @@ import 'package:mocksum_flutter/theme/component/text_default.dart';
 import 'package:mocksum_flutter/view/home/widgets/start_button_msg.dart';
 import 'package:mocksum_flutter/view/home/widgets/stop_bottomsheet.dart';
 import 'package:mocksum_flutter/view/loading.dart';
+import 'package:mocksum_flutter/view/use_env_ask/user_env_ask_view.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
@@ -37,9 +38,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:live_activities/live_activities.dart';
 
 import '../../main.dart';
+import '../../page_navbar.dart';
 import '../../service/stretching_timer.dart';
 import '../../theme/component/button.dart';
 import '../../util/ad_manager.dart';
+import '../setting/subpages/alarm_setting/alarm_setting_view.dart';
 import '../start_position/start_position_view.dart';
 import '../../util/responsive.dart';
 
@@ -102,7 +105,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
             _startWidgetClicked = false;
             Navigator.push(context, MaterialPageRoute(
                 builder: (
-                    context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
+                    context) => UserEnvAsk(onStart: (useTimeLimit, detectionMin) async {
                   audioHandler?.play();
 
                   DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
@@ -383,9 +386,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
           _amplitudeEventManager.actionEvent('mainpage', 'enddetection', Provider.of<GlobalTimer>(context, listen: false).getDetectionTime(), GlobalTimer.alarmCount);
           Provider.of<GlobalTimer>(context, listen: false).stopTimer();
           Provider.of<StretchingTimer>(context, listen: false).cancelTimer(); //스트레칭 알리미 종료
-
           // _liveActivitiesPlugin.endAllActivities();
-
+          // Provider.of<DetectStatus>(context, listen: false).init();
           // const storage = FlutterSecureStorage();
           String? executeCount = await storage.read(key: 'executeCount');
           await storage.write(key: 'executeCount', value: (int.parse(executeCount ?? '0')+1).toString());
@@ -524,64 +526,71 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                         // SizedBox(height: res.percentHeight(2),),
                         // userStatus.isLogged ? const BannerCarousel() : const HomeAppBar(),
                         SizedBox(height: res.percentHeight(2),),
-                        GestureDetector(
-                          onTap: () {
-                            // if (!detectStatus.detectAvailable) {
-                            //   switch (OpenSettingsPlus.shared) {
-                            //     case OpenSettingsPlusIOS settings: settings.bluetooth();
-                            //     default: throw Exception('Platform not supported');
-                            //   }
-                            // }
-                            _amplitudeEventManager.actionEvent('clicked', 'show_connectguide');
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (
-                                context) => const ConnectGuide()));
-                          },
-                          child: SizedBox(
-                              width: res.percentWidth(85),
-                              height: res.percentWidth(85)*0.3,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                      child: Row(
-                                        children: [
-                                          const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
-                                          const SizedBox(width: 5,),
-                                          TextDefault(
-                                            content: 'connect_guide.guide'.tr(),
-                                            fontSize: 13,
-                                            isBold: false,
-                                            fontColor: const Color(0xFF236EF3),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                  Positioned(
-                                    // left: responsive.percentWidth(7.5),
-                                    top: res.percentWidth(6),
-                                    child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
-                                  ),
-                                  Positioned(
-                                    left: res.percentWidth(23),
-                                    top: res.percentWidth(9),
-                                    child: TextDefault(
-                                      content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
-                                      fontSize: 18,
-                                      isBold: true,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    left: res.percentWidth(23),
-                                    top: res.percentWidth(9)+25,
-                                    child: TextDefault(
-                                      content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
-                                      fontSize: 14,
-                                      isBold: false,
-                                      fontColor: const Color(0xFF236EF3),
-                                    ),
-                                  ),
-                                ],
-                              )
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                          height: !detectStatus.detectAvailable ? res.percentWidth(85)*0.3 : 0,
+                          child: SingleChildScrollView(
+                            child: GestureDetector(
+                              onTap: () {
+                                // if (!detectStatus.detectAvailable) {
+                                //   switch (OpenSettingsPlus.shared) {
+                                //     case OpenSettingsPlusIOS settings: settings.bluetooth();
+                                //     default: throw Exception('Platform not supported');
+                                //   }
+                                // }
+                                _amplitudeEventManager.actionEvent('clicked', 'show_connectguide');
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (
+                                    context) => const ConnectGuide()));
+                              },
+                              child: SizedBox(
+                                  width: res.percentWidth(85),
+                                  height: res.percentWidth(85)*0.3,
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                          child: Row(
+                                            children: [
+                                              const AssetIcon('infoCircle', size: 4, color: Color(0xFF236EF3),),
+                                              const SizedBox(width: 5,),
+                                              TextDefault(
+                                                content: 'connect_guide.guide'.tr(),
+                                                fontSize: 13,
+                                                isBold: false,
+                                                fontColor: const Color(0xFF236EF3),
+                                              ),
+                                            ],
+                                          )
+                                      ),
+                                      Positioned(
+                                        // left: responsive.percentWidth(7.5),
+                                        top: res.percentWidth(6),
+                                        child: AirpodsModal(isRotating: !detectStatus.detectAvailable,),
+                                      ),
+                                      Positioned(
+                                        left: res.percentWidth(23),
+                                        top: res.percentWidth(9),
+                                        child: TextDefault(
+                                          content: detectStatus.detectAvailable ? LS.tr('home_view.airpods_connected') : LS.tr('home_view.airpods_disconnected'),
+                                          fontSize: 18,
+                                          isBold: true,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: res.percentWidth(23),
+                                        top: res.percentWidth(9)+25,
+                                        child: TextDefault(
+                                          content: detectStatus.detectAvailable ? LS.tr('home_view.sensor_operation') : LS.tr('home_view.sensor_no_device'),
+                                          fontSize: 14,
+                                          isBold: false,
+                                          fontColor: const Color(0xFF236EF3),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                              ),
+                            ),
                           ),
                         ),
                         Container(
@@ -620,7 +629,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                               _amplitudeEventManager.actionEvent('mainpage', 'click_startbutton');
                                               Navigator.push(context, MaterialPageRoute(
                                                   builder: (
-                                                      context) => StartPosition(onStart: (useTimeLimit, detectionMin) async {
+                                                      context) => UserEnvAsk(onStart: (useTimeLimit, detectionMin) async {
                                                     audioHandler?.play();
 
                                                     DetectStatus detectStatus = Provider.of<DetectStatus>(context, listen: false);
@@ -630,7 +639,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                       'bgSoundActive': detectStatus.bgSoundActive,
                                                       'volume': detectStatus.soundVolume,
                                                       'pushNotiActive': detectStatus.pushNotiAvtive,
-                                                      'useHorizontalMove': detectStatus.useHorizontalMove
+                                                      'useHorizontalMove': detectStatus.useHorizontalMove,
+                                                      'env': detectStatus.userEnvType
                                                     });
 
                                                     String? refreshToken = await storage.read(key: 'refreshToken');
@@ -663,16 +673,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                         }
                                                       }
                                                     }
-                                                    // final id = await _liveActivitiesPlugin.createActivity(
-                                                    //   DynamicIslandStopwatchDataModel(
-                                                    //     elapsedSeconds: 0,
-                                                    //     useTimeLimit: useTimeLimit,
-                                                    //     detectionMin: detectionMin
-                                                    //   ).toMap()
-                                                    // );
-                                                    // setState(() {
-                                                    //   activityID = id;
-                                                    // });
                                                   })));
                                             }
                                           } else {
@@ -686,50 +686,65 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                   TimeConvert.sec2TimeFormat(detectStatus.detectionMin*60 - (globalTimer.useSec-globalTimer.secOnStart))
                                     ),
                                     // const StartButtonMsg(message: 'Press Start for bad posture alert!'),
-                                    if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
-                                      StartButtonMsg(message: 'home_view.start_cta'.tr())
-                                    else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
-                                      StartButtonMsg(message: 'home_view.stop_cta'.tr())
+                                    // if (detectStatus.detectAvailable && !detectStatus.nowDetecting)
+                                    //   StartButtonMsg(message: 'home_view.start_cta'.tr())
+                                    // else if (detectStatus.detectAvailable && detectStatus.nowDetecting)
+                                    //   StartButtonMsg(message: 'home_view.stop_cta'.tr())
                                   ],
                                 ),
                               ],
                             )
                         ),
                         SizedBox(height: res.percentHeight(2)),
-                        // WhiteContainer(
-                        //   width: 90,
-                        //   padding: EdgeInsets.symmetric(horizontal: res.percentWidth(3), vertical: res.percentHeight(1)),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       Row(
-                        //         children: [
-                        //           Row(
-                        //             children: [
-                        //               const AssetIcon('maximize', size: 6,),
-                        //               const SizedBox(width: 5,),
-                        //               TextDefault(
-                        //                 content: LS.tr('home_view.turtle_neck_forward_backward_detection'),
-                        //                 fontSize: 14,
-                        //                 isBold: false,
-                        //               )
-                        //             ],
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       CupertinoSwitch(
-                        //         value: _isLabMode,
-                        //         activeColor: CupertinoColors.activeBlue,
-                        //         onChanged: (bool value) {
-                        //           setState(() {
-                        //             _isLabMode = value;
-                        //             DetectStatus.isLabMode = value;
-                        //           });
-                        //         },
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (
+                                context) => const PageNavBar(pageIdx: 2,))
+                            );
+                          },
+                          child: WhiteContainer(
+                            width: 90,
+                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextDefault(content: 'home_view.strch_reminder'.tr(), fontSize: 12, isBold: false),
+                                    TextDefault(content: stretchingTimer.selectedStretchingInterval == null ? 'home_view.strch_off' : 'home_view.strch_on'.tr(args: [(stretchingTimer.selectedStretchingInterval! ~/ 60).toString()]), fontSize: 16, isBold: true),
+                                  ],
+                                ),
+                                AssetIcon('arrowNext', size: res.percentWidth(1))
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: res.percentHeight(1),),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => const AlarmSetting()));
+                          },
+                          child: WhiteContainer(
+                            width: 90,
+                            padding: EdgeInsets.symmetric(horizontal: res.percentWidth(5), vertical: res.percentHeight(2)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextDefault(content: LS.tr('home_view.alarm_desc1'), fontSize: 12, isBold: false),
+                                    TextDefault(content: 'home_view.alarm_desc2'.tr(), fontSize: 16, isBold: true),
+                                  ],
+                                ),
+                                AssetIcon('arrowNext', size: res.percentWidth(1))
+                              ],
+                            ),
+                          ),
+                        ),
                         userStatus.isPremium ? const SizedBox() : Container(
                           margin: EdgeInsets.only(top: res.percentHeight(1.5)),
                           width: _ad.size.width.toDouble(),

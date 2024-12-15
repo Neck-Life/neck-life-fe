@@ -284,7 +284,7 @@ class UserStatus with ChangeNotifier {
   Future<void> _initSubscriptionState() async {
     String revenuecat_key = dotenv.get('REVENUECAT_KEY');
 
-    await Purchases.setLogLevel(LogLevel.debug);
+    // await Purchases.setLogLevel(LogLevel.debug);
     await Purchases.configure(
       PurchasesConfiguration(revenuecat_key)..appUserID = _email,
     );
@@ -314,11 +314,9 @@ class UserStatus with ChangeNotifier {
     final res = await post(
         '$serverAddress/members',
         {'code': idToken, 'provider': provider,
-          'timeZone': currentTimeZone, 'language' : Platform.localeName
+          'timeZone': currentTimeZone, 'language': Platform.localeName
         }
     );
-
-
 
 
     // print(res.statusCode);
@@ -343,9 +341,12 @@ class UserStatus with ChangeNotifier {
       await storage.write(key: 'email', value: resData['data']['email'].toString());
       await storage.write(key: 'provider', value: resData['data']['provider'].toString());
 
-
-      NotificationService notificationService = NotificationService();
-      await notificationService.initFirebaseMessaging();
+      try {
+        NotificationService notificationService = NotificationService();
+        await notificationService.initFirebaseMessaging();
+      } catch (e) {
+        log('$e');
+      }
       // await postFcmToken(storage);
 
       return true;
