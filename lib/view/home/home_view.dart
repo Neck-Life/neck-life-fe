@@ -713,8 +713,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    TextDefault(content: 'home_view.strch_reminder'.tr(), fontSize: 12, isBold: false),
-                                    TextDefault(content: stretchingTimer.selectedStretchingInterval == null ? 'home_view.strch_off' : 'home_view.strch_on'.tr(args: [(stretchingTimer.selectedStretchingInterval! ~/ 60).toString()]), fontSize: 16, isBold: true),
+                                    TextDefault(content: 'home_view.stretch_reminder'.tr(), fontSize: 12, isBold: false),
+                                    TextDefault(content: stretchingTimer.selectedStretchingInterval == null ? 'home_view.stretch_off'.tr() : 'home_view.stretch_on'.tr(args: [(stretchingTimer.selectedStretchingInterval! ~/ 60).toString()]), fontSize: 16, isBold: true),
                                   ],
                                 ),
                                 AssetIcon('arrowNext', size: res.percentWidth(1))

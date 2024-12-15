@@ -140,9 +140,9 @@
     "detection_doing": "Detecting Your\\nHead Posture",
     "start_cta": "Press Start for bad posture alert!",
     "stop_cta": "Pressing 'Stop' will update your history!",
-    "strch_reminder": "Stretching Reminder",
-    "strch_off": "Stretching guidance is turned off.",
-    "strch_on": "Stretching guidance will be\nprovided every {} minutes.",
+    "stretch_reminder": "Stretching Reminder",
+    "stretch_off": "Stretching guidance is turned off.",
+    "stretch_on": "Stretching guidance will be\nprovided every {} minutes.",
     "alarm_desc1": "To ensure posture alerts are not disruptive",
     "alarm_desc2": "customize the alert settings"
 
