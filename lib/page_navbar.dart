@@ -24,10 +24,12 @@ import 'main.dart';
 
 class PageNavBar extends StatefulWidget {
   final int? pageIdx;
+  final bool? fromLoginSuccess;
 
   const PageNavBar({
     super.key,
-    this.pageIdx
+    this.pageIdx,
+    this.fromLoginSuccess
   });
 
   @override
@@ -50,7 +52,13 @@ class _PageNavBarState extends State<PageNavBar> {
 
       bool isLogged = await Provider.of<UserStatus>(context, listen: false)
           .checkAndUpdateToken();
-      Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
+
+      if (widget.fromLoginSuccess == true) {
+        Provider.of<UserStatus>(context, listen: false).setIsLogged(true);
+      } else {
+        Provider.of<UserStatus>(context, listen: false).setIsLogged(isLogged);
+
+      }
 
       print('login checked');
 
@@ -61,7 +69,7 @@ class _PageNavBarState extends State<PageNavBar> {
       // if (isLogged) {
       await _amplitudeEventManager.initAmplitude();
       // }
-      if (isLogged) {
+      if (isLogged || widget.fromLoginSuccess == true) {
         await _amplitudeEventManager.setUserID(Provider.of<UserStatus>(context, listen: false).email);
       }
 
@@ -124,6 +132,8 @@ class _PageNavBarState extends State<PageNavBar> {
   @override
   Widget build(BuildContext context) {
     UserStatus userStatus = Provider.of(context);
+
+    print('build ${userStatus.isLogged}');
 
     return PopScope(
       canPop: false,
