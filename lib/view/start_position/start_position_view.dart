@@ -47,7 +47,11 @@ class StartPositionState extends State<StartPosition> {
     _started = false;
 
     Future.delayed(Duration.zero, () {
-      _detectionMin = min(10, ((3600-Provider.of<GlobalTimer>(context, listen: false).useSec)/60).ceil());
+      if (!Provider.of<UserStatus>(context, listen: false).isPremium) {
+        _detectionMin = min(10, ((3600 - Provider
+            .of<GlobalTimer>(context, listen: false)
+            .useSec) / 60).ceil());
+      }
       // _startTimer();
     });
     super.initState();
