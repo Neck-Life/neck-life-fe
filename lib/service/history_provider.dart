@@ -9,8 +9,10 @@ import 'package:mocksum_flutter/service/user_provider.dart';
 import '../main.dart';
 
 class HistoryStatus {
-  static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
-  static const String serverAddressV3 = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v3';
+  // static const String serverAddress = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v1';
+  // static const String serverAddressV3 = 'http://necklife-prod-1214-env.eba-mtve9iwm.ap-northeast-2.elasticbeanstalk.com/api/v3';
+  static const String serverAddress = 'http://43.202.171.144:5000/api/v1'; // 마이그레이션서버
+  static const String serverAddressV3 = 'http://43.202.171.144:5000/api/v3'; //마이그레이션서버 v3
 
   // static const String serverAddress = 'http://43.200.200.34/api/v1';
   // static const String serverAddressV3 = 'http://43.200.200.34/api/v3';
