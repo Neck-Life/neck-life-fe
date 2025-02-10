@@ -18,8 +18,8 @@ class StretchingTimer extends ChangeNotifier {
   Timer? _timer;
 
   final List<int?> _intervals = [null, 600, 1200, 1800, 2400, 3000]; // 각 인덱스에 맞는 interval 값, null은 '사용 안함'
-  int _selectedIntervalIndex = 2; // 초기 인덱스 -> 기본 30분
-  int _selectedStretchingIndex = 0; // 초기 인덱스 -> 기본 3
+  int _selectedIntervalIndex = 1; // 초기 인덱스 -> 기본 10분
+  int _selectedStretchingIndex = 0; // 초기 인덱스
   int get selectedIntervalIndex => _selectedIntervalIndex;
   int get selectedStretchingIndex => _selectedStretchingIndex;
   List<StretchingGroup> _stretchingList = StretchingData.init('ko');
@@ -39,6 +39,12 @@ class StretchingTimer extends ChangeNotifier {
     String? selectedStretchingIndexStorage = await storage.read(key: 'selectedStretchingIndex');
     String? completedStretchCountStorage = await storage.read(key: 'completedStretchCount');
 
+    String? isFirstLaunch = await storage.read(key: 'updateVersion');
+    if(isFirstLaunch == null){ // 스트레칭 리마인더 간격 20분 -> 10분으로 강제 설정
+      await storage.write(key: 'updateVersion', value: '1');
+      await storage.write(key: 'selectedIntervalIndex', value: '1');
+      selectedIntervalIndexStorage = await storage.read(key: 'selectedIntervalIndex');
+    }
     if (selectedIntervalIndexStorage != null) {
       _selectedIntervalIndex = int.parse(selectedIntervalIndexStorage);
       // print('loadeddd $_selectedIntervalIndex');
