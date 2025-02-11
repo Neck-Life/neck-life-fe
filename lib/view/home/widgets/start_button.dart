@@ -33,7 +33,7 @@ class _StartButtonState extends State<StartButton> {
     setState(() {
       isPressed = newIsPressed;
     });
-    if (isPressed) widget.onPressed();
+    // if (isPressed) widget.onPressed();
   }
 
   @override

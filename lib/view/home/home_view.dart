@@ -641,7 +641,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                                                       'volume': detectStatus.soundVolume,
                                                       'pushNotiActive': detectStatus.pushNotiAvtive,
                                                       'useHorizontalMove': detectStatus.useHorizontalMove,
-                                                      'env': detectStatus.userEnvType.typeString
+                                                      'env': detectStatus.userEnvType.typeString,
+                                                      'strch_gap': stretchingTimer.selectedStretchingInterval
                                                     });
 
                                                     String? refreshToken = await storage.read(key: 'refreshToken');

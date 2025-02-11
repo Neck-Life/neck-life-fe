@@ -39,7 +39,7 @@ class StartPositionState extends State<StartPosition> {
   Timer? _timer;
   bool _started = false;
 
-  int _detectionMin = 10;
+  int _detectionMin = 20;
   bool _useTimeLimit = true;
 
   @override
@@ -48,7 +48,7 @@ class StartPositionState extends State<StartPosition> {
 
     Future.delayed(Duration.zero, () {
       if (!Provider.of<UserStatus>(context, listen: false).isPremium) {
-        _detectionMin = min(10, ((3600 - Provider
+        _detectionMin = min(20, ((3600 - Provider
             .of<GlobalTimer>(context, listen: false)
             .useSec) / 60).ceil());
       }

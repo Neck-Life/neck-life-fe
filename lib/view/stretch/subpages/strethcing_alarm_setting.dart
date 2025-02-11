@@ -28,7 +28,7 @@ class StretchingAlarmSetting extends StatefulWidget {
 
 
 class _StretchingAlarmSettingState extends State<StretchingAlarmSetting> {
-  double _selectedIntervalIndex = 2;
+  double _selectedIntervalIndex = 1;
   int _selectedStretchingIndex = 0;
   List<StretchingGroup> stretchingGroupList = [];
   StretchingGroup? selectedStretchingGroup; // 상태 변수로 선언
